@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PadPilot.App"
+        xmlns:views="clr-namespace:PadPilot.App.Views"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
-        Title="PadPilot" Width="980" Height="640" MinWidth="820" MinHeight="560"
+        Title="PadPilot" Width="1000" Height="700" MinWidth="860" MinHeight="600"
         Background="{StaticResource WindowBrush}">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -19,303 +20,268 @@
             <DockPanel>
                 <TextBlock Text="{Binding Status}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Verbindung" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" />
-                    <TextBlock Text="{Binding Connection}" Margin="0,0,24,0" />
-                    <TextBlock Text="Akku" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" />
-                    <TextBlock Text="{Binding Battery}" Margin="0,0,24,0" />
-                    <TextBlock Text="{Binding ReportRate}" Foreground="{StaticResource MutedBrush}" />
+                    <TextBlock Text="{local:Tr Label_Connection}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Connection}" Margin="0,0,24,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{local:Tr Label_Battery}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Battery}" Margin="0,0,24,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding ReportRate}" Foreground="{StaticResource MutedBrush}" Margin="0,0,24,0" VerticalAlignment="Center" />
+                    <ComboBox ItemsSource="{x:Static local:Loc.Languages}" SelectedValuePath="Code"
+                              SelectedValue="{Binding Language, Source={x:Static local:Loc.Instance}}" MinWidth="100">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" Foreground="Black" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
             </DockPanel>
         </Border>
 
         <TabControl Grid.Row="1">
-        <TabItem Header="Eingaben">
-        <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <TabItem Header="{local:Tr Tab_Inputs}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-            <!-- Sticks and triggers -->
-            <StackPanel>
-                <Border Style="{StaticResource Panel}">
-                    <StackPanel>
-                        <TextBlock Text="STICKS" Style="{StaticResource Heading}" />
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel Margin="0,0,16,0">
-                                <Canvas Width="100" Height="100">
-                                    <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
-                                    <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
-                                             Canvas.Left="{Binding State.LeftX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
-                                             Canvas.Top="{Binding State.LeftY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
-                                </Canvas>
-                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
-                                    <Run Text="L " /><Run Text="{Binding State.LeftX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.LeftY, Mode=OneWay}" />
-                                </TextBlock>
-                            </StackPanel>
-                            <StackPanel>
-                                <Canvas Width="100" Height="100">
-                                    <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
-                                    <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
-                                             Canvas.Left="{Binding State.RightX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
-                                             Canvas.Top="{Binding State.RightY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
-                                </Canvas>
-                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
-                                    <Run Text="R " /><Run Text="{Binding State.RightX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.RightY, Mode=OneWay}" />
-                                </TextBlock>
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-
-                <Border Style="{StaticResource Panel}">
-                    <StackPanel>
-                        <TextBlock Text="TRIGGER" Style="{StaticResource Heading}" />
-                        <DockPanel Margin="0,0,0,8">
-                            <TextBlock Text="L2" Width="26" />
-                            <TextBlock Text="{Binding State.L2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
-                            <ProgressBar Value="{Binding State.L2, Mode=OneWay}" />
-                        </DockPanel>
-                        <DockPanel>
-                            <TextBlock Text="R2" Width="26" />
-                            <TextBlock Text="{Binding State.R2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
-                            <ProgressBar Value="{Binding State.R2, Mode=OneWay}" />
-                        </DockPanel>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <!-- Buttons -->
-            <Border Grid.Column="1" Style="{StaticResource Panel}">
-                <StackPanel>
-                    <TextBlock Text="TASTEN" Style="{StaticResource Heading}" />
-
-                    <WrapPanel>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L1}"><TextBlock Text="L1" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L2}"><TextBlock Text="L2" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L3}"><TextBlock Text="L3" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R1}"><TextBlock Text="R1" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R2}"><TextBlock Text="R2" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R3}"><TextBlock Text="R3" Style="{StaticResource KeyLabel}" /></Border>
-                    </WrapPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
-                        <!-- D-Pad -->
-                        <Grid Margin="0,0,24,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition /><RowDefinition /><RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition /><ColumnDefinition /><ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadUp}"><TextBlock Text="▲" Style="{StaticResource KeyLabel}" /></Border>
-                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadLeft}"><TextBlock Text="◀" Style="{StaticResource KeyLabel}" /></Border>
-                            <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadRight}"><TextBlock Text="▶" Style="{StaticResource KeyLabel}" /></Border>
-                            <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadDown}"><TextBlock Text="▼" Style="{StaticResource KeyLabel}" /></Border>
-                        </Grid>
-
-                        <!-- Face buttons -->
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition /><RowDefinition /><RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition /><ColumnDefinition /><ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Triangle}"><TextBlock Text="△" Style="{StaticResource KeyLabel}" /></Border>
-                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Square}"><TextBlock Text="□" Style="{StaticResource KeyLabel}" /></Border>
-                            <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Circle}"><TextBlock Text="○" Style="{StaticResource KeyLabel}" /></Border>
-                            <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Cross}"><TextBlock Text="✕" Style="{StaticResource KeyLabel}" /></Border>
-                        </Grid>
-                    </StackPanel>
-
-                    <WrapPanel Margin="0,14,0,0">
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Create}"><TextBlock Text="Create" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Options}"><TextBlock Text="Options" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=PS}"><TextBlock Text="PS" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=TouchpadClick}"><TextBlock Text="Touchpad" Style="{StaticResource KeyLabel}" /></Border>
-                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Mute}"><TextBlock Text="Mikro" Style="{StaticResource KeyLabel}" /></Border>
-                    </WrapPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- Touchpad and motion sensors -->
-            <StackPanel Grid.Column="2">
-                <Border Style="{StaticResource Panel}">
-                    <StackPanel>
-                        <TextBlock Text="TOUCHPAD" Style="{StaticResource Heading}" />
-                        <Border Width="288" Height="162" Background="{StaticResource TrackBrush}" CornerRadius="6" ClipToBounds="True">
-                            <Canvas>
-                                <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBrush}"
-                                         Visibility="{Binding State.Touch1.Active, Converter={StaticResource BoolToVisibility}}"
-                                         Canvas.Left="{Binding State.Touch1.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
-                                         Canvas.Top="{Binding State.Touch1.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
-                                    <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
-                                </Ellipse>
-                                <Ellipse Width="14" Height="14" Fill="#F59E0B"
-                                         Visibility="{Binding State.Touch2.Active, Converter={StaticResource BoolToVisibility}}"
-                                         Canvas.Left="{Binding State.Touch2.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
-                                         Canvas.Top="{Binding State.Touch2.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
-                                    <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
-                                </Ellipse>
-                            </Canvas>
-                        </Border>
-                        <TextBlock Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
-                            <Run Text="Finger 1: " /><Run Text="{Binding State.Touch1.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch1.Y, Mode=OneWay}" />
-                            <Run Text="   Finger 2: " /><Run Text="{Binding State.Touch2.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch2.Y, Mode=OneWay}" />
-                        </TextBlock>
-                    </StackPanel>
-                </Border>
-
-                <Border Style="{StaticResource Panel}">
-                    <StackPanel>
-                        <TextBlock Text="BEWEGUNGSSENSOREN (ROH)" Style="{StaticResource Heading}" />
-                        <TextBlock FontFamily="Consolas">
-                            <Run Text="Gyro   X " /><Run Text="{Binding State.Gyro.X, Mode=OneWay}" />
-                            <Run Text="  Y " /><Run Text="{Binding State.Gyro.Y, Mode=OneWay}" />
-                            <Run Text="  Z " /><Run Text="{Binding State.Gyro.Z, Mode=OneWay}" />
-                        </TextBlock>
-                        <TextBlock FontFamily="Consolas" Margin="0,4,0,0">
-                            <Run Text="Accel  X " /><Run Text="{Binding State.Accel.X, Mode=OneWay}" />
-                            <Run Text="  Y " /><Run Text="{Binding State.Accel.Y, Mode=OneWay}" />
-                            <Run Text="  Z " /><Run Text="{Binding State.Accel.Z, Mode=OneWay}" />
-                        </TextBlock>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </Grid>
-
-        <!-- Raw report for debugging -->
-        <Border Grid.Row="1" Style="{StaticResource Panel}">
-            <StackPanel>
-                <TextBlock Text="ROHDATEN (erste 48 Byte)" Style="{StaticResource Heading}" />
-                <TextBox Text="{Binding RawHex, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
-                         Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
-            </StackPanel>
-        </Border>
-        </Grid>
-        </TabItem>
-
-        <TabItem Header="Ausgaben">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Grid DataContext="{Binding Output}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel>
-                        <!-- Lightbar -->
-                        <Border Style="{StaticResource Panel}">
-                            <StackPanel>
-                                <TextBlock Text="LIGHTBAR" Style="{StaticResource Heading}" />
-                                <DockPanel>
-                                    <Border Width="64" Height="64" CornerRadius="8" Background="{Binding LightbarPreview}" Margin="0,0,14,0" />
-                                    <StackPanel>
-                                        <DockPanel Margin="0,0,0,4">
-                                            <TextBlock Text="Rot" Width="44" />
-                                            <TextBlock Text="{Binding Red}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                            <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
-                                        </DockPanel>
-                                        <DockPanel Margin="0,0,0,4">
-                                            <TextBlock Text="Grün" Width="44" />
-                                            <TextBlock Text="{Binding Green}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                            <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
-                                        </DockPanel>
-                                        <DockPanel>
-                                            <TextBlock Text="Blau" Width="44" />
-                                            <TextBlock Text="{Binding Blue}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                            <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
-                                        </DockPanel>
+                        <!-- Sticks and triggers -->
+                        <StackPanel>
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Sticks}" Style="{StaticResource Heading}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,16,0">
+                                            <Canvas Width="100" Height="100">
+                                                <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
+                                                <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
+                                                         Canvas.Left="{Binding State.LeftX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
+                                                         Canvas.Top="{Binding State.LeftY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
+                                            </Canvas>
+                                            <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                                <Run Text="L " /><Run Text="{Binding State.LeftX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.LeftY, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <Canvas Width="100" Height="100">
+                                                <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
+                                                <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
+                                                         Canvas.Left="{Binding State.RightX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
+                                                         Canvas.Top="{Binding State.RightY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
+                                            </Canvas>
+                                            <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                                <Run Text="R " /><Run Text="{Binding State.RightX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.RightY, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </StackPanel>
-                                </DockPanel>
-                                <StackPanel Orientation="Horizontal" Margin="78,10,0,0">
-                                    <Button Style="{StaticResource Swatch}" Background="#FF0000" Click="Swatch_Click" ToolTip="Rot" />
-                                    <Button Style="{StaticResource Swatch}" Background="#FF8000" Click="Swatch_Click" ToolTip="Orange" />
-                                    <Button Style="{StaticResource Swatch}" Background="#FFFF00" Click="Swatch_Click" ToolTip="Gelb" />
-                                    <Button Style="{StaticResource Swatch}" Background="#00FF00" Click="Swatch_Click" ToolTip="Grün" />
-                                    <Button Style="{StaticResource Swatch}" Background="#00FFFF" Click="Swatch_Click" ToolTip="Cyan" />
-                                    <Button Style="{StaticResource Swatch}" Background="#0040FF" Click="Swatch_Click" ToolTip="Blau" />
-                                    <Button Style="{StaticResource Swatch}" Background="#C000FF" Click="Swatch_Click" ToolTip="Lila" />
-                                    <Button Style="{StaticResource Swatch}" Background="#FFFFFF" Click="Swatch_Click" ToolTip="Weiß" />
-                                    <Button Style="{StaticResource Swatch}" Background="#000000" Click="Swatch_Click" ToolTip="Aus" />
                                 </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Triggers}" Style="{StaticResource Heading}" />
+                                    <DockPanel Margin="0,0,0,8">
+                                        <TextBlock Text="L2" Width="26" />
+                                        <TextBlock Text="{Binding State.L2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <ProgressBar Value="{Binding State.L2, Mode=OneWay}" />
+                                    </DockPanel>
+                                    <DockPanel>
+                                        <TextBlock Text="R2" Width="26" />
+                                        <TextBlock Text="{Binding State.R2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <ProgressBar Value="{Binding State.R2, Mode=OneWay}" />
+                                    </DockPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Buttons: the view matches the connected controller -->
+                        <Border Grid.Column="1" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Heading}">
+                                    <Run Text="{local:Tr Heading_Buttons}" /><Run Text="{Binding ControllerName, Mode=OneWay, StringFormat='  ·  {0}'}" />
+                                </TextBlock>
+                                <views:GenericButtonsView Visibility="{Binding Layout, Converter={StaticResource EqualsVisibility}, ConverterParameter=Generic}" />
+                                <views:PlayStation5ButtonsView Visibility="{Binding Layout, Converter={StaticResource EqualsVisibility}, ConverterParameter=PlayStation5}" />
                             </StackPanel>
                         </Border>
 
-                        <!-- LEDs -->
-                        <Border Style="{StaticResource Panel}">
-                            <StackPanel>
-                                <TextBlock Text="LEDS" Style="{StaticResource Heading}" />
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                    <TextBlock Text="Spieler-LEDs" Width="100" VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Led1}" />
-                                    <CheckBox IsChecked="{Binding Led2}" />
-                                    <CheckBox IsChecked="{Binding Led3}" />
-                                    <CheckBox IsChecked="{Binding Led4}" />
-                                    <CheckBox IsChecked="{Binding Led5}" />
-                                    <ComboBox ItemsSource="{Binding BrightnessLevels}" SelectedItem="{Binding LedBrightness}" Margin="10,0,0,0" />
+                        <!-- Touchpad and motion sensors -->
+                        <StackPanel Grid.Column="2">
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Touchpad}" Style="{StaticResource Heading}" />
+                                    <Border Width="288" Height="162" Background="{StaticResource TrackBrush}" CornerRadius="6" ClipToBounds="True">
+                                        <Canvas>
+                                            <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBrush}"
+                                                     Visibility="{Binding State.Touch1.Active, Converter={StaticResource BoolToVisibility}}"
+                                                     Canvas.Left="{Binding State.Touch1.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
+                                                     Canvas.Top="{Binding State.Touch1.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
+                                                <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                                            </Ellipse>
+                                            <Ellipse Width="14" Height="14" Fill="#F59E0B"
+                                                     Visibility="{Binding State.Touch2.Active, Converter={StaticResource BoolToVisibility}}"
+                                                     Canvas.Left="{Binding State.Touch2.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
+                                                     Canvas.Top="{Binding State.Touch2.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
+                                                <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                                            </Ellipse>
+                                        </Canvas>
+                                    </Border>
+                                    <TextBlock Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                        <Run Text="{local:Tr Touch_Finger1}" /><Run Text=": " /><Run Text="{Binding State.Touch1.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch1.Y, Mode=OneWay}" />
+                                        <Run Text="   " /><Run Text="{local:Tr Touch_Finger2}" /><Run Text=": " /><Run Text="{Binding State.Touch2.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch2.Y, Mode=OneWay}" />
+                                    </TextBlock>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Mikrofon-LED" Width="100" VerticalAlignment="Center" />
-                                    <ComboBox ItemsSource="{Binding MicLedModes}" SelectedItem="{Binding MicLed}" />
+                            </Border>
+
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Motion}" Style="{StaticResource Heading}" />
+                                    <TextBlock FontFamily="Consolas">
+                                        <Run Text="Gyro   X " /><Run Text="{Binding State.Gyro.X, Mode=OneWay}" />
+                                        <Run Text="  Y " /><Run Text="{Binding State.Gyro.Y, Mode=OneWay}" />
+                                        <Run Text="  Z " /><Run Text="{Binding State.Gyro.Z, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock FontFamily="Consolas" Margin="0,4,0,0">
+                                        <Run Text="Accel  X " /><Run Text="{Binding State.Accel.X, Mode=OneWay}" />
+                                        <Run Text="  Y " /><Run Text="{Binding State.Accel.Y, Mode=OneWay}" />
+                                        <Run Text="  Z " /><Run Text="{Binding State.Accel.Z, Mode=OneWay}" />
+                                    </TextBlock>
                                 </StackPanel>
-                            </StackPanel>
-                        </Border>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
 
-                        <!-- Rumble -->
-                        <Border Style="{StaticResource Panel}">
-                            <StackPanel>
-                                <TextBlock Text="RUMBLE" Style="{StaticResource Heading}" />
-                                <DockPanel Margin="0,0,0,4">
-                                    <TextBlock Text="Links (stark)" Width="100" />
-                                    <TextBlock Text="{Binding RumbleLeft}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                    <Slider Minimum="0" Maximum="255" Value="{Binding RumbleLeft}" />
-                                </DockPanel>
-                                <DockPanel Margin="0,0,0,10">
-                                    <TextBlock Text="Rechts (fein)" Width="100" />
-                                    <TextBlock Text="{Binding RumbleRight}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                    <Slider Minimum="0" Maximum="255" Value="{Binding RumbleRight}" />
-                                </DockPanel>
-                                <Button Content="Rumble stoppen" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="StopRumble_Click" />
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Adaptive triggers -->
-                    <StackPanel Grid.Column="1">
-                        <Border Style="{StaticResource Panel}">
-                            <StackPanel>
-                                <TextBlock Text="ADAPTIVER TRIGGER L2" Style="{StaticResource Heading}" />
-                                <ContentControl Content="{Binding LeftTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
-                                <DockPanel Margin="0,8,0,0">
-                                    <TextBlock Text="Live" Width="100" Foreground="{StaticResource MutedBrush}" />
-                                    <ProgressBar Value="{Binding DataContext.State.L2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource Panel}">
-                            <StackPanel>
-                                <TextBlock Text="ADAPTIVER TRIGGER R2" Style="{StaticResource Heading}" />
-                                <ContentControl Content="{Binding RightTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
-                                <DockPanel Margin="0,8,0,0">
-                                    <TextBlock Text="Live" Width="100" Foreground="{StaticResource MutedBrush}" />
-                                    <ProgressBar Value="{Binding DataContext.State.R2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Border>
-                        <TextBlock Margin="10,4" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="12"
-                                   Text="Positionen: 0 = Trigger losgelassen, 9 = ganz durchgedrückt. Waffe: Start 2–7, Ende muss hinter Start liegen (bis 8)." />
-                    </StackPanel>
+                    <!-- Raw report for debugging -->
+                    <Border Grid.Row="1" Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Raw}" Style="{StaticResource Heading}" />
+                            <TextBox Text="{Binding RawHex, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+                                     Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
                 </Grid>
-            </ScrollViewer>
-        </TabItem>
+            </TabItem>
+
+            <TabItem Header="{local:Tr Tab_Outputs}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid DataContext="{Binding Output}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <!-- Lightbar -->
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Lightbar}" Style="{StaticResource Heading}" />
+                                    <DockPanel>
+                                        <Border Width="64" Height="64" CornerRadius="8" Background="{Binding LightbarPreview}" Margin="0,0,14,0" />
+                                        <StackPanel>
+                                            <DockPanel Margin="0,0,0,4">
+                                                <TextBlock Text="{local:Tr Color_Red}" Width="50" />
+                                                <TextBlock Text="{Binding Red}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                                <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
+                                            </DockPanel>
+                                            <DockPanel Margin="0,0,0,4">
+                                                <TextBlock Text="{local:Tr Color_Green}" Width="50" />
+                                                <TextBlock Text="{Binding Green}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                                <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="{local:Tr Color_Blue}" Width="50" />
+                                                <TextBlock Text="{Binding Blue}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                                <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
+                                            </DockPanel>
+                                        </StackPanel>
+                                    </DockPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="78,10,0,0">
+                                        <Button Style="{StaticResource Swatch}" Background="#FF0000" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#FF8000" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#FFFF00" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#00FF00" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#00FFFF" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#0040FF" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#C000FF" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#FFFFFF" Click="Swatch_Click" />
+                                        <Button Style="{StaticResource Swatch}" Background="#000000" Click="Swatch_Click" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- LEDs -->
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Leds}" Style="{StaticResource Heading}" />
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Label_PlayerLeds}" Width="100" VerticalAlignment="Center" />
+                                        <CheckBox IsChecked="{Binding Led1}" />
+                                        <CheckBox IsChecked="{Binding Led2}" />
+                                        <CheckBox IsChecked="{Binding Led3}" />
+                                        <CheckBox IsChecked="{Binding Led4}" />
+                                        <CheckBox IsChecked="{Binding Led5}" />
+                                        <ComboBox ItemsSource="{Binding BrightnessLevels}" SelectedItem="{Binding LedBrightness}" Margin="10,0,0,0" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{local:Tr Label_MicLed}" Width="100" VerticalAlignment="Center" />
+                                        <ComboBox ItemsSource="{Binding MicLedModes}" SelectedItem="{Binding MicLed}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Rumble -->
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Rumble}" Style="{StaticResource Heading}" />
+                                    <DockPanel Margin="0,0,0,4">
+                                        <TextBlock Text="{local:Tr Rumble_Left}" Width="100" />
+                                        <TextBlock Text="{Binding RumbleLeft}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="255" Value="{Binding RumbleLeft}" />
+                                    </DockPanel>
+                                    <DockPanel Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Rumble_Right}" Width="100" />
+                                        <TextBlock Text="{Binding RumbleRight}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="255" Value="{Binding RumbleRight}" />
+                                    </DockPanel>
+                                    <Button Content="{local:Tr Rumble_Stop}" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="StopRumble_Click" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Adaptive triggers -->
+                        <StackPanel Grid.Column="1">
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_TriggerL2}" Style="{StaticResource Heading}" />
+                                    <ContentControl Content="{Binding LeftTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
+                                    <DockPanel Margin="0,8,0,0">
+                                        <TextBlock Text="{local:Tr Trigger_Live}" Width="100" Foreground="{StaticResource MutedBrush}" />
+                                        <ProgressBar Value="{Binding DataContext.State.L2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
+                                    </DockPanel>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_TriggerR2}" Style="{StaticResource Heading}" />
+                                    <ContentControl Content="{Binding RightTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
+                                    <DockPanel Margin="0,8,0,0">
+                                        <TextBlock Text="{local:Tr Trigger_Live}" Width="100" Foreground="{StaticResource MutedBrush}" />
+                                        <ProgressBar Value="{Binding DataContext.State.R2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
+                                    </DockPanel>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Margin="10,4" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                       Text="{local:Tr Trigger_Hint}" />
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

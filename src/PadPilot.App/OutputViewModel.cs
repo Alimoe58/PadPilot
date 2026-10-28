@@ -5,10 +5,10 @@ namespace PadPilot.App;
 
 public enum TriggerMode
 {
-    Aus,
-    Widerstand,
-    Abschnitt,
-    Waffe,
+    Off,
+    Resistance,
+    Section,
+    Weapon,
     Vibration,
 }
 
@@ -44,22 +44,22 @@ public sealed class TriggerViewModel : ObservableObject
     public int Strength { get => _strength; set { if (Set(ref _strength, value)) Changed?.Invoke(); } }
     public int Frequency { get => _frequency; set { if (Set(ref _frequency, value)) Changed?.Invoke(); } }
 
-    public bool UsesStart => Mode != TriggerMode.Aus;
-    public bool UsesEnd => Mode is TriggerMode.Abschnitt or TriggerMode.Waffe;
-    public bool UsesStrength => Mode != TriggerMode.Aus;
+    public bool UsesStart => Mode != TriggerMode.Off;
+    public bool UsesEnd => Mode is TriggerMode.Section or TriggerMode.Weapon;
+    public bool UsesStrength => Mode != TriggerMode.Off;
     public bool UsesFrequency => Mode == TriggerMode.Vibration;
 
     public TriggerEffect ToEffect() => Mode switch
     {
-        TriggerMode.Widerstand => TriggerEffect.Resistance(Start, Strength),
-        TriggerMode.Abschnitt => TriggerEffect.Section(Start, End, Strength),
-        TriggerMode.Waffe => TriggerEffect.Weapon(Start, End, Strength),
+        TriggerMode.Resistance => TriggerEffect.Resistance(Start, Strength),
+        TriggerMode.Section => TriggerEffect.Section(Start, End, Strength),
+        TriggerMode.Weapon => TriggerEffect.Weapon(Start, End, Strength),
         TriggerMode.Vibration => TriggerEffect.Vibration(Start, Strength, Frequency),
         _ => TriggerEffect.Off,
     };
 }
 
-/// <summary>Everything on the "Ausgaben" tab. Raises <see cref="Changed"/> whenever the controller needs an update.</summary>
+/// <summary>Everything on the outputs tab. Raises <see cref="Changed"/> whenever the controller needs an update.</summary>
 public sealed class OutputViewModel : ObservableObject
 {
     private int _red = 0x3B;

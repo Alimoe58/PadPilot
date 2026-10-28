@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="Tab_Inputs" xml:space="preserve"><value>Inputs</value></data>
+  <data name="Tab_Outputs" xml:space="preserve"><value>Outputs</value></data>
+  <data name="Status_Searching" xml:space="preserve"><value>Searching for controller…</value></data>
+  <data name="Status_NotFound" xml:space="preserve"><value>No DualSense found – connect it via USB cable or Bluetooth.</value></data>
+  <data name="Status_Connected" xml:space="preserve"><value>{0} connected</value></data>
+  <data name="Label_Connection" xml:space="preserve"><value>Connection</value></data>
+  <data name="Label_Battery" xml:space="preserve"><value>Battery</value></data>
+  <data name="Battery_Charging" xml:space="preserve"><value>{0} % (charging)</value></data>
+  <data name="Battery_Full" xml:space="preserve"><value>100 % (full)</value></data>
+  <data name="Battery_Unknown" xml:space="preserve"><value>unknown</value></data>
+  <data name="Report_Rate" xml:space="preserve"><value>{0} reports/s</value></data>
+  <data name="Heading_Sticks" xml:space="preserve"><value>STICKS</value></data>
+  <data name="Heading_Triggers" xml:space="preserve"><value>TRIGGERS</value></data>
+  <data name="Heading_Buttons" xml:space="preserve"><value>BUTTONS</value></data>
+  <data name="Heading_Touchpad" xml:space="preserve"><value>TOUCHPAD</value></data>
+  <data name="Heading_Motion" xml:space="preserve"><value>MOTION SENSORS (RAW)</value></data>
+  <data name="Heading_Raw" xml:space="preserve"><value>RAW DATA (first 48 bytes)</value></data>
+  <data name="Touch_Finger1" xml:space="preserve"><value>Finger 1</value></data>
+  <data name="Touch_Finger2" xml:space="preserve"><value>Finger 2</value></data>
+  <data name="Heading_Lightbar" xml:space="preserve"><value>LIGHTBAR</value></data>
+  <data name="Color_Red" xml:space="preserve"><value>Red</value></data>
+  <data name="Color_Green" xml:space="preserve"><value>Green</value></data>
+  <data name="Color_Blue" xml:space="preserve"><value>Blue</value></data>
+  <data name="Heading_Leds" xml:space="preserve"><value>LEDS</value></data>
+  <data name="Label_PlayerLeds" xml:space="preserve"><value>Player LEDs</value></data>
+  <data name="Label_MicLed" xml:space="preserve"><value>Mic LED</value></data>
+  <data name="Heading_Rumble" xml:space="preserve"><value>RUMBLE</value></data>
+  <data name="Rumble_Left" xml:space="preserve"><value>Left (strong)</value></data>
+  <data name="Rumble_Right" xml:space="preserve"><value>Right (fine)</value></data>
+  <data name="Rumble_Stop" xml:space="preserve"><value>Stop rumble</value></data>
+  <data name="Heading_TriggerL2" xml:space="preserve"><value>ADAPTIVE TRIGGER L2</value></data>
+  <data name="Heading_TriggerR2" xml:space="preserve"><value>ADAPTIVE TRIGGER R2</value></data>
+  <data name="Trigger_Effect" xml:space="preserve"><value>Effect</value></data>
+  <data name="Trigger_Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Trigger_End" xml:space="preserve"><value>End</value></data>
+  <data name="Trigger_Strength" xml:space="preserve"><value>Strength</value></data>
+  <data name="Trigger_Frequency" xml:space="preserve"><value>Frequency (Hz)</value></data>
+  <data name="Trigger_Live" xml:space="preserve"><value>Live</value></data>
+  <data name="Trigger_Hint" xml:space="preserve"><value>Positions: 0 = trigger released, 9 = fully pressed. Weapon: start 2–7, end must be after start (up to 8).</value></data>
+  <data name="TriggerMode_Off" xml:space="preserve"><value>Off</value></data>
+  <data name="TriggerMode_Resistance" xml:space="preserve"><value>Resistance</value></data>
+  <data name="TriggerMode_Section" xml:space="preserve"><value>Section</value></data>
+  <data name="TriggerMode_Weapon" xml:space="preserve"><value>Weapon</value></data>
+  <data name="TriggerMode_Vibration" xml:space="preserve"><value>Vibration</value></data>
+  <data name="MicLed_Off" xml:space="preserve"><value>Off</value></data>
+  <data name="MicLed_On" xml:space="preserve"><value>On</value></data>
+  <data name="MicLed_Pulse" xml:space="preserve"><value>Pulse</value></data>
+  <data name="LedBrightness_High" xml:space="preserve"><value>Bright</value></data>
+  <data name="LedBrightness_Medium" xml:space="preserve"><value>Medium</value></data>
+  <data name="LedBrightness_Low" xml:space="preserve"><value>Dim</value></data>
+  <data name="Button_Mute" xml:space="preserve"><value>Mute</value></data>
+</root>

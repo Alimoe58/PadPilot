@@ -10,6 +10,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>PadPilot</AssemblyName>
+    <RootNamespace>PadPilot.App</RootNamespace>
+    <!-- Only ship German satellite resources (ours and the framework's); English is built in. -->
+    <SatelliteResourceLanguages>de</SatelliteResourceLanguages>
   </PropertyGroup>
 
 </Project>

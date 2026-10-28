@@ -1,0 +1,133 @@
+<!--
+    DualSense / DualSense Edge layout: buttons drawn where they sit on the controller.
+    Own drawing (no Sony artwork or logos). Canvas units are 480 x 305; the Viewbox scales it.
+    DataContext: MainViewModel
+-->
+<UserControl x:Class="PadPilot.App.Views.PlayStation5ButtonsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="BodyBrush" Color="#202227" />
+        <SolidColorBrush x:Key="BodyEdgeBrush" Color="#3A3D46" />
+        <SolidColorBrush x:Key="SymbolBrush" Color="#C9CED8" />
+
+        <Style x:Key="Symbol" TargetType="Shape">
+            <Setter Property="Stroke" Value="{StaticResource SymbolBrush}" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="StrokeLineJoin" Value="Round" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+        </Style>
+
+        <Style x:Key="SmallLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SymbolBrush}" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform" MaxHeight="380">
+        <Canvas Width="480" Height="305">
+            <!-- Shoulders: L2/R2 triggers behind, L1/R1 bumpers in front -->
+            <Path Data="M40,30 L40,16 Q40,0 60,0 L110,0 Q130,0 130,16 L130,30 Z"
+                  Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L2}" />
+            <TextBlock Canvas.Left="40" Canvas.Top="8" Width="90" Text="L2" Style="{StaticResource SmallLabel}" />
+            <Path Data="M350,30 L350,16 Q350,0 370,0 L420,0 Q440,0 440,16 L440,30 Z"
+                  Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R2}" />
+            <TextBlock Canvas.Left="350" Canvas.Top="8" Width="90" Text="R2" Style="{StaticResource SmallLabel}" />
+
+            <!-- Body -->
+            <Path Fill="{StaticResource BodyBrush}" Stroke="{StaticResource BodyEdgeBrush}" StrokeThickness="1.5"
+                  Data="M70,40 L410,40 Q450,40 460,80 L476,245 Q480,298 440,300 Q415,301 395,272 L382,260 Q360,270 240,270 Q120,270 98,260 L85,272 Q65,301 40,300 Q0,298 4,245 L20,80 Q30,40 70,40 Z" />
+
+            <Rectangle Canvas.Left="40" Canvas.Top="33" Width="90" Height="14" RadiusX="7" RadiusY="7"
+                       Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L1}" />
+            <TextBlock Canvas.Left="40" Canvas.Top="33" Width="90" Text="L1" Style="{StaticResource SmallLabel}" />
+            <Rectangle Canvas.Left="350" Canvas.Top="33" Width="90" Height="14" RadiusX="7" RadiusY="7"
+                       Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R1}" />
+            <TextBlock Canvas.Left="350" Canvas.Top="33" Width="90" Text="R1" Style="{StaticResource SmallLabel}" />
+
+            <!-- Touchpad with live finger positions -->
+            <Rectangle Canvas.Left="150" Canvas.Top="44" Width="180" Height="100" RadiusX="12" RadiusY="12"
+                       Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=TouchpadClick}" />
+            <Canvas Canvas.Left="150" Canvas.Top="44" Width="180" Height="100" ClipToBounds="True" IsHitTestVisible="False">
+                <Ellipse Width="10" Height="10" Fill="{StaticResource TextBrush}"
+                         Visibility="{Binding State.Touch1.Active, Converter={StaticResource BoolToVisibility}}"
+                         Canvas.Left="{Binding State.Touch1.X, Converter={StaticResource Scale}, ConverterParameter=0.09375}"
+                         Canvas.Top="{Binding State.Touch1.Y, Converter={StaticResource Scale}, ConverterParameter=0.0926}">
+                    <Ellipse.RenderTransform><TranslateTransform X="-5" Y="-5" /></Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="10" Height="10" Fill="#F59E0B"
+                         Visibility="{Binding State.Touch2.Active, Converter={StaticResource BoolToVisibility}}"
+                         Canvas.Left="{Binding State.Touch2.X, Converter={StaticResource Scale}, ConverterParameter=0.09375}"
+                         Canvas.Top="{Binding State.Touch2.Y, Converter={StaticResource Scale}, ConverterParameter=0.0926}">
+                    <Ellipse.RenderTransform><TranslateTransform X="-5" Y="-5" /></Ellipse.RenderTransform>
+                </Ellipse>
+            </Canvas>
+
+            <!-- Create / Options -->
+            <Rectangle Canvas.Left="134" Canvas.Top="58" Width="9" Height="24" RadiusX="4.5" RadiusY="4.5"
+                       Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Create}" ToolTip="Create" />
+            <Rectangle Canvas.Left="337" Canvas.Top="58" Width="9" Height="24" RadiusX="4.5" RadiusY="4.5"
+                       Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Options}" ToolTip="Options" />
+
+            <!-- D-pad -->
+            <Path Data="M83,128 L107,128 L107,148 L95,156 L83,148 Z"
+                  Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadUp}" />
+            <Path Data="M83,192 L107,192 L107,172 L95,164 L83,172 Z"
+                  Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadDown}" />
+            <Path Data="M63,148 L63,172 L83,172 L91,160 L83,148 Z"
+                  Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadLeft}" />
+            <Path Data="M127,148 L127,172 L107,172 L99,160 L107,148 Z"
+                  Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadRight}" />
+
+            <!-- Face buttons: round caps with monochrome outline symbols -->
+            <Ellipse Canvas.Left="368" Canvas.Top="108" Width="34" Height="34"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Triangle}" />
+            <Path Data="M385,117 L393,131 L377,131 Z" Style="{StaticResource Symbol}" />
+
+            <Ellipse Canvas.Left="403" Canvas.Top="143" Width="34" Height="34"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Circle}" />
+            <Ellipse Canvas.Left="412" Canvas.Top="152" Width="16" Height="16" Style="{StaticResource Symbol}" />
+
+            <Ellipse Canvas.Left="368" Canvas.Top="178" Width="34" Height="34"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Cross}" />
+            <Path Data="M379,189 L391,201 M391,189 L379,201" Style="{StaticResource Symbol}" />
+
+            <Ellipse Canvas.Left="333" Canvas.Top="143" Width="34" Height="34"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Square}" />
+            <Rectangle Canvas.Left="343.5" Canvas.Top="153.5" Width="13" Height="13" Style="{StaticResource Symbol}" />
+
+            <!-- Sticks: the cap follows the stick and lights up on L3/R3 -->
+            <Ellipse Canvas.Left="145" Canvas.Top="202" Width="60" Height="60"
+                     Fill="#2A2C33" Stroke="{StaticResource BodyEdgeBrush}" StrokeThickness="1.5" />
+            <Ellipse Canvas.Left="157" Canvas.Top="214" Width="36" Height="36"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L3}"
+                     Stroke="{StaticResource SymbolBrush}" StrokeThickness="1">
+                <Ellipse.RenderTransform>
+                    <TranslateTransform X="{Binding State.LeftX, Converter={StaticResource StickOffset}, ConverterParameter=10}"
+                                        Y="{Binding State.LeftY, Converter={StaticResource StickOffset}, ConverterParameter=10}" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
+            <Ellipse Canvas.Left="275" Canvas.Top="202" Width="60" Height="60"
+                     Fill="#2A2C33" Stroke="{StaticResource BodyEdgeBrush}" StrokeThickness="1.5" />
+            <Ellipse Canvas.Left="287" Canvas.Top="214" Width="36" Height="36"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R3}"
+                     Stroke="{StaticResource SymbolBrush}" StrokeThickness="1">
+                <Ellipse.RenderTransform>
+                    <TranslateTransform X="{Binding State.RightX, Converter={StaticResource StickOffset}, ConverterParameter=10}"
+                                        Y="{Binding State.RightY, Converter={StaticResource StickOffset}, ConverterParameter=10}" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
+
+            <!-- PS button and mute button between the sticks -->
+            <Ellipse Canvas.Left="227" Canvas.Top="209" Width="26" Height="26"
+                     Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=PS}" />
+            <TextBlock Canvas.Left="227" Canvas.Top="215" Width="26" Text="PS" Style="{StaticResource SmallLabel}" />
+            <Rectangle Canvas.Left="226" Canvas.Top="246" Width="28" Height="8" RadiusX="4" RadiusY="4"
+                       Fill="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Mute}" />
+        </Canvas>
+    </Viewbox>
+</UserControl>

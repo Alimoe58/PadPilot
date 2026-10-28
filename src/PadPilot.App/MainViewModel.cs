@@ -4,6 +4,13 @@ using PadPilot.Core;
 
 namespace PadPilot.App;
 
+/// <summary>Which button view is shown. New controller families get their own value and view.</summary>
+public enum ButtonLayout
+{
+    Generic,
+    PlayStation5,
+}
+
 public sealed class MainViewModel : ObservableObject, IDisposable
 {
     private readonly Dispatcher _dispatcher;
@@ -14,13 +21,16 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private DateTime _rateTime = DateTime.UtcNow;
     private byte[] _lastRaw = [];
     private bool _outputDirty = true;
+    private string _statusKey = "Status_Searching";
 
     private ControllerState _state = new();
-    private string _status = "Suche Controller …";
+    private string _status = "";
     private string _connection = "–";
     private string _battery = "–";
     private string _reportRate = "–";
     private string _rawHex = "";
+    private ButtonLayout _layout = ButtonLayout.Generic;
+    private string _controllerName = "";
 
     public ControllerState State { get => _state; private set => Set(ref _state, value); }
     public string Status { get => _status; private set => Set(ref _status, value); }
@@ -28,6 +38,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public string Battery { get => _battery; private set => Set(ref _battery, value); }
     public string ReportRate { get => _reportRate; private set => Set(ref _reportRate, value); }
     public string RawHex { get => _rawHex; private set => Set(ref _rawHex, value); }
+    public ButtonLayout Layout { get => _layout; private set => Set(ref _layout, value); }
+    public string ControllerName { get => _controllerName; private set => Set(ref _controllerName, value); }
 
     public OutputViewModel Output { get; } = new();
 
@@ -37,6 +49,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _uiTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(16), DispatcherPriority.Render, (_, _) => Tick(), dispatcher);
         // Sliders fire many changes per second; Tick() sends at most one report per frame.
         Output.Changed += () => _outputDirty = true;
+        Loc.Instance.PropertyChanged += (_, _) => UpdateTexts();
+        UpdateTexts();
     }
 
     public void Start()
@@ -63,10 +77,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _device = DualSenseDevice.OpenFirst();
         if (_device == null)
         {
-            Status = "Kein DualSense gefunden – per USB-Kabel oder Bluetooth verbinden.";
+            _statusKey = "Status_NotFound";
             Connection = Battery = ReportRate = "–";
             RawHex = "";
+            ControllerName = "";
             State = new ControllerState();
+            UpdateTexts();
             return;
         }
 
@@ -82,8 +98,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _rateCount = 0;
         _rateTime = DateTime.UtcNow;
         _outputDirty = true;
-        Status = $"{_device.DisplayName} verbunden";
+        _statusKey = "Status_Connected";
+        ControllerName = _device.DisplayName;
+        Layout = ButtonLayout.PlayStation5; // DualSense and DualSense Edge share the PS5 layout
         Connection = _device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth";
+        UpdateTexts();
     }
 
     private void CloseDevice()
@@ -91,6 +110,22 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _device?.Dispose();
         _device = null;
     }
+
+    /// <summary>Rebuilds texts that are composed in code; called on connect changes and language switches.</summary>
+    private void UpdateTexts()
+    {
+        Status = _statusKey == "Status_Connected" ? Loc.Format(_statusKey, ControllerName) : Loc.Get(_statusKey);
+        if (_device != null && _device.TryGetLatest(out var state, out _))
+            Battery = FormatBattery(state!);
+    }
+
+    private static string FormatBattery(ControllerState state) => state.Charge switch
+    {
+        ChargeStatus.Charging => Loc.Format("Battery_Charging", state.BatteryPercent),
+        ChargeStatus.Full => Loc.Get("Battery_Full"),
+        ChargeStatus.Unknown => Loc.Get("Battery_Unknown"),
+        _ => $"{state.BatteryPercent} %",
+    };
 
     private void Tick()
     {
@@ -108,13 +143,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         {
             _lastRaw = raw;
             State = state!;
-            Battery = state!.Charge switch
-            {
-                ChargeStatus.Charging => $"{state.BatteryPercent} % (lädt)",
-                ChargeStatus.Full => "100 % (voll)",
-                ChargeStatus.Unknown => "unbekannt",
-                _ => $"{state.BatteryPercent} %",
-            };
+            Battery = FormatBattery(state!);
             RawHex = Convert.ToHexString(raw.AsSpan(0, Math.Min(raw.Length, 48)));
         }
 
@@ -122,7 +151,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         if (now - _rateTime >= TimeSpan.FromSeconds(1))
         {
             long count = _device.ReportCount;
-            ReportRate = $"{(count - _rateCount) / (now - _rateTime).TotalSeconds:0} Reports/s";
+            ReportRate = Loc.Format("Report_Rate", ((count - _rateCount) / (now - _rateTime).TotalSeconds).ToString("0"));
             _rateCount = count;
             _rateTime = now;
         }

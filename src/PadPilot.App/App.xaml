@@ -15,9 +15,18 @@
         <local:ButtonBrushConverter x:Key="ButtonBrush" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <local:EnumLabelConverter x:Key="EnumLabel" />
+        <local:StickOffsetConverter x:Key="StickOffset" />
+        <local:EqualsVisibilityConverter x:Key="EqualsVisibility" />
 
         <DataTemplate x:Key="EnumItem">
-            <TextBlock Text="{Binding Converter={StaticResource EnumLabel}}" Foreground="Black" />
+            <TextBlock Foreground="Black">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource EnumLabel}">
+                        <Binding />
+                        <Binding Path="Language" Source="{x:Static local:Loc.Instance}" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
         </DataTemplate>
 
         <Style TargetType="TabControl">
@@ -98,27 +107,27 @@
         <DataTemplate x:Key="TriggerEditor">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <TextBlock Text="Effekt" Width="100" VerticalAlignment="Center" />
+                    <TextBlock Text="{local:Tr Trigger_Effect}" Width="100" VerticalAlignment="Center" />
                     <ComboBox ItemsSource="{x:Static local:TriggerViewModel.Modes}"
                               SelectedItem="{Binding Mode}" />
                 </StackPanel>
                 <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesStart}">
-                    <TextBlock Text="Start" Width="100" />
+                    <TextBlock Text="{local:Tr Trigger_Start}" Width="100" />
                     <TextBlock Text="{Binding Start}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
                     <Slider Minimum="0" Maximum="9" Value="{Binding Start}" />
                 </DockPanel>
                 <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesEnd}">
-                    <TextBlock Text="Ende" Width="100" />
+                    <TextBlock Text="{local:Tr Trigger_End}" Width="100" />
                     <TextBlock Text="{Binding End}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
                     <Slider Minimum="0" Maximum="9" Value="{Binding End}" />
                 </DockPanel>
                 <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesStrength}">
-                    <TextBlock Text="Stärke" Width="100" />
+                    <TextBlock Text="{local:Tr Trigger_Strength}" Width="100" />
                     <TextBlock Text="{Binding Strength}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
                     <Slider Minimum="1" Maximum="8" Value="{Binding Strength}" />
                 </DockPanel>
                 <DockPanel Style="{StaticResource SettingRow}" IsEnabled="{Binding UsesFrequency}">
-                    <TextBlock Text="Frequenz (Hz)" Width="100" />
+                    <TextBlock Text="{local:Tr Trigger_Frequency}" Width="100" />
                     <TextBlock Text="{Binding Frequency}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
                     <Slider Minimum="1" Maximum="60" Value="{Binding Frequency}" />
                 </DockPanel>
