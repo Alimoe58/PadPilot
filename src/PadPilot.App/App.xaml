@@ -1,0 +1,61 @@
+﻿<Application x:Class="PadPilot.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PadPilot.App"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="WindowBrush" Color="#1E1F24" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#2A2C33" />
+        <SolidColorBrush x:Key="TrackBrush" Color="#3A3D46" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#3B82F6" />
+        <SolidColorBrush x:Key="TextBrush" Color="#E6E6E6" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#9AA0AA" />
+
+        <local:ScaleConverter x:Key="Scale" />
+        <local:ButtonBrushConverter x:Key="ButtonBrush" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <Style x:Key="Heading" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14" />
+            <Setter Property="Margin" Value="6" />
+        </Style>
+
+        <!-- One button indicator; Background is bound per button -->
+        <Style x:Key="Key" TargetType="Border">
+            <Setter Property="MinWidth" Value="48" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Padding" Value="8,0" />
+        </Style>
+
+        <Style x:Key="KeyLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style TargetType="ProgressBar">
+            <Setter Property="Height" Value="14" />
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="255" />
+            <Setter Property="Background" Value="{StaticResource TrackBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+    </Application.Resources>
+</Application>

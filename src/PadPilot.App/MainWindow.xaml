@@ -1,0 +1,197 @@
+﻿<Window x:Class="PadPilot.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PadPilot.App"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+        Title="PadPilot" Width="980" Height="640" MinWidth="820" MinHeight="560"
+        Background="{StaticResource WindowBrush}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Status bar -->
+        <Border Style="{StaticResource Panel}">
+            <DockPanel>
+                <TextBlock Text="{Binding Status}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Verbindung" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" />
+                    <TextBlock Text="{Binding Connection}" Margin="0,0,24,0" />
+                    <TextBlock Text="Akku" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" />
+                    <TextBlock Text="{Binding Battery}" Margin="0,0,24,0" />
+                    <TextBlock Text="{Binding ReportRate}" Foreground="{StaticResource MutedBrush}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Sticks and triggers -->
+            <StackPanel>
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="STICKS" Style="{StaticResource Heading}" />
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="0,0,16,0">
+                                <Canvas Width="100" Height="100">
+                                    <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
+                                    <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
+                                             Canvas.Left="{Binding State.LeftX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
+                                             Canvas.Top="{Binding State.LeftY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
+                                </Canvas>
+                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                    <Run Text="L " /><Run Text="{Binding State.LeftX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.LeftY, Mode=OneWay}" />
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel>
+                                <Canvas Width="100" Height="100">
+                                    <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
+                                    <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
+                                             Canvas.Left="{Binding State.RightX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
+                                             Canvas.Top="{Binding State.RightY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
+                                </Canvas>
+                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                    <Run Text="R " /><Run Text="{Binding State.RightX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.RightY, Mode=OneWay}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="TRIGGER" Style="{StaticResource Heading}" />
+                        <DockPanel Margin="0,0,0,8">
+                            <TextBlock Text="L2" Width="26" />
+                            <TextBlock Text="{Binding State.L2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
+                            <ProgressBar Value="{Binding State.L2, Mode=OneWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <TextBlock Text="R2" Width="26" />
+                            <TextBlock Text="{Binding State.R2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
+                            <ProgressBar Value="{Binding State.R2, Mode=OneWay}" />
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <Border Grid.Column="1" Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="TASTEN" Style="{StaticResource Heading}" />
+
+                    <WrapPanel>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L1}"><TextBlock Text="L1" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L2}"><TextBlock Text="L2" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=L3}"><TextBlock Text="L3" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R1}"><TextBlock Text="R1" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R2}"><TextBlock Text="R2" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=R3}"><TextBlock Text="R3" Style="{StaticResource KeyLabel}" /></Border>
+                    </WrapPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                        <!-- D-Pad -->
+                        <Grid Margin="0,0,24,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition /><RowDefinition /><RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition /><ColumnDefinition /><ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadUp}"><TextBlock Text="▲" Style="{StaticResource KeyLabel}" /></Border>
+                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadLeft}"><TextBlock Text="◀" Style="{StaticResource KeyLabel}" /></Border>
+                            <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadRight}"><TextBlock Text="▶" Style="{StaticResource KeyLabel}" /></Border>
+                            <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=DPadDown}"><TextBlock Text="▼" Style="{StaticResource KeyLabel}" /></Border>
+                        </Grid>
+
+                        <!-- Face buttons -->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition /><RowDefinition /><RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition /><ColumnDefinition /><ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Triangle}"><TextBlock Text="△" Style="{StaticResource KeyLabel}" /></Border>
+                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Square}"><TextBlock Text="□" Style="{StaticResource KeyLabel}" /></Border>
+                            <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Circle}"><TextBlock Text="○" Style="{StaticResource KeyLabel}" /></Border>
+                            <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Cross}"><TextBlock Text="✕" Style="{StaticResource KeyLabel}" /></Border>
+                        </Grid>
+                    </StackPanel>
+
+                    <WrapPanel Margin="0,14,0,0">
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Create}"><TextBlock Text="Create" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Options}"><TextBlock Text="Options" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=PS}"><TextBlock Text="PS" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=TouchpadClick}"><TextBlock Text="Touchpad" Style="{StaticResource KeyLabel}" /></Border>
+                        <Border Style="{StaticResource Key}" Background="{Binding State.Buttons, Converter={StaticResource ButtonBrush}, ConverterParameter=Mute}"><TextBlock Text="Mikro" Style="{StaticResource KeyLabel}" /></Border>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Touchpad and motion sensors -->
+            <StackPanel Grid.Column="2">
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="TOUCHPAD" Style="{StaticResource Heading}" />
+                        <Border Width="288" Height="162" Background="{StaticResource TrackBrush}" CornerRadius="6" ClipToBounds="True">
+                            <Canvas>
+                                <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBrush}"
+                                         Visibility="{Binding State.Touch1.Active, Converter={StaticResource BoolToVisibility}}"
+                                         Canvas.Left="{Binding State.Touch1.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
+                                         Canvas.Top="{Binding State.Touch1.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
+                                    <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Ellipse Width="14" Height="14" Fill="#F59E0B"
+                                         Visibility="{Binding State.Touch2.Active, Converter={StaticResource BoolToVisibility}}"
+                                         Canvas.Left="{Binding State.Touch2.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
+                                         Canvas.Top="{Binding State.Touch2.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
+                                    <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                                </Ellipse>
+                            </Canvas>
+                        </Border>
+                        <TextBlock Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                            <Run Text="Finger 1: " /><Run Text="{Binding State.Touch1.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch1.Y, Mode=OneWay}" />
+                            <Run Text="   Finger 2: " /><Run Text="{Binding State.Touch2.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch2.Y, Mode=OneWay}" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="BEWEGUNGSSENSOREN (ROH)" Style="{StaticResource Heading}" />
+                        <TextBlock FontFamily="Consolas">
+                            <Run Text="Gyro   X " /><Run Text="{Binding State.Gyro.X, Mode=OneWay}" />
+                            <Run Text="  Y " /><Run Text="{Binding State.Gyro.Y, Mode=OneWay}" />
+                            <Run Text="  Z " /><Run Text="{Binding State.Gyro.Z, Mode=OneWay}" />
+                        </TextBlock>
+                        <TextBlock FontFamily="Consolas" Margin="0,4,0,0">
+                            <Run Text="Accel  X " /><Run Text="{Binding State.Accel.X, Mode=OneWay}" />
+                            <Run Text="  Y " /><Run Text="{Binding State.Accel.Y, Mode=OneWay}" />
+                            <Run Text="  Z " /><Run Text="{Binding State.Accel.Z, Mode=OneWay}" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Raw report for debugging -->
+        <Border Grid.Row="2" Style="{StaticResource Panel}">
+            <StackPanel>
+                <TextBlock Text="ROHDATEN (erste 48 Byte)" Style="{StaticResource Heading}" />
+                <TextBox Text="{Binding RawHex, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+                         Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
