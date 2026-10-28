@@ -58,4 +58,44 @@ Aufbau der Daten (Offset relativ zum Datenbeginn, Quelle: Linux `hid-playstation
 ## Bewusst noch nicht in Schritt 1
 
 - Gyro-Kalibrierung (Daten stecken in Feature-Report `0x05`, kommt später)
-- Alle Ausgaben (Output-Report, CRC32 für BT) → Schritt 2
+
+# Schritt 2 – Ausgaben
+
+## Output-Report
+
+| | USB | Bluetooth |
+|---|---|---|
+| Report-ID | `0x02` | `0x31` |
+| Länge | 48 | 78 |
+| Header | – | Byte 1 = Sequenz (oberes Nibble), Byte 2 = Tag `0x10` |
+| Daten ab Byte | 1 | 3 |
+| Prüfsumme | – | CRC32 über `0xA2` + Byte 0–73, Little Endian in Byte 74–77 |
+
+Gemeinsamer 47-Byte-Block (Offset relativ zum Datenbeginn):
+
+| Offset | Inhalt |
+|---|---|
+| 0 | valid_flag0: Bit 0/1 Rumble, Bit 2 rechter Trigger, Bit 3 linker Trigger |
+| 1 | valid_flag1: Bit 0 Mikro-LED, Bit 2 Lightbar, Bit 4 Spieler-LEDs |
+| 2 / 3 | Motor rechts (fein) / links (stark), 0–255 |
+| 8 | Mikro-LED: 0 aus, 1 an, 2 pulsieren |
+| 10–20 | Effekt rechter Trigger (11 Byte) |
+| 21–31 | Effekt linker Trigger (11 Byte) |
+| 38 | valid_flag2: Bit 0 LED-Helligkeit, Bit 1 Lightbar-Setup, Bit 2 Rumble (neuere Firmware) |
+| 41 | Lightbar-Setup: `0x02` blendet das blaue Start-Licht aus (einmalig nötig) |
+| 42 | Helligkeit Spieler-LEDs: 0 hell, 1 mittel, 2 dunkel |
+| 43 | Spieler-LEDs, 5 Bit |
+| 44–46 | Lightbar R, G, B |
+
+## Trigger-Effekte
+
+Der Trigger-Weg ist in 10 Zonen geteilt (0 = losgelassen, 9 = durchgedrückt).
+
+| Effekt | Modus | Parameter |
+|---|---|---|
+| Aus | `0x05` | – |
+| Widerstand / Abschnitt | `0x21` | Byte 1–2: aktive Zonen (Bitmaske), Byte 3–6: 3 Bit Stärke pro Zone |
+| Waffe | `0x25` | Byte 1–2: Bit für Start- und Endzone, Byte 3: Stärke − 1 |
+| Vibration | `0x26` | wie `0x21` (Amplitude statt Stärke), Byte 9: Frequenz in Hz |
+
+Beim Schließen der App werden Rumble und Trigger zurückgesetzt, Lightbar und LEDs bleiben.

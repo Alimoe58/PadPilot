@@ -1,12 +1,10 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using HidSharp;
 using PadPilot.Core;
 
 namespace PadPilot.App;
 
-public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
+public sealed class MainViewModel : ObservableObject, IDisposable
 {
     private readonly Dispatcher _dispatcher;
     private readonly DispatcherTimer _uiTimer;
@@ -15,6 +13,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     private long _rateCount;
     private DateTime _rateTime = DateTime.UtcNow;
     private byte[] _lastRaw = [];
+    private bool _outputDirty = true;
 
     private ControllerState _state = new();
     private string _status = "Suche Controller …";
@@ -23,8 +22,6 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     private string _reportRate = "–";
     private string _rawHex = "";
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public ControllerState State { get => _state; private set => Set(ref _state, value); }
     public string Status { get => _status; private set => Set(ref _status, value); }
     public string Connection { get => _connection; private set => Set(ref _connection, value); }
@@ -32,10 +29,14 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     public string ReportRate { get => _reportRate; private set => Set(ref _reportRate, value); }
     public string RawHex { get => _rawHex; private set => Set(ref _rawHex, value); }
 
+    public OutputViewModel Output { get; } = new();
+
     public MainViewModel(Dispatcher dispatcher)
     {
         _dispatcher = dispatcher;
         _uiTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(16), DispatcherPriority.Render, (_, _) => Tick(), dispatcher);
+        // Sliders fire many changes per second; Tick() sends at most one report per frame.
+        Output.Changed += () => _outputDirty = true;
     }
 
     public void Start()
@@ -80,6 +81,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 
         _rateCount = 0;
         _rateTime = DateTime.UtcNow;
+        _outputDirty = true;
         Status = $"{_device.DisplayName} verbunden";
         Connection = _device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth";
     }
@@ -94,6 +96,13 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     {
         if (_device == null)
             return;
+
+        if (_outputDirty)
+        {
+            _outputDirty = false;
+            if (!_device.Send(Output.ToState()))
+                _outputDirty = true; // retry next frame
+        }
 
         if (_device.TryGetLatest(out var state, out var raw) && !ReferenceEquals(raw, _lastRaw))
         {
@@ -124,13 +133,5 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         _uiTimer.Stop();
         DeviceList.Local.Changed -= OnDeviceListChanged;
         CloseDevice();
-    }
-
-    private void Set<T>(ref T field, T value, [CallerMemberName] string? name = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value))
-            return;
-        field = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

@@ -1,4 +1,4 @@
-﻿<Application x:Class="PadPilot.App.App"
+<Application x:Class="PadPilot.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PadPilot.App"
@@ -14,6 +14,131 @@
         <local:ScaleConverter x:Key="Scale" />
         <local:ButtonBrushConverter x:Key="ButtonBrush" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <local:EnumLabelConverter x:Key="EnumLabel" />
+
+        <DataTemplate x:Key="EnumItem">
+            <TextBlock Text="{Binding Converter={StaticResource EnumLabel}}" Foreground="Black" />
+        </DataTemplate>
+
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
+        <Style TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Tab" Padding="16,8" Margin="6,4,0,0" Background="Transparent"
+                                BorderBrush="Transparent" BorderThickness="0,0,0,2" Cursor="Hand">
+                            <ContentPresenter x:Name="Header" ContentSource="Header" TextElement.FontSize="14"
+                                              TextElement.Foreground="{StaticResource MutedBrush}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Tab" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Header" Property="TextElement.Foreground" Value="{StaticResource TextBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Margin" Value="0,0,14,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="Slider">
+            <Setter Property="IsSnapToTickEnabled" Value="True" />
+            <Setter Property="TickFrequency" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="ItemTemplate" Value="{StaticResource EnumItem}" />
+            <Setter Property="MinWidth" Value="130" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Padding" Value="14,6" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{StaticResource TrackBrush}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Slider rows that don't apply to the chosen trigger effect are dimmed -->
+        <Style x:Key="SettingRow" TargetType="DockPanel">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.35" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Settings for one adaptive trigger (DataContext: TriggerViewModel) -->
+        <DataTemplate x:Key="TriggerEditor">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Effekt" Width="100" VerticalAlignment="Center" />
+                    <ComboBox ItemsSource="{x:Static local:TriggerViewModel.Modes}"
+                              SelectedItem="{Binding Mode}" />
+                </StackPanel>
+                <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesStart}">
+                    <TextBlock Text="Start" Width="100" />
+                    <TextBlock Text="{Binding Start}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="0" Maximum="9" Value="{Binding Start}" />
+                </DockPanel>
+                <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesEnd}">
+                    <TextBlock Text="Ende" Width="100" />
+                    <TextBlock Text="{Binding End}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="0" Maximum="9" Value="{Binding End}" />
+                </DockPanel>
+                <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesStrength}">
+                    <TextBlock Text="Stärke" Width="100" />
+                    <TextBlock Text="{Binding Strength}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="1" Maximum="8" Value="{Binding Strength}" />
+                </DockPanel>
+                <DockPanel Style="{StaticResource SettingRow}" IsEnabled="{Binding UsesFrequency}">
+                    <TextBlock Text="Frequenz (Hz)" Width="100" />
+                    <TextBlock Text="{Binding Frequency}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="1" Maximum="60" Value="{Binding Frequency}" />
+                </DockPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Colour swatch for the lightbar; Background holds the colour -->
+        <Style x:Key="Swatch" TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="13" BorderBrush="#55FFFFFF" BorderThickness="1" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />

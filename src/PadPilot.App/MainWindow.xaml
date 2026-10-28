@@ -12,7 +12,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Status bar -->
@@ -29,7 +28,14 @@
             </DockPanel>
         </Border>
 
-        <Grid Grid.Row="1">
+        <TabControl Grid.Row="1">
+        <TabItem Header="Eingaben">
+        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -186,12 +192,130 @@
         </Grid>
 
         <!-- Raw report for debugging -->
-        <Border Grid.Row="2" Style="{StaticResource Panel}">
+        <Border Grid.Row="1" Style="{StaticResource Panel}">
             <StackPanel>
                 <TextBlock Text="ROHDATEN (erste 48 Byte)" Style="{StaticResource Heading}" />
                 <TextBox Text="{Binding RawHex, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
                          Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
             </StackPanel>
         </Border>
+        </Grid>
+        </TabItem>
+
+        <TabItem Header="Ausgaben">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid DataContext="{Binding Output}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <!-- Lightbar -->
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="LIGHTBAR" Style="{StaticResource Heading}" />
+                                <DockPanel>
+                                    <Border Width="64" Height="64" CornerRadius="8" Background="{Binding LightbarPreview}" Margin="0,0,14,0" />
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,4">
+                                            <TextBlock Text="Rot" Width="44" />
+                                            <TextBlock Text="{Binding Red}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,0,0,4">
+                                            <TextBlock Text="Grün" Width="44" />
+                                            <TextBlock Text="{Binding Green}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="Blau" Width="44" />
+                                            <TextBlock Text="{Binding Blue}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
+                                        </DockPanel>
+                                    </StackPanel>
+                                </DockPanel>
+                                <StackPanel Orientation="Horizontal" Margin="78,10,0,0">
+                                    <Button Style="{StaticResource Swatch}" Background="#FF0000" Click="Swatch_Click" ToolTip="Rot" />
+                                    <Button Style="{StaticResource Swatch}" Background="#FF8000" Click="Swatch_Click" ToolTip="Orange" />
+                                    <Button Style="{StaticResource Swatch}" Background="#FFFF00" Click="Swatch_Click" ToolTip="Gelb" />
+                                    <Button Style="{StaticResource Swatch}" Background="#00FF00" Click="Swatch_Click" ToolTip="Grün" />
+                                    <Button Style="{StaticResource Swatch}" Background="#00FFFF" Click="Swatch_Click" ToolTip="Cyan" />
+                                    <Button Style="{StaticResource Swatch}" Background="#0040FF" Click="Swatch_Click" ToolTip="Blau" />
+                                    <Button Style="{StaticResource Swatch}" Background="#C000FF" Click="Swatch_Click" ToolTip="Lila" />
+                                    <Button Style="{StaticResource Swatch}" Background="#FFFFFF" Click="Swatch_Click" ToolTip="Weiß" />
+                                    <Button Style="{StaticResource Swatch}" Background="#000000" Click="Swatch_Click" ToolTip="Aus" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- LEDs -->
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="LEDS" Style="{StaticResource Heading}" />
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="Spieler-LEDs" Width="100" VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Led1}" />
+                                    <CheckBox IsChecked="{Binding Led2}" />
+                                    <CheckBox IsChecked="{Binding Led3}" />
+                                    <CheckBox IsChecked="{Binding Led4}" />
+                                    <CheckBox IsChecked="{Binding Led5}" />
+                                    <ComboBox ItemsSource="{Binding BrightnessLevels}" SelectedItem="{Binding LedBrightness}" Margin="10,0,0,0" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Mikrofon-LED" Width="100" VerticalAlignment="Center" />
+                                    <ComboBox ItemsSource="{Binding MicLedModes}" SelectedItem="{Binding MicLed}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Rumble -->
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="RUMBLE" Style="{StaticResource Heading}" />
+                                <DockPanel Margin="0,0,0,4">
+                                    <TextBlock Text="Links (stark)" Width="100" />
+                                    <TextBlock Text="{Binding RumbleLeft}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                    <Slider Minimum="0" Maximum="255" Value="{Binding RumbleLeft}" />
+                                </DockPanel>
+                                <DockPanel Margin="0,0,0,10">
+                                    <TextBlock Text="Rechts (fein)" Width="100" />
+                                    <TextBlock Text="{Binding RumbleRight}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                    <Slider Minimum="0" Maximum="255" Value="{Binding RumbleRight}" />
+                                </DockPanel>
+                                <Button Content="Rumble stoppen" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="StopRumble_Click" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Adaptive triggers -->
+                    <StackPanel Grid.Column="1">
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="ADAPTIVER TRIGGER L2" Style="{StaticResource Heading}" />
+                                <ContentControl Content="{Binding LeftTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
+                                <DockPanel Margin="0,8,0,0">
+                                    <TextBlock Text="Live" Width="100" Foreground="{StaticResource MutedBrush}" />
+                                    <ProgressBar Value="{Binding DataContext.State.L2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="ADAPTIVER TRIGGER R2" Style="{StaticResource Heading}" />
+                                <ContentControl Content="{Binding RightTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
+                                <DockPanel Margin="0,8,0,0">
+                                    <TextBlock Text="Live" Width="100" Foreground="{StaticResource MutedBrush}" />
+                                    <ProgressBar Value="{Binding DataContext.State.R2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Margin="10,4" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                   Text="Positionen: 0 = Trigger losgelassen, 9 = ganz durchgedrückt. Waffe: Start 2–7, Ende muss hinter Start liegen (bis 8)." />
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
+        </TabControl>
     </Grid>
 </Window>

@@ -24,6 +24,11 @@ public sealed class DualSenseDevice : IDisposable
     private byte[] _latestRaw = [];
     private long _reportCount;
 
+    private readonly object _writeLock = new();
+    private OutputState? _lastOutput;
+    private byte _outputSequence;
+    private bool _startupLightReleased;
+
     public ConnectionType Connection { get; }
     public string DisplayName { get; }
     public string DevicePath => _device.DevicePath;
@@ -71,6 +76,30 @@ public sealed class DualSenseDevice : IDisposable
             raw = _latestRaw;
         }
         return state != null;
+    }
+
+    /// <summary>Sends lightbar, LEDs, rumble and trigger effects. Returns false if the write failed.</summary>
+    public bool Send(OutputState state)
+    {
+        lock (_writeLock)
+        {
+            var report = OutputReportBuilder.Build(
+                state, Connection, _outputSequence, releaseStartupLight: !_startupLightReleased,
+                reportLength: _device.GetMaxOutputReportLength());
+            try
+            {
+                _stream.Write(report);
+            }
+            catch (Exception ex) when (ex is IOException or TimeoutException or ObjectDisposedException)
+            {
+                return false;
+            }
+
+            _outputSequence = (byte)((_outputSequence + 1) & 0x0F);
+            _startupLightReleased = true;
+            _lastOutput = state;
+            return true;
+        }
     }
 
     /// <summary>
@@ -131,6 +160,10 @@ public sealed class DualSenseDevice : IDisposable
 
     public void Dispose()
     {
+        // Don't leave the triggers stiff or the motors running after we let go of the controller.
+        if (_running && _lastOutput != null)
+            Send(_lastOutput.Released());
+
         _running = false;
         _stream.Dispose();
         if (Thread.CurrentThread != _readThread)
