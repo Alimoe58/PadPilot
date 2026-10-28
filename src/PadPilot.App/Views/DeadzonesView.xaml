@@ -1,0 +1,168 @@
+<!-- "Sticks & deadzones" tab. DataContext: DeadzonesViewModel -->
+<UserControl x:Class="PadPilot.App.Views.DeadzonesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PadPilot.App">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="InnerFill" Color="#33EF4444" />
+        <SolidColorBrush x:Key="InnerLine" Color="#EF4444" />
+        <SolidColorBrush x:Key="OuterLine" Color="#F59E0B" />
+        <SolidColorBrush x:Key="CircLine" Color="#22C55E" />
+
+        <Style x:Key="Readout" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontFamily" Value="Consolas" />
+        </Style>
+
+        <Style x:Key="TestButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="Content" Value="{local:Tr Circ_Start}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsTesting}" Value="True">
+                    <Setter Property="Content" Value="{local:Tr Circ_Stop}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- One stick: live view with deadzones, settings, circularity test -->
+        <DataTemplate x:Key="StickPanel" DataType="{x:Type local:StickDeadzoneViewModel}">
+            <StackPanel>
+                <Canvas Width="220" Height="220" HorizontalAlignment="Center" Margin="0,0,0,12">
+                    <Ellipse Canvas.Left="10" Canvas.Top="10" Width="200" Height="200" Fill="#1E2025"
+                             Stroke="{StaticResource TrackBrush}" StrokeThickness="1.5" />
+                    <Line X1="10" Y1="110" X2="210" Y2="110" Stroke="{StaticResource TrackBrush}" StrokeThickness="1" />
+                    <Line X1="110" Y1="10" X2="110" Y2="210" Stroke="{StaticResource TrackBrush}" StrokeThickness="1" />
+
+                    <!-- Outer deadzone: from this line outwards counts as 100 % -->
+                    <Ellipse Canvas.Left="{Binding OuterOffset}" Canvas.Top="{Binding OuterOffset}" Width="{Binding OuterSize}" Height="{Binding OuterSize}"
+                             Stroke="{StaticResource OuterLine}" StrokeThickness="1.2" StrokeDashArray="4 3"
+                             Visibility="{Binding IsRadial, Converter={StaticResource BoolToVisibility}}" />
+                    <Rectangle Canvas.Left="{Binding OuterOffset}" Canvas.Top="{Binding OuterOffset}" Width="{Binding OuterSize}" Height="{Binding OuterSize}"
+                               Stroke="{StaticResource OuterLine}" StrokeThickness="1.2" StrokeDashArray="4 3"
+                               Visibility="{Binding IsAxial, Converter={StaticResource BoolToVisibility}}" />
+
+                    <!-- Inner deadzone: movement in here is ignored -->
+                    <Ellipse Canvas.Left="{Binding InnerOffset}" Canvas.Top="{Binding InnerOffset}" Width="{Binding InnerSize}" Height="{Binding InnerSize}"
+                             Fill="{StaticResource InnerFill}" Stroke="{StaticResource InnerLine}" StrokeThickness="1"
+                             Visibility="{Binding IsRadial, Converter={StaticResource BoolToVisibility}}" />
+                    <Rectangle Canvas.Left="10" Canvas.Top="{Binding InnerOffset}" Width="200" Height="{Binding InnerSize}" Fill="{StaticResource InnerFill}"
+                               Visibility="{Binding IsAxial, Converter={StaticResource BoolToVisibility}}" />
+                    <Rectangle Canvas.Left="{Binding InnerOffset}" Canvas.Top="10" Width="{Binding InnerSize}" Height="200" Fill="{StaticResource InnerFill}"
+                               Visibility="{Binding IsAxial, Converter={StaticResource BoolToVisibility}}" />
+
+                    <!-- Circularity test result -->
+                    <Polygon Points="{Binding CircularityPoints}" Stroke="{StaticResource CircLine}" StrokeThickness="1.5" Fill="#1522C55E" />
+
+                    <!-- Raw position (grey) and output after deadzones (blue) -->
+                    <Ellipse Width="10" Height="10" Fill="{StaticResource MutedBrush}" Canvas.Left="{Binding RawDot.X}" Canvas.Top="{Binding RawDot.Y}">
+                        <Ellipse.RenderTransform><TranslateTransform X="-5" Y="-5" /></Ellipse.RenderTransform>
+                    </Ellipse>
+                    <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBrush}" Canvas.Left="{Binding OutputDot.X}" Canvas.Top="{Binding OutputDot.Y}">
+                        <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                    </Ellipse>
+                </Canvas>
+
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="{local:Tr Dz_Inner}" Width="120" />
+                    <TextBlock Text="{Binding Inner, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="0" Maximum="50" Value="{Binding Inner}" />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock Text="{local:Tr Dz_Outer}" Width="120" />
+                    <TextBlock Text="{Binding Outer, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="0" Maximum="30" Value="{Binding Outer}" />
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="{local:Tr Dz_Shape}" Width="120" VerticalAlignment="Center" />
+                    <ComboBox ItemsSource="{x:Static local:StickDeadzoneViewModel.Shapes}" SelectedItem="{Binding Shape}" />
+                </StackPanel>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition /><RowDefinition /><RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{local:Tr Stick_Raw}" Foreground="{StaticResource MutedBrush}" />
+                    <TextBlock Grid.Column="1" Text="{Binding RawText}" Style="{StaticResource Readout}" />
+                    <TextBlock Grid.Row="1" Text="{local:Tr Stick_Output}" Foreground="{StaticResource MutedBrush}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding OutputText}" Style="{StaticResource Readout}" />
+                    <TextBlock Grid.Row="2" Text="{local:Tr Stick_Drift}" Foreground="{StaticResource MutedBrush}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DriftText}" Style="{StaticResource Readout}" />
+                </Grid>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource TestButton}" Click="ToggleTest_Click" />
+                    <Button Content="{local:Tr Dz_Reset}" Style="{StaticResource ActionButton}" Click="ResetStick_Click" />
+                </StackPanel>
+                <TextBlock Text="{Binding CircularityResult}" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- One trigger: deadzones plus raw / output bars -->
+        <DataTemplate x:Key="TriggerPanel" DataType="{x:Type local:TriggerDeadzoneViewModel}">
+            <StackPanel>
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Margin="0,0,0,6" />
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="{local:Tr Dz_Inner}" Width="120" />
+                    <TextBlock Text="{Binding Inner, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="0" Maximum="50" Value="{Binding Inner}" />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock Text="{local:Tr Dz_Outer}" Width="120" />
+                    <TextBlock Text="{Binding Outer, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="0" Maximum="30" Value="{Binding Outer}" />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="{local:Tr Stick_Raw}" Width="120" Foreground="{StaticResource MutedBrush}" />
+                    <ProgressBar Maximum="100" Value="{Binding RawPercent, Mode=OneWay}" Foreground="{StaticResource MutedBrush}" />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock Text="{local:Tr Stick_Output}" Width="120" Foreground="{StaticResource MutedBrush}" />
+                    <ProgressBar Maximum="100" Value="{Binding OutputPercent, Mode=OneWay}" />
+                </DockPanel>
+                <Button Content="{local:Tr Dz_Reset}" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="ResetTrigger_Click" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="{local:Tr Heading_LeftStick}" Style="{StaticResource Heading}" />
+                        <ContentControl Content="{Binding LeftStick}" ContentTemplate="{StaticResource StickPanel}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="{local:Tr Heading_RightStick}" Style="{StaticResource Heading}" />
+                        <ContentControl Content="{Binding RightStick}" ContentTemplate="{StaticResource StickPanel}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="{local:Tr Heading_TriggerDeadzones}" Style="{StaticResource Heading}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentControl Content="{Binding L2}" ContentTemplate="{StaticResource TriggerPanel}" />
+                        <ContentControl Grid.Column="2" Content="{Binding R2}" ContentTemplate="{StaticResource TriggerPanel}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Margin="10,4,10,10" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="12" Text="{local:Tr Dz_Hint}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

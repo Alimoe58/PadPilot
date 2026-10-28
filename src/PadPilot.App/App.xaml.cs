@@ -1,13 +1,21 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 
 namespace PadPilot.App;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : Application
 {
-}
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
 
+        // The window may live hidden in the tray, so the app ends only when MainWindow says so.
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+        var window = new MainWindow();
+        MainWindow = window;
+        if (AppSettings.Current.StartMinimized)
+            window.HideToTray();
+        else
+            window.Show();
+    }
+}

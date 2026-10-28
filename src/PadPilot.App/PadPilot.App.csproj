@@ -14,6 +14,15 @@
     <RootNamespace>PadPilot.App</RootNamespace>
     <!-- Only ship German satellite resources (ours and the framework's); English is built in. -->
     <SatelliteResourceLanguages>de</SatelliteResourceLanguages>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <!-- WinForms only for the tray icon (NotifyIcon); keep its namespaces out of the implicit usings -->
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+    <Resource Include="app.ico" />
+  </ItemGroup>
 
 </Project>

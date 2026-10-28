@@ -73,16 +73,46 @@ public sealed class OutputViewModel : ObservableObject
 
     public event Action? Changed;
 
+    // The lightbar colour is stored as RGB (what the controller gets); hue / intensity / brightness
+    // are kept alongside for the colour field and sliders, and both sides update each other.
+    private double _hue;
+    private int _saturation;
+    private int _brightness;
+
     public OutputViewModel()
     {
         LeftTrigger.Changed += RaiseChanged;
         RightTrigger.Changed += RaiseChanged;
+        UpdateHsvFromRgb();
     }
 
     public int Red { get => _red; set => SetColor(ref _red, value); }
     public int Green { get => _green; set => SetColor(ref _green, value); }
     public int Blue { get => _blue; set => SetColor(ref _blue, value); }
     public Brush LightbarPreview => new SolidColorBrush(Color.FromRgb((byte)Red, (byte)Green, (byte)Blue));
+
+    /// <summary>Hue in degrees (0–360), picked in the colour field.</summary>
+    public double Hue { get => _hue; set { if (Set(ref _hue, Math.Clamp(value, 0, 360))) ApplyHsv(); } }
+
+    /// <summary>Colour intensity (saturation) in percent: 100 = pure colour, 0 = white.</summary>
+    public int Saturation { get => _saturation; set { if (Set(ref _saturation, Math.Clamp(value, 0, 100))) ApplyHsv(); } }
+
+    /// <summary>Brightness in percent: 0 = off, 100 = full brightness.</summary>
+    public int Brightness { get => _brightness; set { if (Set(ref _brightness, Math.Clamp(value, 0, 100))) ApplyHsv(); } }
+
+    /// <summary>Colour as "#RRGGBB"; invalid input is ignored.</summary>
+    public string Hex
+    {
+        get => $"#{Red:X2}{Green:X2}{Blue:X2}";
+        set
+        {
+            string s = (value ?? "").Trim().TrimStart('#');
+            if (s.Length == 6 && int.TryParse(s, System.Globalization.NumberStyles.HexNumber, null, out int rgb))
+                SetColor(Color.FromRgb((byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb));
+            else
+                OnPropertyChanged(nameof(Hex)); // put the valid value back into the text box
+        }
+    }
 
     public bool Led1 { get => _led1; set => SetAndRaise(ref _led1, value); }
     public bool Led2 { get => _led2; set => SetAndRaise(ref _led2, value); }
@@ -104,14 +134,8 @@ public sealed class OutputViewModel : ObservableObject
 
     public void SetColor(Color color)
     {
-        _red = color.R;
-        _green = color.G;
-        _blue = color.B;
-        OnPropertyChanged(nameof(Red));
-        OnPropertyChanged(nameof(Green));
-        OnPropertyChanged(nameof(Blue));
-        OnPropertyChanged(nameof(LightbarPreview));
-        RaiseChanged();
+        SetRgb(color.R, color.G, color.B);
+        UpdateHsvFromRgb();
     }
 
     public void StopRumble()
@@ -148,7 +172,65 @@ public sealed class OutputViewModel : ObservableObject
     {
         if (!Set(ref field, Math.Clamp(value, 0, 255), name)) return;
         OnPropertyChanged(nameof(LightbarPreview));
+        OnPropertyChanged(nameof(Hex));
+        UpdateHsvFromRgb();
         RaiseChanged();
+    }
+
+    private void SetRgb(int r, int g, int b)
+    {
+        _red = r;
+        _green = g;
+        _blue = b;
+        OnPropertyChanged(nameof(Red));
+        OnPropertyChanged(nameof(Green));
+        OnPropertyChanged(nameof(Blue));
+        OnPropertyChanged(nameof(LightbarPreview));
+        OnPropertyChanged(nameof(Hex));
+        RaiseChanged();
+    }
+
+    /// <summary>Hue / intensity / brightness changed: recompute the RGB colour.</summary>
+    private void ApplyHsv()
+    {
+        double s = Saturation / 100.0, v = Brightness / 100.0;
+        double c = v * s;
+        double h = Hue % 360 / 60;
+        double x = c * (1 - Math.Abs(h % 2 - 1));
+        var (r, g, b) = (int)h switch
+        {
+            0 => (c, x, 0.0),
+            1 => (x, c, 0.0),
+            2 => (0.0, c, x),
+            3 => (0.0, x, c),
+            4 => (x, 0.0, c),
+            _ => (c, 0.0, x),
+        };
+        double m = v - c;
+        SetRgb((int)Math.Round((r + m) * 255), (int)Math.Round((g + m) * 255), (int)Math.Round((b + m) * 255));
+    }
+
+    /// <summary>RGB changed: recompute hue / intensity / brightness. Hue and intensity are kept when they are undefined (black or grey).</summary>
+    private void UpdateHsvFromRgb()
+    {
+        double r = Red / 255.0, g = Green / 255.0, b = Blue / 255.0;
+        double max = Math.Max(r, Math.Max(g, b)), min = Math.Min(r, Math.Min(g, b));
+        double delta = max - min;
+
+        _brightness = (int)Math.Round(max * 100);
+        if (max > 0)
+            _saturation = (int)Math.Round(delta / max * 100);
+        if (delta > 0)
+        {
+            double h = max == r ? (g - b) / delta % 6
+                     : max == g ? (b - r) / delta + 2
+                     : (r - g) / delta + 4;
+            _hue = (h * 60 + 360) % 360;
+        }
+
+        OnPropertyChanged(nameof(Hue));
+        OnPropertyChanged(nameof(Saturation));
+        OnPropertyChanged(nameof(Brightness));
     }
 
     private void SetAndRaise<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string? name = null)

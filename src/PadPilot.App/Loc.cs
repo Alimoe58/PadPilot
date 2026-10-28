@@ -42,7 +42,9 @@ public sealed class Loc : INotifyPropertyChanged
         get => _culture.TwoLetterISOLanguageName;
         set
         {
-            if (value == Language)
+            // The language ComboBox briefly pushes an empty value while the window is built;
+            // only accept real choices so that doesn't count (and get saved) as a language switch.
+            if (value == Language || Languages.All(l => l.Code != value))
                 return;
             _culture = CultureInfo.GetCultureInfo(value);
             AppSettings.Current.Language = value;

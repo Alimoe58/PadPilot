@@ -54,4 +54,33 @@
   <data name="LedBrightness_Medium" xml:space="preserve"><value>Mittel</value></data>
   <data name="LedBrightness_Low" xml:space="preserve"><value>Dunkel</value></data>
   <data name="Button_Mute" xml:space="preserve"><value>Mikro</value></data>
+  <data name="Tab_Sticks" xml:space="preserve"><value>Sticks &amp; Deadzones</value></data>
+  <data name="Heading_LeftStick" xml:space="preserve"><value>LINKER STICK</value></data>
+  <data name="Heading_RightStick" xml:space="preserve"><value>RECHTER STICK</value></data>
+  <data name="Heading_TriggerDeadzones" xml:space="preserve"><value>TRIGGER-DEADZONES</value></data>
+  <data name="Dz_Inner" xml:space="preserve"><value>Innere Deadzone</value></data>
+  <data name="Dz_Outer" xml:space="preserve"><value>Äußere Deadzone</value></data>
+  <data name="Dz_Shape" xml:space="preserve"><value>Form</value></data>
+  <data name="Dz_Reset" xml:space="preserve"><value>Zurücksetzen</value></data>
+  <data name="Dz_Hint" xml:space="preserve"><value>Deadzones wirken auf alles, was PadPilot ausgibt, z. B. die Xbox-Emulation (Schritt 3). Grauer Punkt = Rohposition, blauer Punkt = Ausgabe. Rot = innere Deadzone (wird ignoriert), orange gestrichelt = ab hier 100 %. Die Einstellungen werden beim Schließen gespeichert.</value></data>
+  <data name="DeadzoneShape_Radial" xml:space="preserve"><value>Rund (radial)</value></data>
+  <data name="DeadzoneShape_Axial" xml:space="preserve"><value>Kreuz (axial)</value></data>
+  <data name="Stick_Raw" xml:space="preserve"><value>Roh</value></data>
+  <data name="Stick_Output" xml:space="preserve"><value>Ausgabe</value></data>
+  <data name="Stick_Drift" xml:space="preserve"><value>Abstand zur Mitte</value></data>
+  <data name="Circ_Start" xml:space="preserve"><value>Rundheit testen</value></data>
+  <data name="Circ_Stop" xml:space="preserve"><value>Test beenden</value></data>
+  <data name="Circ_Hint" xml:space="preserve"><value>Den Stick ein paar Mal langsam am Rand entlang drehen.</value></data>
+  <data name="Circ_Result" xml:space="preserve"><value>Durchschnittlicher Fehler: {0:0.0} %  ·  erfasst: {1:0} %</value></data>
+  <data name="Tab_Settings" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="Heading_Window" xml:space="preserve"><value>FENSTER</value></data>
+  <data name="Set_MinimizeToTray" xml:space="preserve"><value>Beim Minimieren in den Infobereich (Tray) verschieben</value></data>
+  <data name="Set_CloseToTray" xml:space="preserve"><value>Beim Schließen im Infobereich weiterlaufen lassen</value></data>
+  <data name="Set_StartMinimized" xml:space="preserve"><value>Minimiert im Infobereich starten</value></data>
+  <data name="Set_Hint" xml:space="preserve"><value>Im Infobereich öffnet ein Doppelklick auf das PadPilot-Symbol das Fenster, ein Rechtsklick zeigt das Menü mit „Beenden“. Die Controller-Einstellungen (Lightbar, Trigger …) bleiben aktiv, solange PadPilot im Infobereich läuft.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>PadPilot öffnen</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>Beenden</value></data>
+  <data name="Tray_Balloon" xml:space="preserve"><value>PadPilot läuft im Infobereich weiter.</value></data>
+  <data name="Color_Intensity" xml:space="preserve"><value>Intensität</value></data>
+  <data name="Color_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
 </root>

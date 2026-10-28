@@ -7,8 +7,8 @@
         xmlns:views="clr-namespace:PadPilot.App.Views"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
-        Title="PadPilot" Width="1000" Height="700" MinWidth="860" MinHeight="600"
-        Background="{StaticResource WindowBrush}">
+        Title="PadPilot" Width="1040" Height="760" MinWidth="880" MinHeight="600"
+        Background="{StaticResource WindowBrush}" Icon="app.ico">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -168,6 +168,10 @@
                 </Grid>
             </TabItem>
 
+            <TabItem Header="{local:Tr Tab_Sticks}">
+                <views:DeadzonesView DataContext="{Binding Deadzones}" />
+            </TabItem>
+
             <TabItem Header="{local:Tr Tab_Outputs}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid DataContext="{Binding Output}">
@@ -181,27 +185,46 @@
                             <Border Style="{StaticResource Panel}">
                                 <StackPanel>
                                     <TextBlock Text="{local:Tr Heading_Lightbar}" Style="{StaticResource Heading}" />
-                                    <DockPanel>
-                                        <Border Width="64" Height="64" CornerRadius="8" Background="{Binding LightbarPreview}" Margin="0,0,14,0" />
-                                        <StackPanel>
-                                            <DockPanel Margin="0,0,0,4">
-                                                <TextBlock Text="{local:Tr Color_Red}" Width="50" />
-                                                <TextBlock Text="{Binding Red}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                                <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
-                                            </DockPanel>
-                                            <DockPanel Margin="0,0,0,4">
-                                                <TextBlock Text="{local:Tr Color_Green}" Width="50" />
-                                                <TextBlock Text="{Binding Green}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                                <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
-                                            </DockPanel>
-                                            <DockPanel>
-                                                <TextBlock Text="{local:Tr Color_Blue}" Width="50" />
-                                                <TextBlock Text="{Binding Blue}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                                <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
-                                            </DockPanel>
+                                    <!-- Colour field (hue × intensity) with preview and hex input -->
+                                    <DockPanel Margin="0,0,0,12">
+                                        <StackPanel Margin="0,0,14,0">
+                                            <Border Width="72" Height="72" CornerRadius="8" Background="{Binding LightbarPreview}"
+                                                    BorderBrush="{StaticResource TrackBrush}" BorderThickness="1" />
+                                            <TextBox Text="{Binding Hex, UpdateSourceTrigger=LostFocus}" Width="72" Margin="0,8,0,0"
+                                                     FontFamily="Consolas" TextAlignment="Center" KeyDown="HexBox_KeyDown"
+                                                     Background="{StaticResource TrackBrush}" Foreground="{StaticResource TextBrush}"
+                                                     BorderThickness="0" Padding="2,4" />
                                         </StackPanel>
+                                        <views:ColorField Height="110" Hue="{Binding Hue}" Saturation="{Binding Saturation}" />
                                     </DockPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="78,10,0,0">
+
+                                    <DockPanel Margin="0,0,0,4">
+                                        <TextBlock Text="{local:Tr Color_Intensity}" Width="86" />
+                                        <TextBlock Text="{Binding Saturation, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="100" Value="{Binding Saturation}" />
+                                    </DockPanel>
+                                    <DockPanel Margin="0,0,0,12">
+                                        <TextBlock Text="{local:Tr Color_Brightness}" Width="86" />
+                                        <TextBlock Text="{Binding Brightness, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="100" Value="{Binding Brightness}" />
+                                    </DockPanel>
+
+                                    <DockPanel Margin="0,0,0,4">
+                                        <TextBlock Text="{local:Tr Color_Red}" Width="86" />
+                                        <TextBlock Text="{Binding Red}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
+                                    </DockPanel>
+                                    <DockPanel Margin="0,0,0,4">
+                                        <TextBlock Text="{local:Tr Color_Green}" Width="86" />
+                                        <TextBlock Text="{Binding Green}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
+                                    </DockPanel>
+                                    <DockPanel>
+                                        <TextBlock Text="{local:Tr Color_Blue}" Width="86" />
+                                        <TextBlock Text="{Binding Blue}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
+                                    </DockPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="86,12,0,0">
                                         <Button Style="{StaticResource Swatch}" Background="#FF0000" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#FF8000" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#FFFF00" Click="Swatch_Click" />
@@ -281,6 +304,26 @@
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{local:Tr Tab_Settings}">
+                <StackPanel DataContext="{Binding Settings}">
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Window}" Style="{StaticResource Heading}" />
+                            <CheckBox IsChecked="{Binding MinimizeToTray}" Margin="0,0,0,8">
+                                <TextBlock Text="{local:Tr Set_MinimizeToTray}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding CloseToTray}" Margin="0,0,0,8">
+                                <TextBlock Text="{local:Tr Set_CloseToTray}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding StartMinimized}" Margin="0,0,0,12">
+                                <TextBlock Text="{local:Tr Set_StartMinimized}" />
+                            </CheckBox>
+                            <TextBlock Text="{local:Tr Set_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </TabItem>
         </TabControl>
     </Grid>

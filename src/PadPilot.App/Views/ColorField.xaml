@@ -1,0 +1,40 @@
+<!--
+    Colour field: hue left to right, intensity (saturation) top to bottom (full colour at the top, white at the bottom).
+    Click or drag to pick. Brightness is set separately.
+-->
+<UserControl x:Class="PadPilot.App.Views.ColorField"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Cursor="Cross">
+    <Grid x:Name="Root" Background="Transparent"
+          MouseLeftButtonDown="Root_MouseLeftButtonDown" MouseMove="Root_MouseMove" MouseLeftButtonUp="Root_MouseLeftButtonUp">
+        <Border CornerRadius="6" ClipToBounds="True">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FF0000" Offset="0" />
+                    <GradientStop Color="#FFFF00" Offset="0.1667" />
+                    <GradientStop Color="#00FF00" Offset="0.3333" />
+                    <GradientStop Color="#00FFFF" Offset="0.5" />
+                    <GradientStop Color="#0000FF" Offset="0.6667" />
+                    <GradientStop Color="#FF00FF" Offset="0.8333" />
+                    <GradientStop Color="#FF0000" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Border CornerRadius="6">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#00FFFFFF" Offset="0" />
+                    <GradientStop Color="#FFFFFFFF" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Canvas IsHitTestVisible="False" ClipToBounds="False">
+            <Ellipse x:Name="Marker" Width="16" Height="16" Stroke="White" StrokeThickness="2.5">
+                <Ellipse.Effect>
+                    <DropShadowEffect ShadowDepth="0" BlurRadius="4" Opacity="0.9" />
+                </Ellipse.Effect>
+            </Ellipse>
+        </Canvas>
+    </Grid>
+</UserControl>

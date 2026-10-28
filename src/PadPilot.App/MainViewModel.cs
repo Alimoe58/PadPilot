@@ -21,6 +21,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private DateTime _rateTime = DateTime.UtcNow;
     private byte[] _lastRaw = [];
     private bool _outputDirty = true;
+    private DateTime _lastHiddenRefresh;
     private string _statusKey = "Status_Searching";
 
     private ControllerState _state = new();
@@ -42,6 +43,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public string ControllerName { get => _controllerName; private set => Set(ref _controllerName, value); }
 
     public OutputViewModel Output { get; } = new();
+    public DeadzonesViewModel Deadzones { get; } = new(AppSettings.Current);
+    public SettingsViewModel Settings { get; } = new(AppSettings.Current);
+
+    /// <summary>False while the window is hidden in the tray; the live view then only refreshes twice a second.</summary>
+    public bool IsUiVisible { get; set; } = true;
 
     public MainViewModel(Dispatcher dispatcher)
     {
@@ -139,10 +145,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 _outputDirty = true; // retry next frame
         }
 
-        if (_device.TryGetLatest(out var state, out var raw) && !ReferenceEquals(raw, _lastRaw))
+        bool refreshView = IsUiVisible || DateTime.UtcNow - _lastHiddenRefresh >= TimeSpan.FromMilliseconds(500);
+        if (refreshView && _device.TryGetLatest(out var state, out var raw) && !ReferenceEquals(raw, _lastRaw))
         {
+            _lastHiddenRefresh = DateTime.UtcNow;
             _lastRaw = raw;
             State = state!;
+            Deadzones.Update(state!);
             Battery = FormatBattery(state!);
             RawHex = Convert.ToHexString(raw.AsSpan(0, Math.Min(raw.Length, 48)));
         }
@@ -162,5 +171,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _uiTimer.Stop();
         DeviceList.Local.Changed -= OnDeviceListChanged;
         CloseDevice();
+        Deadzones.SaveTo(AppSettings.Current);
+        AppSettings.Current.Save();
     }
 }

@@ -52,8 +52,8 @@ public sealed class EnumLabelConverter : IMultiValueConverter
 /// <summary>Returns the "pressed" brush when the button named in ConverterParameter is held.</summary>
 public sealed class ButtonBrushConverter : IValueConverter
 {
-    private static readonly Brush Pressed = Freeze(new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6)));
-    private static readonly Brush Released = Freeze(new SolidColorBrush(Color.FromRgb(0x3A, 0x3D, 0x46)));
+    public Brush Pressed { get; set; } = Freeze(new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6)));
+    public Brush Released { get; set; } = Freeze(new SolidColorBrush(Color.FromRgb(0x3A, 0x3D, 0x46)));
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

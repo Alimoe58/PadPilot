@@ -1,8 +1,7 @@
 <Application x:Class="PadPilot.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:PadPilot.App"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:PadPilot.App">
     <Application.Resources>
         <SolidColorBrush x:Key="WindowBrush" Color="#1E1F24" />
         <SolidColorBrush x:Key="PanelBrush" Color="#2A2C33" />
