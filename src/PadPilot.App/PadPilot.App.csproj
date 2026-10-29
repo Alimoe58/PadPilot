@@ -11,6 +11,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>PadPilot</AssemblyName>
+    <Version>1.0.0</Version>
+    <!-- Show "1.0.0" in the file properties instead of "1.0.0+<git hash>" -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Product>PadPilot</Product>
+    <Description>DualSense controller tool for Windows</Description>
+    <Copyright>Copyright (c) 2026 Alim, MIT License</Copyright>
     <RootNamespace>PadPilot.App</RootNamespace>
     <!-- Only ship German satellite resources (ours and the framework's); English is built in. -->
     <SatelliteResourceLanguages>de</SatelliteResourceLanguages>
