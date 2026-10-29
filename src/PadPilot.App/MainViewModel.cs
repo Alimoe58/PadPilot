@@ -1,6 +1,7 @@
 using System.Windows.Threading;
 using HidSharp;
 using PadPilot.Core;
+using PadPilot.Core.Emulation;
 
 namespace PadPilot.App;
 
@@ -20,8 +21,17 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private long _rateCount;
     private DateTime _rateTime = DateTime.UtcNow;
     private byte[] _lastRaw = [];
-    private bool _outputDirty = true;
+    private volatile bool _outputDirty = true;
     private DateTime _lastHiddenRefresh;
+
+    private readonly EmulationService _emulation = new();
+    // Rumble requested by a game through the virtual controller (written on a ViGEm thread).
+    private volatile int _gameRumbleLarge;
+    private volatile int _gameRumbleSmall;
+
+    // HidHide calls start a short-lived process, so they run in the background, one after another.
+    private readonly HidHideController _hidHide = new(AppSettings.Current.HidHideHiddenInstance, AppSettings.Current.HidHideCloakSetByUs);
+    private Task _hidHideWork = Task.CompletedTask;
     private string _statusKey = "Status_Searching";
 
     private ControllerState _state = new();
@@ -45,6 +55,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public OutputViewModel Output { get; } = new();
     public DeadzonesViewModel Deadzones { get; } = new(AppSettings.Current);
     public SettingsViewModel Settings { get; } = new(AppSettings.Current);
+    public EmulationViewModel Emulation { get; }
 
     /// <summary>False while the window is hidden in the tray; the live view then only refreshes twice a second.</summary>
     public bool IsUiVisible { get; set; } = true;
@@ -55,8 +66,72 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _uiTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(16), DispatcherPriority.Render, (_, _) => Tick(), dispatcher);
         // Sliders fire many changes per second; Tick() sends at most one report per frame.
         Output.Changed += () => _outputDirty = true;
+        Settings.Changed += () =>
+        {
+            if (_device != null)
+                _device.MotionDisabled = AppSettings.Current.GyroDisabled;
+        };
         Loc.Instance.PropertyChanged += (_, _) => UpdateTexts();
         UpdateTexts();
+
+        _emulation.Deadzones = Deadzones.Profile;
+        _emulation.Mode = AppSettings.Current.EmulationMode;
+        _emulation.StatusChanged += () => _dispatcher.BeginInvoke(() =>
+        {
+            Emulation!.UpdateStatus();
+            UpdateHidHide();
+        });
+        _emulation.RumbleRequested += (large, small) =>
+        {
+            _gameRumbleLarge = large;
+            _gameRumbleSmall = small;
+            _outputDirty = true;
+        };
+        Emulation = new EmulationViewModel(_emulation, AppSettings.Current);
+        Emulation.HideControllerChanged += UpdateHidHide;
+
+        // A previous run may have crashed while the controller was hidden: give it back first.
+        UpdateHidHide();
+    }
+
+    /// <summary>
+    /// Hides the real DualSense while a virtual controller is active (and the user wants that),
+    /// otherwise makes sure it is visible again.
+    /// </summary>
+    private void UpdateHidHide()
+    {
+        if (!HidHideController.IsInstalled)
+            return;
+
+        bool shouldHide = AppSettings.Current.HideControllerWithHidHide
+            && _emulation.Status == EmulationStatus.Active
+            && _device != null;
+        string? devicePath = _device?.DevicePath;
+        string appPath = Environment.ProcessPath ?? "";
+
+        _hidHideWork = _hidHideWork.ContinueWith(_ =>
+        {
+            bool ok = shouldHide && devicePath != null
+                ? _hidHide.HiddenInstance != null || _hidHide.Hide(devicePath, appPath)
+                : (_hidHide.HiddenInstance == null && !_hidHide.CloakSetByUs) || _hidHide.Release();
+            bool hidden = _hidHide.HiddenInstance != null;
+            string? error = ok ? null : _hidHide.LastError;
+            _dispatcher.BeginInvoke(() =>
+            {
+                SaveHidHideState();
+                Emulation.SetHidHideState(hidden, error);
+            });
+        }, TaskScheduler.Default);
+    }
+
+    private void SaveHidHideState()
+    {
+        if (AppSettings.Current.HidHideHiddenInstance == _hidHide.HiddenInstance &&
+            AppSettings.Current.HidHideCloakSetByUs == _hidHide.CloakSetByUs)
+            return;
+        AppSettings.Current.HidHideHiddenInstance = _hidHide.HiddenInstance;
+        AppSettings.Current.HidHideCloakSetByUs = _hidHide.CloakSetByUs;
+        AppSettings.Current.Save();
     }
 
     public void Start()
@@ -101,18 +176,22 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             }
         });
 
+        _device.MotionDisabled = AppSettings.Current.GyroDisabled;
         _rateCount = 0;
         _rateTime = DateTime.UtcNow;
         _outputDirty = true;
         _statusKey = "Status_Connected";
         ControllerName = _device.DisplayName;
         Layout = ButtonLayout.PlayStation5; // DualSense and DualSense Edge share the PS5 layout
+        _emulation.Attach(_device);
         Connection = _device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth";
         UpdateTexts();
     }
 
     private void CloseDevice()
     {
+        // Detach first: the device's read thread must not be inside the emulation while it shuts down.
+        _emulation.Detach();
         _device?.Dispose();
         _device = null;
     }
@@ -138,10 +217,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         if (_device == null)
             return;
 
+        _emulation.Deadzones = Deadzones.Profile;
+        Emulation.GameRumbleLarge = _gameRumbleLarge / 255.0 * 100;
+        Emulation.GameRumbleSmall = _gameRumbleSmall / 255.0 * 100;
+
         if (_outputDirty)
         {
             _outputDirty = false;
-            if (!_device.Send(Output.ToState()))
+            if (!_device.Send(BuildOutput()))
                 _outputDirty = true; // retry next frame
         }
 
@@ -166,11 +249,32 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>Settings from the Outputs tab; game rumble is added on top (the stronger value wins).</summary>
+    private OutputState BuildOutput()
+    {
+        var output = Output.ToState();
+        if (!AppSettings.Current.RumblePassthrough)
+            return output;
+        return output with
+        {
+            RumbleLeft = (byte)Math.Max(output.RumbleLeft, _gameRumbleLarge),
+            RumbleRight = (byte)Math.Max(output.RumbleRight, _gameRumbleSmall),
+        };
+    }
+
     public void Dispose()
     {
         _uiTimer.Stop();
         DeviceList.Local.Changed -= OnDeviceListChanged;
         CloseDevice();
+        _emulation.Dispose();
+
+        // Never leave the controller hidden after PadPilot is gone.
+        _hidHideWork.Wait(TimeSpan.FromSeconds(10));
+        if (_hidHide.HiddenInstance != null || _hidHide.CloakSetByUs)
+            _hidHide.Release();
+        AppSettings.Current.HidHideHiddenInstance = _hidHide.HiddenInstance;
+        AppSettings.Current.HidHideCloakSetByUs = _hidHide.CloakSetByUs;
         Deadzones.SaveTo(AppSettings.Current);
         AppSettings.Current.Save();
     }

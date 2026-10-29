@@ -25,10 +25,21 @@ public sealed class SettingsViewModel : ObservableObject
         set => Update(() => _settings.StartMinimized = value);
     }
 
+    /// <summary>Switches the controller's motion sensors off; the controller gets the change with the next output report.</summary>
+    public bool GyroDisabled
+    {
+        get => _settings.GyroDisabled;
+        set => Update(() => _settings.GyroDisabled = value);
+    }
+
+    /// <summary>Raised after any setting changed.</summary>
+    public event Action? Changed;
+
     private void Update(Action apply, [System.Runtime.CompilerServices.CallerMemberName] string? name = null)
     {
         apply();
         _settings.Save();
         OnPropertyChanged(name);
+        Changed?.Invoke();
     }
 }

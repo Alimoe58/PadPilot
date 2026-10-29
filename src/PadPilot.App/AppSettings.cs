@@ -26,6 +26,19 @@ public sealed class AppSettings
     public bool CloseToTray { get; set; }
     public bool StartMinimized { get; set; }
 
+    /// <summary>Gyro and accelerometer switched off in the controller.</summary>
+    public bool GyroDisabled { get; set; }
+
+    public PadPilot.Core.Emulation.EmulationMode EmulationMode { get; set; } = PadPilot.Core.Emulation.EmulationMode.Off;
+    public bool RumblePassthrough { get; set; } = true;
+
+    /// <summary>Hide the real DualSense via HidHide while the emulation is active.</summary>
+    public bool HideControllerWithHidHide { get; set; } = true;
+
+    // What PadPilot changed in HidHide, so a crash can be undone on the next start.
+    public string? HidHideHiddenInstance { get; set; }
+    public bool HidHideCloakSetByUs { get; set; }
+
     public DeadzoneSettings LeftStick { get; set; } = new();
     public DeadzoneSettings RightStick { get; set; } = new();
     public DeadzoneSettings L2 { get; set; } = new() { Inner = 0 };

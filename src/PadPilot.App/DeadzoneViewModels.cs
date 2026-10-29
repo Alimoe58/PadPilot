@@ -214,6 +214,15 @@ public sealed class DeadzonesViewModel
         R2.Update(state.R2);
     }
 
+    /// <summary>Current deadzones of all four inputs, as used by the emulation.</summary>
+    public PadPilot.Core.Emulation.DeadzoneProfile Profile => new()
+    {
+        LeftStick = LeftStick.Settings,
+        RightStick = RightStick.Settings,
+        L2 = L2.Settings,
+        R2 = R2.Settings,
+    };
+
     public void SaveTo(AppSettings settings)
     {
         settings.LeftStick = LeftStick.Settings;

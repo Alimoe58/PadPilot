@@ -83,4 +83,32 @@
   <data name="Tray_Balloon" xml:space="preserve"><value>PadPilot keeps running in the notification area.</value></data>
   <data name="Color_Intensity" xml:space="preserve"><value>Intensity</value></data>
   <data name="Color_Brightness" xml:space="preserve"><value>Brightness</value></data>
+  <data name="Tab_Emulation" xml:space="preserve"><value>Emulation</value></data>
+  <data name="Heading_Emulation" xml:space="preserve"><value>VIRTUAL CONTROLLER</value></data>
+  <data name="Emu_Mode" xml:space="preserve"><value>Games see</value></data>
+  <data name="Emu_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="EmulationMode_Off" xml:space="preserve"><value>Only the DualSense (no emulation)</value></data>
+  <data name="EmulationMode_Xbox360" xml:space="preserve"><value>An Xbox 360 controller</value></data>
+  <data name="EmulationMode_DualShock4" xml:space="preserve"><value>A DualShock 4 controller</value></data>
+  <data name="EmulationStatus_Off" xml:space="preserve"><value>Off</value></data>
+  <data name="EmulationStatus_WaitingForController" xml:space="preserve"><value>Waiting for the DualSense – the virtual controller starts as soon as it is connected.</value></data>
+  <data name="EmulationStatus_Active" xml:space="preserve"><value>Active – the virtual controller is connected.</value></data>
+  <data name="EmulationStatus_DriverMissing" xml:space="preserve"><value>The ViGEmBus driver was not found. Please install ViGEmBus and restart PadPilot.</value></data>
+  <data name="EmulationStatus_Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Emu_RumblePassthrough" xml:space="preserve"><value>Pass rumble from games on to the DualSense</value></data>
+  <data name="Emu_GameRumbleLarge" xml:space="preserve"><value>Game rumble left (strong)</value></data>
+  <data name="Emu_GameRumbleSmall" xml:space="preserve"><value>Game rumble right (fine)</value></data>
+  <data name="Emu_Hint" xml:space="preserve"><value>Sticks and triggers pass through your deadzones. Lightbar, LEDs and adaptive triggers from the Outputs tab stay active. Tip: In Steam, turn off &quot;PlayStation Controller Support&quot; for games you play with PadPilot, otherwise Steam reads the DualSense as well.</value></data>
+  <data name="Heading_HidHide" xml:space="preserve"><value>HIDE THE REAL CONTROLLER (HIDHIDE)</value></data>
+  <data name="HidHide_NotInstalled" xml:space="preserve"><value>HidHide is not installed. Without it, some games see two controllers (the virtual one and the real DualSense) and may react to inputs twice. Click &quot;Install HidHide&quot;, confirm the Windows prompt, then restart the PC and PadPilot.</value></data>
+  <data name="HidHide_Installed" xml:space="preserve"><value>When PadPilot closes or the emulation is switched off, the DualSense is released again automatically – after a crash, on the next start. If hiding doesn&apos;t work right after installing HidHide, restart the PC once.</value></data>
+  <data name="HidHide_Hide" xml:space="preserve"><value>Hide the real DualSense from games while the emulation is running</value></data>
+  <data name="HidHideState_Hidden" xml:space="preserve"><value>Hidden – games only see the virtual controller.</value></data>
+  <data name="HidHideState_Visible" xml:space="preserve"><value>Visible – games can see the DualSense.</value></data>
+  <data name="HidHideState_Error" xml:space="preserve"><value>HidHide error: {0}</value></data>
+  <data name="HidHide_Install" xml:space="preserve"><value>Install HidHide</value></data>
+  <data name="Heading_Controller" xml:space="preserve"><value>CONTROLLER</value></data>
+  <data name="Set_GyroDisabled" xml:space="preserve"><value>Disable gyro completely</value></data>
+  <data name="Set_GyroHint" xml:space="preserve"><value>PadPilot then ignores all gyro and accelerometer data from the controller: the live view, the emulation and gyro features receive nothing. Programs that read the DualSense directly (e.g. Steam) are not affected – unless the controller is hidden with HidHide during emulation.</value></data>
+  <data name="Motion_Disabled" xml:space="preserve"><value>Gyro is disabled (Settings tab).</value></data>
 </root>

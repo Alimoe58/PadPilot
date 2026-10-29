@@ -142,6 +142,8 @@
                             <Border Style="{StaticResource Panel}">
                                 <StackPanel>
                                     <TextBlock Text="{local:Tr Heading_Motion}" Style="{StaticResource Heading}" />
+                                    <TextBlock Text="{local:Tr Motion_Disabled}" Foreground="#F59E0B" Margin="0,0,0,6" TextWrapping="Wrap"
+                                               Visibility="{Binding Settings.GyroDisabled, Converter={StaticResource BoolToVisibility}}" />
                                     <TextBlock FontFamily="Consolas">
                                         <Run Text="Gyro   X " /><Run Text="{Binding State.Gyro.X, Mode=OneWay}" />
                                         <Run Text="  Y " /><Run Text="{Binding State.Gyro.Y, Mode=OneWay}" />
@@ -306,8 +308,21 @@
                 </ScrollViewer>
             </TabItem>
 
+            <TabItem Header="{local:Tr Tab_Emulation}">
+                <views:EmulationView DataContext="{Binding Emulation}" />
+            </TabItem>
+
             <TabItem Header="{local:Tr Tab_Settings}">
                 <StackPanel DataContext="{Binding Settings}">
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Controller}" Style="{StaticResource Heading}" />
+                            <CheckBox IsChecked="{Binding GyroDisabled}" Margin="0,0,0,12">
+                                <TextBlock Text="{local:Tr Set_GyroDisabled}" />
+                            </CheckBox>
+                            <TextBlock Text="{local:Tr Set_GyroHint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
                     <Border Style="{StaticResource Panel}">
                         <StackPanel>
                             <TextBlock Text="{local:Tr Heading_Window}" Style="{StaticResource Heading}" />

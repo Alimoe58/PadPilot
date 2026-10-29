@@ -45,7 +45,7 @@ public readonly record struct TouchPoint(bool Active, byte Id, int X, int Y);
 public readonly record struct Vector3S(short X, short Y, short Z);
 
 /// <summary>One parsed input report.</summary>
-public sealed class ControllerState
+public sealed record ControllerState
 {
     public byte LeftX { get; init; } = 128;
     public byte LeftY { get; init; } = 128;

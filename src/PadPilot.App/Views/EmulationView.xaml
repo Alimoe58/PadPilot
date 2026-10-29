@@ -1,0 +1,82 @@
+<!-- "Emulation" tab. DataContext: EmulationViewModel -->
+<UserControl x:Class="PadPilot.App.Views.EmulationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PadPilot.App">
+    <UserControl.Resources>
+        <Style x:Key="StatusText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                    <Setter Property="Foreground" Value="#22C55E" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasProblem}" Value="True">
+                    <Setter Property="Foreground" Value="#EF4444" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Border Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="{local:Tr Heading_Emulation}" Style="{StaticResource Heading}" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="{local:Tr Emu_Mode}" Width="180" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{x:Static local:EmulationViewModel.Modes}" SelectedItem="{Binding Mode}" MinWidth="220" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                        <TextBlock Text="{local:Tr Emu_Status}" Width="180" />
+                        <TextBlock Text="{Binding StatusText}" Style="{StaticResource StatusText}" TextWrapping="Wrap" MaxWidth="560" />
+                    </StackPanel>
+
+                    <CheckBox IsChecked="{Binding RumblePassthrough}" Margin="0,0,0,10">
+                        <TextBlock Text="{local:Tr Emu_RumblePassthrough}" />
+                    </CheckBox>
+                    <DockPanel Margin="0,0,0,4">
+                        <TextBlock Text="{local:Tr Emu_GameRumbleLarge}" Width="180" Foreground="{StaticResource MutedBrush}" />
+                        <ProgressBar Maximum="100" Value="{Binding GameRumbleLarge, Mode=OneWay}" MaxWidth="400" HorizontalAlignment="Left" Width="400" />
+                    </DockPanel>
+                    <DockPanel Margin="0,0,0,12">
+                        <TextBlock Text="{local:Tr Emu_GameRumbleSmall}" Width="180" Foreground="{StaticResource MutedBrush}" />
+                        <ProgressBar Maximum="100" Value="{Binding GameRumbleSmall, Mode=OneWay}" MaxWidth="400" HorizontalAlignment="Left" Width="400" />
+                    </DockPanel>
+
+                    <TextBlock Text="{local:Tr Emu_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="{local:Tr Heading_HidHide}" Style="{StaticResource Heading}" />
+                    <StackPanel Visibility="{Binding HidHideMissing, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Text="{local:Tr HidHide_NotInstalled}" TextWrapping="Wrap" Margin="0,0,0,10" />
+                        <Button Content="{local:Tr HidHide_Install}" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="HidHideInstall_Click" />
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding HidHideInstalled, Converter={StaticResource BoolToVisibility}}">
+                        <CheckBox IsChecked="{Binding HideController}" Margin="0,0,0,10">
+                            <TextBlock Text="{local:Tr HidHide_Hide}" />
+                        </CheckBox>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="{local:Tr Emu_Status}" Width="180" />
+                            <TextBlock Text="{Binding HidHideStatusText}" FontWeight="SemiBold" TextWrapping="Wrap" MaxWidth="560">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HidHideHidden}" Value="True">
+                                                <Setter Property="Foreground" Value="#22C55E" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="{local:Tr HidHide_Installed}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

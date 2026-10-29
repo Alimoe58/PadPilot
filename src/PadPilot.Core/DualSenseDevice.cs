@@ -29,10 +29,20 @@ public sealed class DualSenseDevice : IDisposable
     private byte _outputSequence;
     private bool _startupLightReleased;
 
+    /// <summary>
+    /// When set, gyro and accelerometer values are zeroed right after parsing, so nothing in the app
+    /// (display, emulation, gyro mouse) receives motion data.
+    /// </summary>
+    public bool MotionDisabled { get => _motionDisabled; set => _motionDisabled = value; }
+    private volatile bool _motionDisabled;
+
     public ConnectionType Connection { get; }
     public string DisplayName { get; }
     public string DevicePath => _device.DevicePath;
     public long ReportCount => Interlocked.Read(ref _reportCount);
+
+    /// <summary>Raised on the read thread for every input report, for low-latency consumers like emulation.</summary>
+    public event Action<ControllerState>? StateReceived;
 
     /// <summary>Raised on the read thread when the controller is unplugged or the connection drops.</summary>
     public event Action<DualSenseDevice>? Disconnected;
@@ -144,6 +154,8 @@ public sealed class DualSenseDevice : IDisposable
             var report = buffer.AsSpan(0, count);
             if (InputReportParser.TryParse(report, Connection, out var state))
             {
+                if (_motionDisabled)
+                    state = state! with { Gyro = default, Accel = default };
                 var raw = report.ToArray();
                 lock (_lock)
                 {
@@ -151,6 +163,7 @@ public sealed class DualSenseDevice : IDisposable
                     _latestRaw = raw;
                 }
                 Interlocked.Increment(ref _reportCount);
+                StateReceived?.Invoke(state!);
             }
         }
 

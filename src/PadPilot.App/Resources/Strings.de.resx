@@ -83,4 +83,32 @@
   <data name="Tray_Balloon" xml:space="preserve"><value>PadPilot läuft im Infobereich weiter.</value></data>
   <data name="Color_Intensity" xml:space="preserve"><value>Intensität</value></data>
   <data name="Color_Brightness" xml:space="preserve"><value>Helligkeit</value></data>
+  <data name="Tab_Emulation" xml:space="preserve"><value>Emulation</value></data>
+  <data name="Heading_Emulation" xml:space="preserve"><value>VIRTUELLER CONTROLLER</value></data>
+  <data name="Emu_Mode" xml:space="preserve"><value>Spiele sehen</value></data>
+  <data name="Emu_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="EmulationMode_Off" xml:space="preserve"><value>Nur den DualSense (keine Emulation)</value></data>
+  <data name="EmulationMode_Xbox360" xml:space="preserve"><value>Einen Xbox-360-Controller</value></data>
+  <data name="EmulationMode_DualShock4" xml:space="preserve"><value>Einen DualShock-4-Controller</value></data>
+  <data name="EmulationStatus_Off" xml:space="preserve"><value>Aus</value></data>
+  <data name="EmulationStatus_WaitingForController" xml:space="preserve"><value>Warte auf den DualSense – der virtuelle Controller startet, sobald er verbunden ist.</value></data>
+  <data name="EmulationStatus_Active" xml:space="preserve"><value>Aktiv – der virtuelle Controller ist verbunden.</value></data>
+  <data name="EmulationStatus_DriverMissing" xml:space="preserve"><value>Der ViGEmBus-Treiber wurde nicht gefunden. Bitte ViGEmBus installieren und PadPilot neu starten.</value></data>
+  <data name="EmulationStatus_Error" xml:space="preserve"><value>Fehler: {0}</value></data>
+  <data name="Emu_RumblePassthrough" xml:space="preserve"><value>Rumble aus Spielen an den DualSense weitergeben</value></data>
+  <data name="Emu_GameRumbleLarge" xml:space="preserve"><value>Spiel-Rumble links (stark)</value></data>
+  <data name="Emu_GameRumbleSmall" xml:space="preserve"><value>Spiel-Rumble rechts (fein)</value></data>
+  <data name="Emu_Hint" xml:space="preserve"><value>Sticks und Trigger laufen durch deine Deadzones. Lightbar, LEDs und adaptive Trigger aus dem Tab „Ausgaben“ bleiben aktiv. Tipp: In Steam für Spiele, die du mit PadPilot spielst, die „PlayStation-Controller-Unterstützung“ ausschalten, sonst liest Steam den DualSense zusätzlich.</value></data>
+  <data name="Heading_HidHide" xml:space="preserve"><value>ECHTEN CONTROLLER VERSTECKEN (HIDHIDE)</value></data>
+  <data name="HidHide_NotInstalled" xml:space="preserve"><value>HidHide ist nicht installiert. Ohne HidHide sehen manche Spiele zwei Controller (den virtuellen und den echten DualSense) und reagieren eventuell doppelt. Auf „HidHide installieren“ klicken, die Windows-Abfrage bestätigen und danach PC und PadPilot neu starten.</value></data>
+  <data name="HidHide_Installed" xml:space="preserve"><value>Beim Beenden von PadPilot oder Ausschalten der Emulation wird der DualSense automatisch wieder freigegeben – nach einem Absturz beim nächsten Start. Falls das Verstecken direkt nach der HidHide-Installation nicht klappt, den PC einmal neu starten.</value></data>
+  <data name="HidHide_Hide" xml:space="preserve"><value>Echten DualSense vor Spielen verstecken, solange die Emulation läuft</value></data>
+  <data name="HidHideState_Hidden" xml:space="preserve"><value>Versteckt – Spiele sehen nur den virtuellen Controller.</value></data>
+  <data name="HidHideState_Visible" xml:space="preserve"><value>Sichtbar – Spiele sehen den DualSense.</value></data>
+  <data name="HidHideState_Error" xml:space="preserve"><value>HidHide-Fehler: {0}</value></data>
+  <data name="HidHide_Install" xml:space="preserve"><value>HidHide installieren</value></data>
+  <data name="Heading_Controller" xml:space="preserve"><value>CONTROLLER</value></data>
+  <data name="Set_GyroDisabled" xml:space="preserve"><value>Gyro komplett deaktivieren</value></data>
+  <data name="Set_GyroHint" xml:space="preserve"><value>PadPilot ignoriert dann alle Gyro- und Beschleunigungsdaten des Controllers: Anzeige, Emulation und Gyro-Funktionen bekommen nichts mehr. Programme, die den DualSense direkt lesen (z. B. Steam), sind davon nicht betroffen – außer der Controller ist während der Emulation per HidHide versteckt.</value></data>
+  <data name="Motion_Disabled" xml:space="preserve"><value>Gyro ist deaktiviert (Tab „Einstellungen“).</value></data>
 </root>

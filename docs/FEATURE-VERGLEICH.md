@@ -21,9 +21,9 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 
 | Feature | DSX | PadPilot |
 |---|---|---|
-| Xbox-360-Emulation (ViGEmBus) | ✅ | 🗓️ Schritt 3 |
-| DualShock-4-Emulation (inkl. Touchpad/Gyro) | ✅ | ➕ mit Schritt 3 (ViGEmBus kann das ebenfalls) |
-| Echten Controller verstecken (HidHide) | ✅ optional | ➕ mit Schritt 3, sonst sehen Spiele zwei Controller |
+| Xbox-360-Emulation (ViGEmBus) | ✅ | ✅ inkl. Deadzones und Rumble aus Spielen |
+| DualShock-4-Emulation (inkl. Touchpad/Gyro) | ✅ | ✅ Tasten, Sticks, Trigger, Rumble; Touchpad-Bewegung und Gyro ➕ |
+| Echten Controller verstecken (HidHide) | ✅ optional | ✅ automatisch während der Emulation, Installation per Knopf |
 | Keine Emulation (nur Trigger/LEDs) | ✅ | ✅ |
 | Virtueller DualSense | ✅ (DSX+, kostenpflichtig) | ❌ (kein offener Treiber dafür) |
 
