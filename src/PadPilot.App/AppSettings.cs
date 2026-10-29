@@ -39,6 +39,15 @@ public sealed class AppSettings
     public string? HidHideHiddenInstance { get; set; }
     public bool HidHideCloakSetByUs { get; set; }
 
+    public bool ModUdpEnabled { get; set; } = true;
+    public int ModUdpPort { get; set; } = PadPilot.Core.Mods.UdpModServer.DefaultPort;
+    public bool ModFileEnabled { get; set; }
+
+    /// <summary>File for the text-file method; null means the default next to the settings.</summary>
+    public string? ModFilePath { get; set; }
+
+    public static string DefaultModFilePath => Path.Combine(Path.GetDirectoryName(FilePath)!, "mod-commands.json");
+
     public PadPilot.Core.Mouse.TouchpadMouseSettings TouchpadMouse { get; set; } = new();
     public PadPilot.Core.Mouse.GyroMouseSettings GyroMouse { get; set; } = new();
 

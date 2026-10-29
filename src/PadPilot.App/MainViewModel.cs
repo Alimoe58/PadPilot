@@ -26,6 +26,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private readonly EmulationService _emulation = new();
     private readonly PadPilot.Core.Mouse.MouseService _mouse = new();
+
+    // Mods: commands arrive on network/file threads and are laid over the Outputs tab.
+    private readonly PadPilot.Core.Mods.ModOverrides _modOverrides = new();
+    private readonly PadPilot.Core.Mods.UdpModServer _modUdp = new();
+    private readonly PadPilot.Core.Mods.ModFileWatcher _modFile = new();
+    private volatile string _modStatusJson = "{\"ok\":true,\"connected\":false}";
     // Rumble requested by a game through the virtual controller (written on a ViGEm thread).
     private volatile int _gameRumbleLarge;
     private volatile int _gameRumbleSmall;
@@ -58,6 +64,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public SettingsViewModel Settings { get; } = new(AppSettings.Current);
     public EmulationViewModel Emulation { get; }
     public MouseViewModel Mouse { get; }
+    public ModsViewModel Mods { get; }
 
     /// <summary>False while the window is hidden in the tray; the live view then only refreshes twice a second.</summary>
     public bool IsUiVisible { get; set; } = true;
@@ -75,6 +82,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             Mouse!.RefreshGyroSwitch();
         };
         Mouse = new MouseViewModel(_mouse, AppSettings.Current, dispatcher);
+
+        // The snapshot is refreshed once per second; whether a mod is in control is added live,
+        // so the reply to a command already reflects that command.
+        _modUdp.StatusJson = () => _modStatusJson[..^1] + $",\"modOverrides\":{(_modOverrides.IsActive ? "true" : "false")}}}";
+        _modUdp.Received += (cmd, error) => OnModCommand("UDP", cmd, error);
+        _modFile.Received += (cmd, error) => OnModCommand(Loc.Get("Mods_SourceFile"), cmd, error);
+        Mods = new ModsViewModel(_modUdp, _modFile, _modOverrides, AppSettings.Current);
+        Mods.OverridesCleared += () => _outputDirty = true;
         Loc.Instance.PropertyChanged += (_, _) => UpdateTexts();
         UpdateTexts();
 
@@ -96,6 +111,34 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         // A previous run may have crashed while the controller was hidden: give it back first.
         UpdateHidHide();
+    }
+
+    /// <summary>Called on a network or file thread for every mod command.</summary>
+    private void OnModCommand(string source, PadPilot.Core.Mods.ModCommand? cmd, string? error)
+    {
+        if (cmd != null && !cmd.IsStatusRequest)
+        {
+            _modOverrides.Apply(cmd);
+            _outputDirty = true;
+        }
+        _dispatcher.BeginInvoke(() => Mods.Report(source, cmd, error));
+    }
+
+    /// <summary>The reply mods get to every command, refreshed once per second.</summary>
+    private void UpdateModStatus()
+    {
+        bool connected = _device != null && _device.TryGetLatest(out _, out _);
+        var status = new Dictionary<string, object?>
+        {
+            ["ok"] = true,
+            ["connected"] = connected,
+            ["controller"] = connected ? _device!.DisplayName : null,
+            ["connection"] = connected ? (_device!.Connection == ConnectionType.Usb ? "usb" : "bluetooth") : null,
+            ["battery"] = connected ? State.BatteryPercent : null,
+            ["charging"] = connected ? State.Charge is ChargeStatus.Charging or ChargeStatus.Full : null,
+            ["emulation"] = _emulation.Status == EmulationStatus.Active ? _emulation.Mode.ToString().ToLowerInvariant() : "off",
+        };
+        _modStatusJson = System.Text.Json.JsonSerializer.Serialize(status);
     }
 
     /// <summary>
@@ -200,6 +243,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _mouse.Detach();
         _device?.Dispose();
         _device = null;
+        UpdateModStatus();
     }
 
     /// <summary>Rebuilds texts that are composed in code; called on connect changes and language switches.</summary>
@@ -250,15 +294,19 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         {
             long count = _device.ReportCount;
             ReportRate = Loc.Format("Report_Rate", ((count - _rateCount) / (now - _rateTime).TotalSeconds).ToString("0"));
+            UpdateModStatus();
             _rateCount = count;
             _rateTime = now;
         }
     }
 
-    /// <summary>Settings from the Outputs tab; game rumble is added on top (the stronger value wins).</summary>
+    /// <summary>
+    /// Settings from the Outputs tab, with mod commands laid on top; game rumble is added
+    /// on top of that (the stronger value wins).
+    /// </summary>
     private OutputState BuildOutput()
     {
-        var output = Output.ToState();
+        var output = _modOverrides.ApplyTo(Output.ToState());
         if (!AppSettings.Current.RumblePassthrough)
             return output;
         return output with
@@ -282,6 +330,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         AppSettings.Current.HidHideHiddenInstance = _hidHide.HiddenInstance;
         AppSettings.Current.HidHideCloakSetByUs = _hidHide.CloakSetByUs;
         _mouse.Dispose();
+        _modUdp.Dispose();
+        _modFile.Dispose();
         Deadzones.SaveTo(AppSettings.Current);
         Mouse.SaveTo(AppSettings.Current);
         AppSettings.Current.Save();

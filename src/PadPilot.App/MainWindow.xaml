@@ -316,6 +316,10 @@
                 <views:MouseView DataContext="{Binding Mouse}" />
             </TabItem>
 
+            <TabItem Header="{local:Tr Tab_Mods}">
+                <views:ModsView DataContext="{Binding Mods}" />
+            </TabItem>
+
             <TabItem Header="{local:Tr Tab_Settings}">
                 <StackPanel DataContext="{Binding Settings}">
                     <Border Style="{StaticResource Panel}">

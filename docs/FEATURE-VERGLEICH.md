@@ -55,8 +55,8 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 
 | Feature | DSX | PadPilot |
 |---|---|---|
-| UDP-Server für Mods (Trigger, LEDs) | ✅ | 🗓️ Schritt 5 |
-| Textdatei-Methode für Mods | ✅ | ➕ mit Schritt 5 (einfach) |
+| UDP-Server für Mods (Trigger, LEDs) | ✅ | ✅ eigenes JSON-Protokoll (docs/MOD-PROTOKOLL.md), Status-Antwort; DSX-Format nicht kompatibel |
+| Textdatei-Methode für Mods | ✅ | ✅ |
 | Spiele-Liste / Workshop-Profile | ✅ | ❌ (bräuchte einen eigenen Server) |
 
 ## Programm

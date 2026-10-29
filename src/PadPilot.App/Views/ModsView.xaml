@@ -1,0 +1,97 @@
+<!-- "Mods" tab: UDP server and text-file method for game mods. DataContext: ModsViewModel -->
+<UserControl x:Class="PadPilot.App.Views.ModsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PadPilot.App">
+    <UserControl.Resources>
+        <Style x:Key="UdpStatus" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding UdpOk}" Value="True">
+                    <Setter Property="Foreground" Value="#22C55E" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding UdpFailed}" Value="True">
+                    <Setter Property="Foreground" Value="#EF4444" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <!-- UDP -->
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="{local:Tr Heading_ModUdp}" Style="{StaticResource Heading}" />
+                        <CheckBox IsChecked="{Binding UdpEnabled}" Margin="0,0,0,10">
+                            <TextBlock Text="{local:Tr Mods_UdpEnabled}" />
+                        </CheckBox>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="{local:Tr Mods_Port}" Width="120" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding Port, UpdateSourceTrigger=LostFocus}" Width="80" Padding="4,3"
+                                     Background="{StaticResource TrackBrush}" Foreground="{StaticResource TextBrush}" BorderThickness="0"
+                                     FontFamily="Consolas" KeyDown="Port_KeyDown" />
+                            <TextBlock Text="127.0.0.1" Foreground="{StaticResource MutedBrush}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="{local:Tr Emu_Status}" Width="120" />
+                            <TextBlock Text="{Binding UdpStatusText}" Style="{StaticResource UdpStatus}" TextWrapping="Wrap" MaxWidth="320" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Text file -->
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="{local:Tr Heading_ModFile}" Style="{StaticResource Heading}" />
+                        <CheckBox IsChecked="{Binding FileEnabled}" Margin="0,0,0,10">
+                            <TextBlock Text="{local:Tr Mods_FileEnabled}" />
+                        </CheckBox>
+                        <TextBox Text="{Binding FilePath, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+                                 Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                        <Button Content="{local:Tr Mods_OpenFolder}" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="OpenFolder_Click" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Activity -->
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="{local:Tr Heading_ModActivity}" Style="{StaticResource Heading}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="{local:Tr Mods_Received}" Width="120" />
+                            <TextBlock Text="{Binding CommandCount}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="{local:Tr Mods_Last}" Width="120" />
+                            <TextBlock Text="{Binding LastCommandText}" TextWrapping="Wrap" MaxWidth="320" />
+                        </StackPanel>
+                        <TextBlock Text="{local:Tr Mods_OverridesActive}" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,4,0,8"
+                                   Visibility="{Binding OverridesActive, Converter={StaticResource BoolToVisibility}}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="{local:Tr Mods_SendTest}" Style="{StaticResource ActionButton}" Click="SendTest_Click" />
+                            <Button Content="{local:Tr Mods_Reset}" Style="{StaticResource ActionButton}" Click="Reset_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Protocol -->
+            <Border Grid.Column="1" Style="{StaticResource Panel}" VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock Text="{local:Tr Heading_ModProtocol}" Style="{StaticResource Heading}" />
+                    <TextBlock Text="{local:Tr Mods_ProtocolIntro}" TextWrapping="Wrap" Margin="0,0,0,10" />
+                    <TextBox Text="{Binding ExampleJson, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+                             HorizontalScrollBarVisibility="Auto"
+                             Background="#1E2025" Foreground="{StaticResource TextBrush}" BorderThickness="0" Padding="10" Margin="0,0,0,10" />
+                    <TextBlock Text="{local:Tr Mods_ProtocolDetails}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

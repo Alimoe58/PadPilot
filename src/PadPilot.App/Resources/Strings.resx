@@ -137,4 +137,26 @@
   <data name="Gyro_Calibrated" xml:space="preserve"><value>Resting value: X {0} · Y {1} · Z {2}</value></data>
   <data name="Mouse_GyroSwitchedOff" xml:space="preserve"><value>The gyro is switched off in Settings – the gyro mouse receives no data.</value></data>
   <data name="Mouse_GyroHint" xml:space="preserve"><value>Turning the controller left/right moves the pointer sideways, tilting it moves it up/down. If the pointer drifts while the controller lies still, calibrate the gyro.</value></data>
+  <data name="Tab_Mods" xml:space="preserve"><value>Mods</value></data>
+  <data name="Heading_ModUdp" xml:space="preserve"><value>UDP SERVER</value></data>
+  <data name="Heading_ModFile" xml:space="preserve"><value>TEXT FILE</value></data>
+  <data name="Heading_ModActivity" xml:space="preserve"><value>ACTIVITY</value></data>
+  <data name="Heading_ModProtocol" xml:space="preserve"><value>FOR MOD DEVELOPERS</value></data>
+  <data name="Mods_UdpEnabled" xml:space="preserve"><value>Accept commands from mods via UDP</value></data>
+  <data name="Mods_Port" xml:space="preserve"><value>Port</value></data>
+  <data name="Mods_UdpOff" xml:space="preserve"><value>Off</value></data>
+  <data name="Mods_UdpListening" xml:space="preserve"><value>Listening on port {0} (only reachable from this PC)</value></data>
+  <data name="Mods_UdpError" xml:space="preserve"><value>Could not start: {0}</value></data>
+  <data name="Mods_FileEnabled" xml:space="preserve"><value>Watch this file for commands (for mods without UDP)</value></data>
+  <data name="Mods_OpenFolder" xml:space="preserve"><value>Open folder</value></data>
+  <data name="Mods_Received" xml:space="preserve"><value>Commands</value></data>
+  <data name="Mods_Last" xml:space="preserve"><value>Last</value></data>
+  <data name="Mods_Invalid" xml:space="preserve"><value>invalid: {0}</value></data>
+  <data name="Mods_StatusRequest" xml:space="preserve"><value>status request</value></data>
+  <data name="Mods_SourceFile" xml:space="preserve"><value>file</value></data>
+  <data name="Mods_OverridesActive" xml:space="preserve"><value>A mod is currently controlling parts of the output (lightbar, triggers …). Your Outputs settings apply again after &quot;Reset&quot;.</value></data>
+  <data name="Mods_SendTest" xml:space="preserve"><value>Send test command</value></data>
+  <data name="Mods_Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="Mods_ProtocolIntro" xml:space="preserve"><value>Mods send a JSON object as a UDP packet to 127.0.0.1 and the port on the left (or write it into the text file). Every field is optional – only what is sent changes:</value></data>
+  <data name="Mods_ProtocolDetails" xml:space="preserve"><value>Trigger modes: off · resistance (start, strength) · section (start, end, strength) · weapon (start, end, strength) · vibration (start, strength, frequency). Positions 0–9, strength 1–8. micLed: off/on/pulse. &quot;reset&quot;: true hands control back to PadPilot. An empty object {} only asks for the status. Every packet is answered with JSON: controller, connection, battery, emulation. Full description: docs/MOD-PROTOKOLL.md</value></data>
 </root>
