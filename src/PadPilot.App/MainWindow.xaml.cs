@@ -93,6 +93,32 @@ public partial class MainWindow : Window
     private void UpdateTrayProfiles() =>
         _tray.SetProfiles(_viewModel.Profiles.Names, _viewModel.Profiles.Active, name => _viewModel.Profiles.Switch(name));
 
+    public const string IssuesUrl = "https://github.com/Alimoe58/PadPilot/issues/new";
+
+    private void CopyDiagnostics_Click(object sender, RoutedEventArgs e)
+    {
+        string text = _viewModel.BuildDiagnostics();
+        DiagnosticsBox.Text = text;
+        DiagnosticsBox.Visibility = Visibility.Visible;
+        try
+        {
+            Clipboard.SetText(text);
+            DiagnosticsCopied.Text = Loc.Get("Support_Copied");
+        }
+        catch (System.Runtime.InteropServices.COMException)
+        {
+            // Another program is holding the clipboard; the text is still shown to copy by hand.
+            DiagnosticsCopied.Text = Loc.Get("Support_CopyFailed");
+        }
+    }
+
+    private void ReportProblem_Click(object sender, RoutedEventArgs e) =>
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(IssuesUrl) { UseShellExecute = true });
+
+    private void InstallViGEm_Click(object sender, RoutedEventArgs e) => _viewModel.Emulation.InstallViGEm();
+    private void CheckDrivers_Click(object sender, RoutedEventArgs e) => _viewModel.Emulation.CheckDrivers();
+    private void DismissBanner_Click(object sender, RoutedEventArgs e) => _viewModel.Emulation.DismissBanner();
+
     private void NewProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.CreateNew();
     private void RenameProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.RenameActive();
     private void DeleteProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.DeleteActive();

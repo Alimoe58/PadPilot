@@ -179,4 +179,23 @@
   <data name="Set_StartWithWindows" xml:space="preserve"><value>Start with Windows (minimized in the tray)</value></data>
   <data name="Heading_Language" xml:space="preserve"><value>LANGUAGE</value></data>
   <data name="Label_Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Heading_Drivers" xml:space="preserve"><value>DRIVERS</value></data>
+  <data name="Driver_ViGEmLabel" xml:space="preserve"><value>ViGEmBus (required)</value></data>
+  <data name="Driver_HidHideLabel" xml:space="preserve"><value>HidHide (optional)</value></data>
+  <data name="Driver_Installed" xml:space="preserve"><value>Installed (version {0})</value></data>
+  <data name="Driver_ViGEmMissing" xml:space="preserve"><value>Not installed – Xbox / DualShock 4 emulation can&apos;t work without it.</value></data>
+  <data name="Driver_HidHideMissing" xml:space="preserve"><value>Not installed – emulation works, but some games may see two controllers.</value></data>
+  <data name="Driver_Install" xml:space="preserve"><value>Install</value></data>
+  <data name="Driver_Download" xml:space="preserve"><value>Download page</value></data>
+  <data name="Driver_CheckAgain" xml:space="preserve"><value>Check again</value></data>
+  <data name="Driver_Hint" xml:space="preserve"><value>&quot;Install&quot; uses winget and asks for admin rights. Restart the PC if Windows asks for it, then click &quot;Check again&quot;.</value></data>
+  <data name="Banner_ViGEmMissing" xml:space="preserve"><value>Xbox / DualShock 4 emulation needs the free ViGEmBus driver, which isn&apos;t installed. Everything else in PadPilot works without it.</value></data>
+  <data name="Banner_InstallViGEm" xml:space="preserve"><value>Install ViGEmBus</value></data>
+  <data name="Banner_Dismiss" xml:space="preserve"><value>Hide this note until the next start</value></data>
+  <data name="Heading_Support" xml:space="preserve"><value>SUPPORT</value></data>
+  <data name="Support_Intro" xml:space="preserve"><value>Found a problem? Copy the diagnostics and paste them into your report. They contain the PadPilot and Windows version, controller model and connection, driver versions and the main settings – nothing personal (no serial number, Bluetooth address or user name).</value></data>
+  <data name="Support_Copy" xml:space="preserve"><value>Copy diagnostics</value></data>
+  <data name="Support_Report" xml:space="preserve"><value>Report a problem on GitHub</value></data>
+  <data name="Support_Copied" xml:space="preserve"><value>Copied to the clipboard.</value></data>
+  <data name="Support_CopyFailed" xml:space="preserve"><value>Couldn&apos;t access the clipboard – copy the text below by hand.</value></data>
 </root>

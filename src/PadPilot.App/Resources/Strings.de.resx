@@ -179,4 +179,23 @@
   <data name="Set_StartWithWindows" xml:space="preserve"><value>Mit Windows starten (minimiert im Infobereich)</value></data>
   <data name="Heading_Language" xml:space="preserve"><value>SPRACHE</value></data>
   <data name="Label_Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Heading_Drivers" xml:space="preserve"><value>TREIBER</value></data>
+  <data name="Driver_ViGEmLabel" xml:space="preserve"><value>ViGEmBus (nötig)</value></data>
+  <data name="Driver_HidHideLabel" xml:space="preserve"><value>HidHide (optional)</value></data>
+  <data name="Driver_Installed" xml:space="preserve"><value>Installiert (Version {0})</value></data>
+  <data name="Driver_ViGEmMissing" xml:space="preserve"><value>Nicht installiert – ohne ihn funktioniert die Xbox-/DualShock-4-Emulation nicht.</value></data>
+  <data name="Driver_HidHideMissing" xml:space="preserve"><value>Nicht installiert – die Emulation läuft, aber manche Spiele sehen evtl. zwei Controller.</value></data>
+  <data name="Driver_Install" xml:space="preserve"><value>Installieren</value></data>
+  <data name="Driver_Download" xml:space="preserve"><value>Downloadseite</value></data>
+  <data name="Driver_CheckAgain" xml:space="preserve"><value>Erneut prüfen</value></data>
+  <data name="Driver_Hint" xml:space="preserve"><value>„Installieren“ nutzt winget und fragt nach Admin-Rechten. Falls Windows einen Neustart verlangt, neu starten und dann „Erneut prüfen“ klicken.</value></data>
+  <data name="Banner_ViGEmMissing" xml:space="preserve"><value>Die Xbox-/DualShock-4-Emulation braucht den kostenlosen ViGEmBus-Treiber, der nicht installiert ist. Alles andere in PadPilot funktioniert auch ohne.</value></data>
+  <data name="Banner_InstallViGEm" xml:space="preserve"><value>ViGEmBus installieren</value></data>
+  <data name="Banner_Dismiss" xml:space="preserve"><value>Hinweis bis zum nächsten Start ausblenden</value></data>
+  <data name="Heading_Support" xml:space="preserve"><value>SUPPORT</value></data>
+  <data name="Support_Intro" xml:space="preserve"><value>Ein Problem gefunden? Diagnose kopieren und in deine Meldung einfügen. Sie enthält PadPilot- und Windows-Version, Controller-Modell und Verbindung, Treiberversionen und die wichtigsten Einstellungen – nichts Persönliches (keine Seriennummer, Bluetooth-Adresse oder Benutzername).</value></data>
+  <data name="Support_Copy" xml:space="preserve"><value>Diagnose kopieren</value></data>
+  <data name="Support_Report" xml:space="preserve"><value>Problem auf GitHub melden</value></data>
+  <data name="Support_Copied" xml:space="preserve"><value>In die Zwischenablage kopiert.</value></data>
+  <data name="Support_CopyFailed" xml:space="preserve"><value>Kein Zugriff auf die Zwischenablage – bitte den Text unten von Hand kopieren.</value></data>
 </root>

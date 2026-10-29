@@ -6,7 +6,6 @@ PadPilot includes the following libraries. They are compiled into `PadPilot.exe`
 |---|---|---|---|
 | HidSharp | 2.1.0 | Apache License 2.0 | <https://www.zer7.com/software/hidsharp> |
 | Nefarius.ViGEm.Client | 1.21.256 | MIT | <https://github.com/ViGEm/ViGEm.NET> |
-| System.ServiceProcess.ServiceController | 8.0.1 | MIT | <https://dot.net/> |
 | .NET 8 runtime (self-contained build) | 8.0 | MIT | <https://github.com/dotnet/runtime> |
 
 The full license texts are available at the project links above and at

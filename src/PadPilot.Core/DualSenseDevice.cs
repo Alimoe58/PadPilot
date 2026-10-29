@@ -39,6 +39,7 @@ public sealed class DualSenseDevice : IDisposable
     public ConnectionType Connection { get; }
     public string DisplayName { get; }
     public string DevicePath => _device.DevicePath;
+    public int ProductId => _device.ProductID;
     public long ReportCount => Interlocked.Read(ref _reportCount);
 
     /// <summary>Raised on the read thread for every input report, for low-latency consumers like emulation.</summary>

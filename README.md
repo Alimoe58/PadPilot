@@ -9,7 +9,7 @@ Adaptive triggers, lightbar, Xbox / DualShock 4 emulation, touchpad and gyro mou
 
 ## Download
 
-Get **`PadPilot.exe`** from the [latest release](../../releases/latest). It is a single file – no installation, no .NET needed. Just run it.
+Get **`PadPilot.exe`** from the [latest release](../../releases/latest). The app itself is a single file – no installation, no .NET needed. Just run it.
 
 Windows SmartScreen may warn you the first time because the file isn't code-signed: click **More info → Run anyway**.
 
@@ -17,10 +17,21 @@ Windows SmartScreen may warn you the first time because the file isn't code-sign
 
 - Windows 10 or 11, 64-bit
 - A DualSense or DualSense Edge controller (USB or Bluetooth)
-- For Xbox / DualShock 4 emulation: the **[ViGEmBus](https://github.com/nefarius/ViGEmBus/releases)** driver
-- Optional: **[HidHide](https://github.com/nefarius/HidHide/releases)**, so games only see the virtual controller (PadPilot can install it for you from the Emulation tab)
+
+Everything except emulation works right away. **Xbox / DualShock 4 emulation needs two separate drivers:**
+
+| Driver | Needed for | |
+|---|---|---|
+| **[ViGEmBus](https://github.com/nefarius/ViGEmBus/releases)** | the virtual Xbox / DualShock 4 controller | required for emulation |
+| **[HidHide](https://github.com/nefarius/HidHide/releases)** | hiding the real DualSense so games don't see two controllers | optional, recommended |
+
+PadPilot checks for both at startup. If ViGEmBus is missing, a note at the top of the window tells you so; the **Emulation** tab shows the state of both drivers with an **Install** button (via winget, asks for admin rights) and a link to the download page. Restart the PC if the installer asks for it.
 
 Note: ViGEmBus is no longer actively developed by its author, but it keeps working on current Windows versions.
+
+## Reporting problems
+
+Open **Settings → Support → Copy diagnostics** and paste the text into a [new issue](../../issues/new). It contains the PadPilot and Windows version, controller model and connection type, driver versions and the main settings – nothing personal. This is especially helpful for DualSense Edge owners, as I can't test the Edge myself.
 
 ## Features
 

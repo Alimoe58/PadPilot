@@ -118,6 +118,64 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Profiles = new ProfilesViewModel(CaptureProfile, ApplyProfile, AppSettings.Current);
     }
 
+    /// <summary>
+    /// Plain-text summary for bug reports: app, Windows, controller, drivers and the main settings.
+    /// Leaves out anything personal (no serial number, Bluetooth address, user name or paths).
+    /// </summary>
+    public string BuildDiagnostics()
+    {
+        var sb = new System.Text.StringBuilder();
+        string version = System.Reflection.Assembly.GetEntryAssembly()?
+            .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+            .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ?? "?";
+        sb.AppendLine($"PadPilot {version}");
+        sb.AppendLine($"Windows: {WindowsDescription()}");
+        sb.AppendLine($".NET: {Environment.Version}");
+
+        if (_device != null && _device.TryGetLatest(out var state, out _))
+        {
+            sb.AppendLine($"Controller: {_device.DisplayName} (PID 0x{_device.ProductId:X4}), " +
+                          $"{(_device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth")}, " +
+                          $"battery {state!.BatteryPercent} % ({state.Charge}), {ReportRate}");
+        }
+        else
+        {
+            sb.AppendLine("Controller: not connected");
+        }
+
+        sb.AppendLine($"Drivers: {Emulation.ViGEm.Summary} | {Emulation.HidHideDriver.Summary}" +
+                      $"{(Emulation.HidHideDriver.Installed && !HidHideController.IsInstalled ? " (HidHideCLI.exe not found)" : "")}");
+        sb.AppendLine($"Emulation: {_emulation.Mode}, status {_emulation.Status}" +
+                      $"{(_emulation.ErrorMessage is string err ? $" ({err})" : "")}");
+        sb.AppendLine($"Hide controller with HidHide: {(Emulation.HideController ? "on" : "off")}, currently hidden: {(_hidHide.HiddenInstance != null ? "yes" : "no")}");
+        sb.AppendLine($"Mouse: touchpad {(Mouse.TouchpadEnabled ? "on" : "off")}, gyro {(Mouse.GyroEnabled ? $"on ({Mouse.Activation})" : "off")}, " +
+                      $"gyro data {(AppSettings.Current.GyroDisabled ? "disabled" : "enabled")}");
+        sb.AppendLine($"Mods: UDP {(AppSettings.Current.ModUdpEnabled ? $"on (port {AppSettings.Current.ModUdpPort}, {(Mods.UdpOk ? "listening" : "not listening")})" : "off")}, " +
+                      $"text file {(AppSettings.Current.ModFileEnabled ? "on" : "off")}, mod overrides active: {(_modOverrides.IsActive ? "yes" : "no")}");
+        sb.Append($"Language: {Loc.Instance.Language}");
+        return sb.ToString();
+    }
+
+    private static string WindowsDescription()
+    {
+        try
+        {
+            using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+            string product = key?.GetValue("ProductName") as string ?? "Windows";
+            string build = key?.GetValue("CurrentBuild") as string ?? "?";
+            // Windows 11 still reports "Windows 10" as product name; the build number tells them apart.
+            if (int.TryParse(build, out int b) && b >= 22000)
+                product = product.Replace("Windows 10", "Windows 11");
+            string release = key?.GetValue("DisplayVersion") as string ?? "";
+            string ubr = key?.GetValue("UBR")?.ToString() ?? "0";
+            return $"{product} {release} (build {build}.{ubr}), {(Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")}".Replace("  ", " ");
+        }
+        catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException)
+        {
+            return Environment.OSVersion.VersionString;
+        }
+    }
+
     private Profile CaptureProfile() => new()
     {
         Outputs = Output.ToProfile(),

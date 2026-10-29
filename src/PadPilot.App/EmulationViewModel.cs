@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.ServiceProcess;
 using PadPilot.Core.Emulation;
 
 namespace PadPilot.App;
@@ -18,11 +16,13 @@ public sealed class EmulationViewModel : ObservableObject
     {
         _service = service;
         _settings = settings;
-        HidHideInstalled = IsServiceInstalled("HidHide") && HidHideController.IsInstalled;
+        CheckDrivers();
         Loc.Instance.PropertyChanged += (_, _) =>
         {
             UpdateStatus();
             UpdateHidHideText();
+            OnPropertyChanged(nameof(ViGEmText));
+            OnPropertyChanged(nameof(HidHideDriverText));
         };
         UpdateStatus();
         UpdateHidHideText();
@@ -65,8 +65,52 @@ public sealed class EmulationViewModel : ObservableObject
     public double GameRumbleLarge { get => _gameRumbleLarge; set => Set(ref _gameRumbleLarge, value); }
     public double GameRumbleSmall { get => _gameRumbleSmall; set => Set(ref _gameRumbleSmall, value); }
 
-    public bool HidHideInstalled { get; }
+    // Drivers: ViGEmBus is required for emulation, HidHide is optional.
+    private DriverInfo _vigem = null!;
+    private DriverInfo _hidHide = null!;
+    private bool _bannerDismissed;
+
+    public DriverInfo ViGEm => _vigem;
+    public DriverInfo HidHideDriver => _hidHide;
+    public bool ViGEmInstalled => _vigem.Installed;
+    public bool ViGEmMissing => !_vigem.Installed;
+
+    /// <summary>HidHide usable: driver installed and its command line tool found.</summary>
+    public bool HidHideInstalled => _hidHide.Installed && HidHideController.IsInstalled;
     public bool HidHideMissing => !HidHideInstalled;
+
+    public string ViGEmText => _vigem.Installed
+        ? Loc.Format("Driver_Installed", _vigem.Version ?? "?")
+        : Loc.Get("Driver_ViGEmMissing");
+
+    public string HidHideDriverText => HidHideInstalled
+        ? Loc.Format("Driver_Installed", _hidHide.Version ?? "?")
+        : Loc.Get("Driver_HidHideMissing");
+
+    /// <summary>The banner under the status bar: shown at startup when ViGEmBus is missing, until dismissed.</summary>
+    public bool ShowDriverBanner => ViGEmMissing && !_bannerDismissed;
+
+    /// <summary>Reads the driver state again, e.g. after the user installed one.</summary>
+    public void CheckDrivers()
+    {
+        _vigem = DriverCheck.ViGEmBus();
+        _hidHide = DriverCheck.HidHide();
+        OnPropertyChanged(string.Empty); // refresh every binding
+        // A driver installed while PadPilot runs: let the emulation try again.
+        if (_vigem.Installed && _service.Status == EmulationStatus.DriverMissing)
+            _service.Retry();
+    }
+
+    public void DismissBanner()
+    {
+        _bannerDismissed = true;
+        OnPropertyChanged(nameof(ShowDriverBanner));
+    }
+
+    public void InstallViGEm() => DriverCheck.Install(_vigem);
+    public void InstallHidHide() => DriverCheck.Install(_hidHide);
+    public void OpenViGEmPage() => DriverCheck.OpenDownloadPage(_vigem);
+    public void OpenHidHidePage() => DriverCheck.OpenDownloadPage(_hidHide);
 
     private string _hidHideStatusText = "";
     private bool _hidHideHidden;
@@ -104,12 +148,6 @@ public sealed class EmulationViewModel : ObservableObject
             ? Loc.Format("HidHideState_Error", _hidHideError)
             : Loc.Get(HidHideHidden ? "HidHideState_Hidden" : "HidHideState_Visible");
 
-    /// <summary>Installs HidHide through winget in a visible console; Windows asks for admin rights.</summary>
-    public static void InstallHidHide() =>
-        Process.Start(new ProcessStartInfo("winget",
-            "install --id Nefarius.HidHide --exact --accept-source-agreements --accept-package-agreements")
-        { UseShellExecute = true });
-
     /// <summary>Called on the UI thread when the service reports a change.</summary>
     public void UpdateStatus()
     {
@@ -119,18 +157,5 @@ public sealed class EmulationViewModel : ObservableObject
             : Loc.Get($"EmulationStatus_{Status}");
         OnPropertyChanged(nameof(IsActive));
         OnPropertyChanged(nameof(HasProblem));
-    }
-
-    private static bool IsServiceInstalled(string name)
-    {
-        try
-        {
-            return ServiceController.GetDevices().Any(s => s.ServiceName.Equals(name, StringComparison.OrdinalIgnoreCase))
-                || ServiceController.GetServices().Any(s => s.ServiceName.Equals(name, StringComparison.OrdinalIgnoreCase));
-        }
-        catch (InvalidOperationException)
-        {
-            return false;
-        }
     }
 }

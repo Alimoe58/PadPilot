@@ -19,6 +19,67 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel>
+            <!-- Driver check: what emulation needs, and how to get it -->
+            <Border Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="{local:Tr Heading_Drivers}" Style="{StaticResource Heading}" />
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{local:Tr Driver_ViGEmLabel}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="{Binding ViGEmText}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Foreground" Value="#22C55E" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ViGEmMissing}" Value="True">
+                                            <Setter Property="Foreground" Value="#EF4444" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,4"
+                                    Visibility="{Binding ViGEmMissing, Converter={StaticResource BoolToVisibility}}">
+                            <Button Content="{local:Tr Driver_Install}" Style="{StaticResource ActionButton}" Click="InstallViGEm_Click" />
+                            <Button Content="{local:Tr Driver_Download}" Style="{StaticResource ActionButton}" Click="ViGEmPage_Click" />
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Text="{local:Tr Driver_HidHideLabel}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HidHideDriverText}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Foreground" Value="#22C55E" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HidHideMissing}" Value="True">
+                                            <Setter Property="Foreground" Value="#F59E0B" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,4"
+                                    Visibility="{Binding HidHideMissing, Converter={StaticResource BoolToVisibility}}">
+                            <Button Content="{local:Tr Driver_Install}" Style="{StaticResource ActionButton}" Click="HidHideInstall_Click" />
+                            <Button Content="{local:Tr Driver_Download}" Style="{StaticResource ActionButton}" Click="HidHidePage_Click" />
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="{local:Tr Driver_CheckAgain}" Style="{StaticResource ActionButton}" Click="CheckDrivers_Click" />
+                        <TextBlock Text="{local:Tr Driver_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap"
+                                   VerticalAlignment="Center" MaxWidth="760" Margin="6,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <Border Style="{StaticResource Panel}">
                 <StackPanel>
                     <TextBlock Text="{local:Tr Heading_Emulation}" Style="{StaticResource Heading}" />

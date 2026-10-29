@@ -12,6 +12,7 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -37,7 +38,19 @@
             </DockPanel>
         </Border>
 
-        <TabControl Grid.Row="1">
+        <!-- Shown at startup when the emulation driver is missing -->
+        <Border Grid.Row="1" Style="{StaticResource Panel}" Background="#3A2A12" BorderBrush="#F59E0B" BorderThickness="1"
+                Visibility="{Binding Emulation.ShowDriverBanner, Converter={StaticResource BoolToVisibility}}">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="✕" Style="{StaticResource ActionButton}" Margin="6,0,0,0"
+                        ToolTip="{local:Tr Banner_Dismiss}" Click="DismissBanner_Click" />
+                <Button DockPanel.Dock="Right" Content="{local:Tr Driver_CheckAgain}" Style="{StaticResource ActionButton}" Click="CheckDrivers_Click" />
+                <Button DockPanel.Dock="Right" Content="{local:Tr Banner_InstallViGEm}" Style="{StaticResource ActionButton}" Click="InstallViGEm_Click" />
+                <TextBlock Text="{local:Tr Banner_ViGEmMissing}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" />
+            </DockPanel>
+        </Border>
+
+        <TabControl Grid.Row="2">
             <TabItem Header="{local:Tr Tab_Inputs}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -323,6 +336,22 @@
             <TabItem Header="{local:Tr Tab_Settings}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
+                    <!-- Support: diagnostics for bug reports -->
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Support}" Style="{StaticResource Heading}" />
+                            <TextBlock Text="{local:Tr Support_Intro}" TextWrapping="Wrap" Margin="0,0,0,10" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button Content="{local:Tr Support_Copy}" Style="{StaticResource ActionButton}" Click="CopyDiagnostics_Click" />
+                                <Button Content="{local:Tr Support_Report}" Style="{StaticResource ActionButton}" Click="ReportProblem_Click" />
+                                <TextBlock x:Name="DiagnosticsCopied" Foreground="#22C55E" VerticalAlignment="Center" Margin="6,0,0,0" />
+                            </StackPanel>
+                            <TextBox x:Name="DiagnosticsBox" IsReadOnly="True" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
+                                     Background="#1E2025" Foreground="{StaticResource MutedBrush}" BorderThickness="0" Padding="8"
+                                     Visibility="Collapsed" />
+                        </StackPanel>
+                    </Border>
+
                     <Border Style="{StaticResource Panel}">
                         <StackPanel>
                             <TextBlock Text="{local:Tr Heading_Language}" Style="{StaticResource Heading}" />

@@ -11,7 +11,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>PadPilot</AssemblyName>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <!-- Show "1.0.0" in the file properties instead of "1.0.0+<git hash>" -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>PadPilot</Product>
@@ -29,10 +29,6 @@
     <Using Remove="System.Windows.Forms" />
     <Using Remove="System.Drawing" />
     <Resource Include="app.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

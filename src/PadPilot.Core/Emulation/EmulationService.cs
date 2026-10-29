@@ -56,6 +56,14 @@ public sealed class EmulationService : IDisposable
         }
     }
 
+    /// <summary>Tries to create the virtual controller again, e.g. after the driver was installed.</summary>
+    public void Retry()
+    {
+        lock (_lock)
+            RecreatePad();
+        StatusChanged?.Invoke();
+    }
+
     public void Attach(DualSenseDevice device)
     {
         lock (_lock)
