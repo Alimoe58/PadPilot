@@ -312,6 +312,10 @@
                 <views:EmulationView DataContext="{Binding Emulation}" />
             </TabItem>
 
+            <TabItem Header="{local:Tr Tab_Mouse}">
+                <views:MouseView DataContext="{Binding Mouse}" />
+            </TabItem>
+
             <TabItem Header="{local:Tr Tab_Settings}">
                 <StackPanel DataContext="{Binding Settings}">
                     <Border Style="{StaticResource Panel}">

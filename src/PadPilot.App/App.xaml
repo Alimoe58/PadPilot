@@ -16,6 +16,7 @@
         <local:EnumLabelConverter x:Key="EnumLabel" />
         <local:StickOffsetConverter x:Key="StickOffset" />
         <local:EqualsVisibilityConverter x:Key="EqualsVisibility" />
+        <local:NotConverter x:Key="Not" />
 
         <DataTemplate x:Key="EnumItem">
             <TextBlock Foreground="Black">

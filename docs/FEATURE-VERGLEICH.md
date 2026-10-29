@@ -45,8 +45,8 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 
 | Feature | DSX | PadPilot |
 |---|---|---|
-| Touchpad als Maus | ✅ | 🗓️ Schritt 4 |
-| Gyro als Maus | ✅ | 🗓️ Schritt 4 (optional) |
+| Touchpad als Maus | ✅ | ✅ Bewegen, Klicken (rechte Hälfte = Rechtsklick), Zwei-Finger-Scrollen, Antippen |
+| Gyro als Maus | ✅ | ✅ mit Aktivierungstaste und Kalibrierung |
 | Tasten neu belegen | ✅ | ➕ |
 | Controller → Tastatur/Maus (für Spiele ohne Controller-Support) | ✅ | ➕ |
 | Tastatur-Kürzel / Makros | ✅ (Shortcuts) | ➕ |

@@ -39,6 +39,9 @@ public sealed class AppSettings
     public string? HidHideHiddenInstance { get; set; }
     public bool HidHideCloakSetByUs { get; set; }
 
+    public PadPilot.Core.Mouse.TouchpadMouseSettings TouchpadMouse { get; set; } = new();
+    public PadPilot.Core.Mouse.GyroMouseSettings GyroMouse { get; set; } = new();
+
     public DeadzoneSettings LeftStick { get; set; } = new();
     public DeadzoneSettings RightStick { get; set; } = new();
     public DeadzoneSettings L2 { get; set; } = new() { Inner = 0 };

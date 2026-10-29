@@ -26,6 +26,14 @@ public sealed class StickOffsetConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>Inverts a bool (e.g. disable a button while something runs).</summary>
+public sealed class NotConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value is not true;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value is not true;
+}
+
 /// <summary>Visible when the bound value's name equals ConverterParameter (used to pick the button layout).</summary>
 public sealed class EqualsVisibilityConverter : IValueConverter
 {

@@ -111,4 +111,30 @@
   <data name="Set_GyroDisabled" xml:space="preserve"><value>Disable gyro completely</value></data>
   <data name="Set_GyroHint" xml:space="preserve"><value>PadPilot then ignores all gyro and accelerometer data from the controller: the live view, the emulation and gyro features receive nothing. Programs that read the DualSense directly (e.g. Steam) are not affected – unless the controller is hidden with HidHide during emulation.</value></data>
   <data name="Motion_Disabled" xml:space="preserve"><value>Gyro is disabled (Settings tab).</value></data>
+  <data name="Tab_Mouse" xml:space="preserve"><value>Mouse</value></data>
+  <data name="Heading_TouchpadMouse" xml:space="preserve"><value>TOUCHPAD AS MOUSE</value></data>
+  <data name="Heading_GyroMouse" xml:space="preserve"><value>GYRO AS MOUSE</value></data>
+  <data name="Mouse_TouchpadEnabled" xml:space="preserve"><value>Use the touchpad as a mouse</value></data>
+  <data name="Mouse_Sensitivity" xml:space="preserve"><value>Sensitivity</value></data>
+  <data name="Mouse_Acceleration" xml:space="preserve"><value>Acceleration</value></data>
+  <data name="Mouse_ScrollSpeed" xml:space="preserve"><value>Scroll speed</value></data>
+  <data name="Mouse_RightHalf" xml:space="preserve"><value>Pressing the right half is a right click</value></data>
+  <data name="Mouse_TwoFingerScroll" xml:space="preserve"><value>Scroll with two fingers</value></data>
+  <data name="Mouse_TapToClick" xml:space="preserve"><value>Tap to click</value></data>
+  <data name="Mouse_TouchpadHint" xml:space="preserve"><value>One finger moves the pointer, pressing the touchpad clicks (with two fingers on it: right click). Works alongside the emulation; in games the touchpad click is also sent to the virtual controller.</value></data>
+  <data name="Mouse_GyroEnabled" xml:space="preserve"><value>Move the pointer by moving the controller</value></data>
+  <data name="Mouse_Activation" xml:space="preserve"><value>Active</value></data>
+  <data name="GyroActivation_Always" xml:space="preserve"><value>Always</value></data>
+  <data name="GyroActivation_HoldL1" xml:space="preserve"><value>While holding L1</value></data>
+  <data name="GyroActivation_HoldR1" xml:space="preserve"><value>While holding R1</value></data>
+  <data name="GyroActivation_HoldL2" xml:space="preserve"><value>While holding L2</value></data>
+  <data name="GyroActivation_TouchpadTouched" xml:space="preserve"><value>While touching the touchpad</value></data>
+  <data name="Mouse_InvertX" xml:space="preserve"><value>Invert left/right</value></data>
+  <data name="Mouse_InvertY" xml:space="preserve"><value>Invert up/down</value></data>
+  <data name="Gyro_Calibrate" xml:space="preserve"><value>Calibrate gyro</value></data>
+  <data name="Gyro_Calibrating" xml:space="preserve"><value>Calibrating – put the controller down and don&apos;t touch it (2 seconds) …</value></data>
+  <data name="Gyro_CalibrationFailed" xml:space="preserve"><value>Calibration failed: no data from the controller.</value></data>
+  <data name="Gyro_Calibrated" xml:space="preserve"><value>Resting value: X {0} · Y {1} · Z {2}</value></data>
+  <data name="Mouse_GyroSwitchedOff" xml:space="preserve"><value>The gyro is switched off in Settings – the gyro mouse receives no data.</value></data>
+  <data name="Mouse_GyroHint" xml:space="preserve"><value>Turning the controller left/right moves the pointer sideways, tilting it moves it up/down. If the pointer drifts while the controller lies still, calibrate the gyro.</value></data>
 </root>

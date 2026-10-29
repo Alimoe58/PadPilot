@@ -25,6 +25,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private DateTime _lastHiddenRefresh;
 
     private readonly EmulationService _emulation = new();
+    private readonly PadPilot.Core.Mouse.MouseService _mouse = new();
     // Rumble requested by a game through the virtual controller (written on a ViGEm thread).
     private volatile int _gameRumbleLarge;
     private volatile int _gameRumbleSmall;
@@ -56,6 +57,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public DeadzonesViewModel Deadzones { get; } = new(AppSettings.Current);
     public SettingsViewModel Settings { get; } = new(AppSettings.Current);
     public EmulationViewModel Emulation { get; }
+    public MouseViewModel Mouse { get; }
 
     /// <summary>False while the window is hidden in the tray; the live view then only refreshes twice a second.</summary>
     public bool IsUiVisible { get; set; } = true;
@@ -70,7 +72,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         {
             if (_device != null)
                 _device.MotionDisabled = AppSettings.Current.GyroDisabled;
+            Mouse!.RefreshGyroSwitch();
         };
+        Mouse = new MouseViewModel(_mouse, AppSettings.Current, dispatcher);
         Loc.Instance.PropertyChanged += (_, _) => UpdateTexts();
         UpdateTexts();
 
@@ -184,6 +188,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         ControllerName = _device.DisplayName;
         Layout = ButtonLayout.PlayStation5; // DualSense and DualSense Edge share the PS5 layout
         _emulation.Attach(_device);
+        _mouse.Attach(_device);
         Connection = _device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth";
         UpdateTexts();
     }
@@ -192,6 +197,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         // Detach first: the device's read thread must not be inside the emulation while it shuts down.
         _emulation.Detach();
+        _mouse.Detach();
         _device?.Dispose();
         _device = null;
     }
@@ -275,7 +281,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _hidHide.Release();
         AppSettings.Current.HidHideHiddenInstance = _hidHide.HiddenInstance;
         AppSettings.Current.HidHideCloakSetByUs = _hidHide.CloakSetByUs;
+        _mouse.Dispose();
         Deadzones.SaveTo(AppSettings.Current);
+        Mouse.SaveTo(AppSettings.Current);
         AppSettings.Current.Save();
     }
 }
