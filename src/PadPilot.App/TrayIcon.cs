@@ -10,6 +10,7 @@ public sealed class TrayIcon : IDisposable
     private readonly Forms.NotifyIcon _icon;
     private readonly Forms.ToolStripMenuItem _openItem;
     private readonly Forms.ToolStripMenuItem _exitItem;
+    private readonly Forms.ToolStripMenuItem _profilesItem;
     private bool _balloonShown;
 
     public event Action? OpenRequested;
@@ -25,8 +26,11 @@ public sealed class TrayIcon : IDisposable
         _exitItem = new Forms.ToolStripMenuItem();
         _exitItem.Click += (_, _) => ExitRequested?.Invoke();
 
+        _profilesItem = new Forms.ToolStripMenuItem();
+
         var menu = new Forms.ContextMenuStrip();
         menu.Items.Add(_openItem);
+        menu.Items.Add(_profilesItem);
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(_exitItem);
 
@@ -55,11 +59,24 @@ public sealed class TrayIcon : IDisposable
         _icon.ShowBalloonTip(3000, "PadPilot", Loc.Get("Tray_Balloon"), Forms.ToolTipIcon.None);
     }
 
+    /// <summary>Fills the "Profile" submenu; the active one is ticked.</summary>
+    public void SetProfiles(IEnumerable<string> names, string active, Action<string> select)
+    {
+        _profilesItem.DropDownItems.Clear();
+        foreach (string name in names)
+        {
+            var item = new Forms.ToolStripMenuItem(name) { Checked = name == active };
+            item.Click += (_, _) => select(name);
+            _profilesItem.DropDownItems.Add(item);
+        }
+    }
+
     private void OnLanguageChanged(object? sender, PropertyChangedEventArgs e) => UpdateMenuTexts();
 
     private void UpdateMenuTexts()
     {
         _openItem.Text = Loc.Get("Tray_Open");
+        _profilesItem.Text = Loc.Get("Tray_Profiles");
         _exitItem.Text = Loc.Get("Tray_Exit");
     }
 

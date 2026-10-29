@@ -63,8 +63,8 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 
 | Feature | DSX | PadPilot |
 |---|---|---|
-| Profile speichern | ✅ | 🗓️ Schritt 6 |
-| Mit Windows starten | ✅ | 🗓️ Schritt 6 |
+| Profile speichern | ✅ | ✅ benannte Profile, Wechsel oben im Fenster und im Tray-Menü |
+| Mit Windows starten | ✅ | ✅ minimiert im Infobereich, ohne Admin-Rechte |
 | In den Infobereich minimieren, minimiert starten | (nicht beschrieben) | ✅ |
 | Mehrere Sprachen | ✅ 20+ | ✅ Deutsch, Englisch (weitere über .resx-Dateien) |
 | Helles/dunkles Design, Hintergrundbilder, Rahmenfarbe | ✅ | ➕ |

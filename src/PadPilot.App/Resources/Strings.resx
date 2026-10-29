@@ -159,4 +159,24 @@
   <data name="Mods_Reset" xml:space="preserve"><value>Reset</value></data>
   <data name="Mods_ProtocolIntro" xml:space="preserve"><value>Mods send a JSON object as a UDP packet to 127.0.0.1 and the port on the left (or write it into the text file). Every field is optional – only what is sent changes:</value></data>
   <data name="Mods_ProtocolDetails" xml:space="preserve"><value>Trigger modes: off · resistance (start, strength) · section (start, end, strength) · weapon (start, end, strength) · vibration (start, strength, frequency). Positions 0–9, strength 1–8. micLed: off/on/pulse. &quot;reset&quot;: true hands control back to PadPilot. An empty object {} only asks for the status. Every packet is answered with JSON: controller, connection, battery, emulation. Full description: docs/MOD-PROTOKOLL.md</value></data>
+  <data name="Label_Profile" xml:space="preserve"><value>Profile</value></data>
+  <data name="Tray_Profiles" xml:space="preserve"><value>Profile</value></data>
+  <data name="Heading_Profiles" xml:space="preserve"><value>PROFILES</value></data>
+  <data name="Profiles_Active" xml:space="preserve"><value>Active profile</value></data>
+  <data name="Profiles_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Profiles_New" xml:space="preserve"><value>Save as new profile</value></data>
+  <data name="Profiles_Rename" xml:space="preserve"><value>Rename active</value></data>
+  <data name="Profiles_Delete" xml:space="preserve"><value>Delete active</value></data>
+  <data name="Profiles_OpenFolder" xml:space="preserve"><value>Open profile folder</value></data>
+  <data name="Profiles_Hint" xml:space="preserve"><value>A profile contains lightbar, LEDs, adaptive triggers, deadzones, emulation and mouse settings. Changes are saved to the active profile automatically (when switching and when closing). Not part of a profile: gyro calibration, language, window and mod options. Switch quickly at the top or in the tray menu.</value></data>
+  <data name="Profiles_NameMissing" xml:space="preserve"><value>Please enter a name first.</value></data>
+  <data name="Profiles_NameTaken" xml:space="preserve"><value>A profile called &quot;{0}&quot; already exists.</value></data>
+  <data name="Profiles_Created" xml:space="preserve"><value>Profile &quot;{0}&quot; created and active.</value></data>
+  <data name="Profiles_Renamed" xml:space="preserve"><value>Renamed to &quot;{0}&quot;.</value></data>
+  <data name="Profiles_Deleted" xml:space="preserve"><value>Profile &quot;{0}&quot; deleted.</value></data>
+  <data name="Profiles_LastOne" xml:space="preserve"><value>The last profile can&apos;t be deleted.</value></data>
+  <data name="Profiles_LoadFailed" xml:space="preserve"><value>Profile &quot;{0}&quot; could not be read.</value></data>
+  <data name="Set_StartWithWindows" xml:space="preserve"><value>Start with Windows (minimized in the tray)</value></data>
+  <data name="Heading_Language" xml:space="preserve"><value>LANGUAGE</value></data>
+  <data name="Label_Language" xml:space="preserve"><value>Language</value></data>
 </root>

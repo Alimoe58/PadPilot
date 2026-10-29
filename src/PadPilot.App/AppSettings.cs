@@ -19,12 +19,15 @@ public sealed class AppSettings
 
     public static AppSettings Current { get; } = Load();
 
-    /// <summary>"de" or "en"; null means follow the Windows language.</summary>
+    /// <summary>"de" or "en"; null means English (the default).</summary>
     public string? Language { get; set; }
 
     public bool MinimizeToTray { get; set; } = true;
     public bool CloseToTray { get; set; }
     public bool StartMinimized { get; set; }
+
+    /// <summary>Name of the profile in use (see ProfileStore).</summary>
+    public string? ActiveProfile { get; set; }
 
     /// <summary>Gyro and accelerometer switched off in the controller.</summary>
     public bool GyroDisabled { get; set; }

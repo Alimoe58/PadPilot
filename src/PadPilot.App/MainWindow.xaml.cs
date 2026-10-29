@@ -26,6 +26,8 @@ public partial class MainWindow : Window
                 UpdateTrayToolTip();
         };
         UpdateTrayToolTip();
+        _viewModel.Profiles.ProfilesChanged += UpdateTrayProfiles;
+        UpdateTrayProfiles();
 
         StateChanged += OnStateChanged;
         IsVisibleChanged += (_, _) => UpdateUiVisible();
@@ -87,6 +89,14 @@ public partial class MainWindow : Window
         _tray.SetToolTip(_viewModel.Battery is "–" or ""
             ? $"PadPilot · {_viewModel.Status}"
             : $"PadPilot · {_viewModel.Status} · {_viewModel.Battery}");
+
+    private void UpdateTrayProfiles() =>
+        _tray.SetProfiles(_viewModel.Profiles.Names, _viewModel.Profiles.Active, name => _viewModel.Profiles.Switch(name));
+
+    private void NewProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.CreateNew();
+    private void RenameProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.RenameActive();
+    private void DeleteProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.DeleteActive();
+    private void ProfileFolder_Click(object sender, RoutedEventArgs e) => ProfilesViewModel.OpenFolder();
 
     private void Swatch_Click(object sender, RoutedEventArgs e)
     {

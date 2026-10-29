@@ -28,9 +28,8 @@ public sealed class Loc : INotifyPropertyChanged
 
     private Loc()
     {
-        string code = AppSettings.Current.Language
-            ?? (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "de" ? "de" : "en");
-        _culture = CultureInfo.GetCultureInfo(code);
+        // English until the user picks another language in Settings (independent of the Windows language).
+        _culture = CultureInfo.GetCultureInfo(AppSettings.Current.Language ?? "en");
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

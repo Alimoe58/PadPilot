@@ -68,6 +68,20 @@ public sealed class MouseViewModel : ObservableObject
         }));
     }
 
+    public TouchpadMouseSettings TouchpadSettings => _touch;
+    public GyroMouseSettings GyroSettings => _gyro;
+
+    /// <summary>Takes over a profile's mouse settings; the gyro calibration stays (it belongs to the controller).</summary>
+    public void Apply(TouchpadMouseSettings touch, GyroMouseSettings gyro)
+    {
+        _touch = touch;
+        _gyro = gyro with { Bias = _gyro.Bias };
+        _service.Touchpad = _touch;
+        _service.Gyro = _gyro;
+        OnPropertyChanged(string.Empty); // refresh every binding
+        UpdateCalibrationText();
+    }
+
     public void SaveTo(AppSettings settings)
     {
         settings.TouchpadMouse = _touch;

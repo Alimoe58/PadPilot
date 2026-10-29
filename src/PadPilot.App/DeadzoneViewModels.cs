@@ -79,12 +79,13 @@ public sealed class StickDeadzoneViewModel : ObservableObject
         UpdateCircularityText();
     }
 
-    public void ResetDefaults()
+    public void ResetDefaults() => Apply(new DeadzoneSettings());
+
+    public void Apply(DeadzoneSettings s)
     {
-        var defaults = new DeadzoneSettings();
-        Inner = (int)Math.Round(defaults.Inner * 100);
-        Outer = (int)Math.Round(defaults.Outer * 100);
-        Shape = defaults.Shape;
+        Inner = (int)Math.Round(s.Inner * 100);
+        Outer = (int)Math.Round(s.Outer * 100);
+        Shape = s.Shape;
     }
 
     public void Update(byte x, byte y)
@@ -173,11 +174,12 @@ public sealed class TriggerDeadzoneViewModel : ObservableObject
     public double RawPercent { get => _rawPercent; private set => Set(ref _rawPercent, value); }
     public double OutputPercent { get => _outputPercent; private set => Set(ref _outputPercent, value); }
 
-    public void ResetDefaults()
+    public void ResetDefaults() => Apply(new DeadzoneSettings { Inner = 0 });
+
+    public void Apply(DeadzoneSettings s)
     {
-        var defaults = new DeadzoneSettings { Inner = 0 };
-        Inner = (int)Math.Round(defaults.Inner * 100);
-        Outer = (int)Math.Round(defaults.Outer * 100);
+        Inner = (int)Math.Round(s.Inner * 100);
+        Outer = (int)Math.Round(s.Outer * 100);
     }
 
     public void Update(byte raw)

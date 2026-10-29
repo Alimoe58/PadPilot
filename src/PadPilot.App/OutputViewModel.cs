@@ -57,6 +57,17 @@ public sealed class TriggerViewModel : ObservableObject
         TriggerMode.Vibration => TriggerEffect.Vibration(Start, Strength, Frequency),
         _ => TriggerEffect.Off,
     };
+
+    public TriggerProfile ToProfile() => new() { Mode = Mode, Start = Start, End = End, Strength = Strength, Frequency = Frequency };
+
+    public void Apply(TriggerProfile p)
+    {
+        Start = p.Start;
+        End = p.End;
+        Strength = p.Strength;
+        Frequency = p.Frequency;
+        Mode = p.Mode;
+    }
 }
 
 /// <summary>Everything on the outputs tab. Raises <see cref="Changed"/> whenever the controller needs an update.</summary>
@@ -131,6 +142,32 @@ public sealed class OutputViewModel : ObservableObject
 
     public IReadOnlyList<MicLed> MicLedModes { get; } = Enum.GetValues<MicLed>();
     public IReadOnlyList<LedBrightness> BrightnessLevels { get; } = Enum.GetValues<LedBrightness>();
+
+    /// <summary>Current settings for a profile (the rumble test sliders are not included).</summary>
+    public OutputProfile ToProfile() => new()
+    {
+        Lightbar = Hex,
+        PlayerLeds = [Led1, Led2, Led3, Led4, Led5],
+        LedBrightness = LedBrightness,
+        MicLed = MicLed,
+        LeftTrigger = LeftTrigger.ToProfile(),
+        RightTrigger = RightTrigger.ToProfile(),
+    };
+
+    public void Apply(OutputProfile p)
+    {
+        Hex = p.Lightbar;
+        bool Led(int i) => i < p.PlayerLeds.Length && p.PlayerLeds[i];
+        Led1 = Led(0);
+        Led2 = Led(1);
+        Led3 = Led(2);
+        Led4 = Led(3);
+        Led5 = Led(4);
+        LedBrightness = p.LedBrightness;
+        MicLed = p.MicLed;
+        LeftTrigger.Apply(p.LeftTrigger);
+        RightTrigger.Apply(p.RightTrigger);
+    }
 
     public void SetColor(Color color)
     {

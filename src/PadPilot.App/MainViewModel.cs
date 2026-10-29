@@ -65,6 +65,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public EmulationViewModel Emulation { get; }
     public MouseViewModel Mouse { get; }
     public ModsViewModel Mods { get; }
+    public ProfilesViewModel Profiles { get; }
 
     /// <summary>False while the window is hidden in the tray; the live view then only refreshes twice a second.</summary>
     public bool IsUiVisible { get; set; } = true;
@@ -90,6 +91,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _modFile.Received += (cmd, error) => OnModCommand(Loc.Get("Mods_SourceFile"), cmd, error);
         Mods = new ModsViewModel(_modUdp, _modFile, _modOverrides, AppSettings.Current);
         Mods.OverridesCleared += () => _outputDirty = true;
+
         Loc.Instance.PropertyChanged += (_, _) => UpdateTexts();
         UpdateTexts();
 
@@ -111,6 +113,36 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
         // A previous run may have crashed while the controller was hidden: give it back first.
         UpdateHidHide();
+
+        // Must stay last: capturing and loading a profile touches all the view models above.
+        Profiles = new ProfilesViewModel(CaptureProfile, ApplyProfile, AppSettings.Current);
+    }
+
+    private Profile CaptureProfile() => new()
+    {
+        Outputs = Output.ToProfile(),
+        LeftStick = Deadzones.LeftStick.Settings,
+        RightStick = Deadzones.RightStick.Settings,
+        L2 = Deadzones.L2.Settings,
+        R2 = Deadzones.R2.Settings,
+        EmulationMode = Emulation.Mode,
+        HideControllerWithHidHide = Emulation.HideController,
+        RumblePassthrough = Emulation.RumblePassthrough,
+        TouchpadMouse = Mouse.TouchpadSettings,
+        GyroMouse = Mouse.GyroSettings with { Bias = default }, // calibration belongs to the controller, not the profile
+    };
+
+    private void ApplyProfile(Profile p)
+    {
+        Output.Apply(p.Outputs);
+        Deadzones.LeftStick.Apply(p.LeftStick);
+        Deadzones.RightStick.Apply(p.RightStick);
+        Deadzones.L2.Apply(p.L2);
+        Deadzones.R2.Apply(p.R2);
+        Emulation.Mode = p.EmulationMode;
+        Emulation.HideController = p.HideControllerWithHidHide;
+        Emulation.RumblePassthrough = p.RumblePassthrough;
+        Mouse.Apply(p.TouchpadMouse, p.GyroMouse);
     }
 
     /// <summary>Called on a network or file thread for every mod command.</summary>
@@ -318,6 +350,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
+        // Save the profile first, while emulation and everything else still show the user's settings
+        // (shutting the emulation down switches its mode to Off).
+        Profiles.SaveActive();
         _uiTimer.Stop();
         DeviceList.Local.Changed -= OnDeviceListChanged;
         CloseDevice();

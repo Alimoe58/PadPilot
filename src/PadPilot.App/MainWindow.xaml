@@ -25,11 +25,11 @@
                     <TextBlock Text="{local:Tr Label_Battery}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Battery}" Margin="0,0,24,0" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding ReportRate}" Foreground="{StaticResource MutedBrush}" Margin="0,0,24,0" VerticalAlignment="Center" />
-                    <ComboBox ItemsSource="{x:Static local:Loc.Languages}" SelectedValuePath="Code"
-                              SelectedValue="{Binding Language, Source={x:Static local:Loc.Instance}}" MinWidth="100">
+                    <TextBlock Text="{local:Tr Label_Profile}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                    <ComboBox ItemsSource="{Binding Profiles.Names}" SelectedItem="{Binding Profiles.Active}" MinWidth="130">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" Foreground="Black" />
+                                <TextBlock Text="{Binding}" Foreground="Black" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -321,6 +321,48 @@
             </TabItem>
 
             <TabItem Header="{local:Tr Tab_Settings}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Language}" Style="{StaticResource Heading}" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{local:Tr Label_Language}" Width="140" VerticalAlignment="Center" />
+                                <ComboBox ItemsSource="{x:Static local:Loc.Languages}" SelectedValuePath="Code"
+                                          SelectedValue="{Binding Language, Source={x:Static local:Loc.Instance}}" MinWidth="160">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" Foreground="Black" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Panel}" DataContext="{Binding Profiles}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Profiles}" Style="{StaticResource Heading}" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBlock Text="{local:Tr Profiles_Active}" Width="140" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Active}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBlock Text="{local:Tr Profiles_Name}" Width="140" VerticalAlignment="Center" />
+                                <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Width="220" Padding="4,3" Margin="0,0,10,0"
+                                         Background="{StaticResource TrackBrush}" Foreground="{StaticResource TextBrush}" BorderThickness="0" />
+                                <Button Content="{local:Tr Profiles_New}" Style="{StaticResource ActionButton}" Click="NewProfile_Click" />
+                                <Button Content="{local:Tr Profiles_Rename}" Style="{StaticResource ActionButton}" Click="RenameProfile_Click" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="140,0,0,8">
+                                <Button Content="{local:Tr Profiles_Delete}" Style="{StaticResource ActionButton}" Click="DeleteProfile_Click" />
+                                <Button Content="{local:Tr Profiles_OpenFolder}" Style="{StaticResource ActionButton}" Click="ProfileFolder_Click" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Message}" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,0,0,6" />
+                            <TextBlock Text="{local:Tr Profiles_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
                 <StackPanel DataContext="{Binding Settings}">
                     <Border Style="{StaticResource Panel}">
                         <StackPanel>
@@ -343,10 +385,15 @@
                             <CheckBox IsChecked="{Binding StartMinimized}" Margin="0,0,0,12">
                                 <TextBlock Text="{local:Tr Set_StartMinimized}" />
                             </CheckBox>
+                            <CheckBox IsChecked="{Binding StartWithWindows}" Margin="0,0,0,12">
+                                <TextBlock Text="{local:Tr Set_StartWithWindows}" />
+                            </CheckBox>
                             <TextBlock Text="{local:Tr Set_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
                 </StackPanel>
+                </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
     </Grid>

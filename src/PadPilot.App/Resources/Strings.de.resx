@@ -159,4 +159,24 @@
   <data name="Mods_Reset" xml:space="preserve"><value>Zurücksetzen</value></data>
   <data name="Mods_ProtocolIntro" xml:space="preserve"><value>Mods schicken ein JSON-Objekt als UDP-Paket an 127.0.0.1 und den Port links (oder schreiben es in die Textdatei). Jedes Feld ist optional – nur was gesendet wird, ändert sich:</value></data>
   <data name="Mods_ProtocolDetails" xml:space="preserve"><value>Trigger-Modi: off · resistance (start, strength) · section (start, end, strength) · weapon (start, end, strength) · vibration (start, strength, frequency). Positionen 0–9, Stärke 1–8. micLed: off/on/pulse. &quot;reset&quot;: true gibt die Kontrolle an PadPilot zurück. Ein leeres Objekt {} fragt nur den Status ab. Jedes Paket wird mit JSON beantwortet: Controller, Verbindung, Akku, Emulation. Ausführlich: docs/MOD-PROTOKOLL.md</value></data>
+  <data name="Label_Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Tray_Profiles" xml:space="preserve"><value>Profil</value></data>
+  <data name="Heading_Profiles" xml:space="preserve"><value>PROFILE</value></data>
+  <data name="Profiles_Active" xml:space="preserve"><value>Aktives Profil</value></data>
+  <data name="Profiles_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Profiles_New" xml:space="preserve"><value>Als neues Profil speichern</value></data>
+  <data name="Profiles_Rename" xml:space="preserve"><value>Aktives umbenennen</value></data>
+  <data name="Profiles_Delete" xml:space="preserve"><value>Aktives löschen</value></data>
+  <data name="Profiles_OpenFolder" xml:space="preserve"><value>Profil-Ordner öffnen</value></data>
+  <data name="Profiles_Hint" xml:space="preserve"><value>Ein Profil enthält Lightbar, LEDs, adaptive Trigger, Deadzones, Emulation und Maus-Einstellungen. Änderungen landen automatisch im aktiven Profil (beim Wechseln und beim Beenden). Nicht im Profil: Gyro-Kalibrierung, Sprache, Fenster- und Mod-Optionen. Schnell wechseln oben im Fenster oder im Tray-Menü.</value></data>
+  <data name="Profiles_NameMissing" xml:space="preserve"><value>Bitte zuerst einen Namen eingeben.</value></data>
+  <data name="Profiles_NameTaken" xml:space="preserve"><value>Ein Profil „{0}“ gibt es schon.</value></data>
+  <data name="Profiles_Created" xml:space="preserve"><value>Profil „{0}“ angelegt und aktiv.</value></data>
+  <data name="Profiles_Renamed" xml:space="preserve"><value>Umbenannt in „{0}“.</value></data>
+  <data name="Profiles_Deleted" xml:space="preserve"><value>Profil „{0}“ gelöscht.</value></data>
+  <data name="Profiles_LastOne" xml:space="preserve"><value>Das letzte Profil kann nicht gelöscht werden.</value></data>
+  <data name="Profiles_LoadFailed" xml:space="preserve"><value>Profil „{0}“ konnte nicht gelesen werden.</value></data>
+  <data name="Set_StartWithWindows" xml:space="preserve"><value>Mit Windows starten (minimiert im Infobereich)</value></data>
+  <data name="Heading_Language" xml:space="preserve"><value>SPRACHE</value></data>
+  <data name="Label_Language" xml:space="preserve"><value>Sprache</value></data>
 </root>

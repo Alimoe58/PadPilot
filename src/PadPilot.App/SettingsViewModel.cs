@@ -32,6 +32,20 @@ public sealed class SettingsViewModel : ObservableObject
         set => Update(() => _settings.GyroDisabled = value);
     }
 
+    /// <summary>Start with Windows (minimized in the tray). Stored in Windows' autostart list, not in the settings file.</summary>
+    public bool StartWithWindows
+    {
+        get => Autostart.IsEnabled;
+        set
+        {
+            if (value)
+                Autostart.Enable();
+            else
+                Autostart.Disable();
+            OnPropertyChanged(nameof(StartWithWindows));
+        }
+    }
+
     /// <summary>Raised after any setting changed.</summary>
     public event Action? Changed;
 
