@@ -38,17 +38,31 @@
             </DockPanel>
         </Border>
 
-        <!-- Shown at startup when the emulation driver is missing -->
-        <Border Grid.Row="1" Style="{StaticResource Panel}" Background="#3A2A12" BorderBrush="#F59E0B" BorderThickness="1"
-                Visibility="{Binding Emulation.ShowDriverBanner, Converter={StaticResource BoolToVisibility}}">
-            <DockPanel>
-                <Button DockPanel.Dock="Right" Content="✕" Style="{StaticResource ActionButton}" Margin="6,0,0,0"
-                        ToolTip="{local:Tr Banner_Dismiss}" Click="DismissBanner_Click" />
-                <Button DockPanel.Dock="Right" Content="{local:Tr Driver_CheckAgain}" Style="{StaticResource ActionButton}" Click="CheckDrivers_Click" />
-                <Button DockPanel.Dock="Right" Content="{local:Tr Banner_InstallViGEm}" Style="{StaticResource ActionButton}" Click="InstallViGEm_Click" />
-                <TextBlock Text="{local:Tr Banner_ViGEmMissing}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" />
-            </DockPanel>
-        </Border>
+        <StackPanel Grid.Row="1">
+            <!-- Shown at startup when the emulation driver is missing -->
+            <Border Style="{StaticResource Panel}" Background="#3A2A12" BorderBrush="#F59E0B" BorderThickness="1"
+                    Visibility="{Binding Emulation.ShowDriverBanner, Converter={StaticResource BoolToVisibility}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="✕" Style="{StaticResource ActionButton}" Margin="6,0,0,0"
+                            ToolTip="{local:Tr Banner_Dismiss}" Click="DismissBanner_Click" />
+                    <Button DockPanel.Dock="Right" Content="{local:Tr Driver_CheckAgain}" Style="{StaticResource ActionButton}" Click="CheckDrivers_Click" />
+                    <Button DockPanel.Dock="Right" Content="{local:Tr Banner_InstallViGEm}" Style="{StaticResource ActionButton}" Click="InstallViGEm_Click" />
+                    <TextBlock Text="{local:Tr Banner_ViGEmMissing}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" />
+                </DockPanel>
+            </Border>
+
+            <!-- A newer release is on GitHub -->
+            <Border Style="{StaticResource Panel}" Background="#12283A" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                    Visibility="{Binding Update.ShowBanner, Converter={StaticResource BoolToVisibility}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="✕" Style="{StaticResource ActionButton}" Margin="6,0,0,0"
+                            ToolTip="{local:Tr Update_Later}" Click="DismissUpdate_Click" />
+                    <Button DockPanel.Dock="Right" Content="{local:Tr Update_Skip}" Style="{StaticResource ActionButton}" Click="SkipUpdate_Click" />
+                    <Button DockPanel.Dock="Right" Content="{local:Tr Update_Download}" Style="{StaticResource ActionButton}" Click="DownloadUpdate_Click" />
+                    <TextBlock Text="{Binding Update.BannerText}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" />
+                </DockPanel>
+            </Border>
+        </StackPanel>
 
         <TabControl Grid.Row="2">
             <TabItem Header="{local:Tr Tab_Inputs}">
@@ -250,6 +264,9 @@
                                         <Button Style="{StaticResource Swatch}" Background="#FFFFFF" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#000000" Click="Swatch_Click" />
                                     </StackPanel>
+                                    <CheckBox IsChecked="{Binding LightbarBattery}" Margin="0,12,0,0">
+                                        <TextBlock Text="{local:Tr Lightbar_Battery}" TextWrapping="Wrap" />
+                                    </CheckBox>
                                 </StackPanel>
                             </Border>
 
@@ -321,6 +338,10 @@
                 </ScrollViewer>
             </TabItem>
 
+            <TabItem Header="{local:Tr Tab_Buttons}">
+                <views:MappingView DataContext="{Binding Mapping}" />
+            </TabItem>
+
             <TabItem Header="{local:Tr Tab_Emulation}">
                 <views:EmulationView DataContext="{Binding Emulation}" />
             </TabItem>
@@ -349,6 +370,22 @@
                             <TextBox x:Name="DiagnosticsBox" IsReadOnly="True" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
                                      Background="#1E2025" Foreground="{StaticResource MutedBrush}" BorderThickness="0" Padding="8"
                                      Visibility="Collapsed" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Updates from GitHub -->
+                    <Border Style="{StaticResource Panel}" DataContext="{Binding Update}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Updates}" Style="{StaticResource Heading}" />
+                            <CheckBox IsChecked="{Binding CheckAtStartup}" Margin="0,0,0,10">
+                                <TextBlock Text="{local:Tr Update_CheckAtStartup}" />
+                            </CheckBox>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <Button Content="{local:Tr Update_CheckNow}" Style="{StaticResource ActionButton}" Click="CheckUpdate_Click"
+                                        IsEnabled="{Binding IsChecking, Converter={StaticResource Not}}" />
+                                <TextBlock Text="{Binding Status}" VerticalAlignment="Center" Margin="6,0,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <TextBlock Text="{local:Tr Update_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
@@ -392,6 +429,55 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- Games linked to the active profile -->
+                    <Border Style="{StaticResource Panel}" DataContext="{Binding Profiles}">
+                        <StackPanel>
+                            <TextBlock Text="{local:Tr Heading_Games}" Style="{StaticResource Heading}" />
+                            <CheckBox IsChecked="{Binding AutoSwitch}" Margin="0,0,0,10">
+                                <TextBlock Text="{local:Tr Games_AutoSwitch}" />
+                            </CheckBox>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBlock Text="{local:Tr Games_Pick}" Width="140" VerticalAlignment="Center" />
+                                <ComboBox ItemsSource="{Binding RunningApps}" SelectedItem="{Binding SelectedApp}" Width="320" Margin="0,0,10,0"
+                                          DropDownOpened="RunningApps_DropDownOpened" />
+                                <Button Content="{local:Tr Games_Link}" Style="{StaticResource ActionButton}" Click="LinkRunningGame_Click" />
+                                <Button Content="{local:Tr Games_Browse}" Style="{StaticResource ActionButton}" Click="BrowseGame_Click" />
+                            </StackPanel>
+                            <DockPanel Margin="0,0,0,8">
+                                <TextBlock DockPanel.Dock="Left" Width="140" Margin="0,4,0,0">
+                                    <Run Text="{local:Tr Games_LinkedTo}" /><Run Text="{Binding Active, Mode=OneWay, StringFormat=' {0}'}" FontWeight="SemiBold" />
+                                </TextBlock>
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Games_None}" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Games.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Games}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                                    <TextBlock Text="{Binding}" FontFamily="Consolas" Width="260" VerticalAlignment="Center" />
+                                                    <Button Content="{local:Tr Games_Remove}" Style="{StaticResource ActionButton}" Click="RemoveGame_Click" Tag="{Binding}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DockPanel>
+                            <TextBlock Text="{Binding GameMessage}" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,0,0,6" />
+                            <TextBlock Text="{Binding GameStatus}" Foreground="#22C55E" TextWrapping="Wrap" Margin="0,0,0,6" />
+                            <TextBlock Text="{local:Tr Games_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
                 <StackPanel DataContext="{Binding Settings}">
                     <Border Style="{StaticResource Panel}">
                         <StackPanel>
@@ -399,7 +485,33 @@
                             <CheckBox IsChecked="{Binding GyroDisabled}" Margin="0,0,0,12">
                                 <TextBlock Text="{local:Tr Set_GyroDisabled}" />
                             </CheckBox>
-                            <TextBlock Text="{local:Tr Set_GyroHint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                            <TextBlock Text="{local:Tr Set_GyroHint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+                            <!-- Battery -->
+                            <CheckBox IsChecked="{Binding LowBatteryWarning}" Margin="0,0,0,8">
+                                <TextBlock Text="{local:Tr Battery_Warn}" />
+                            </CheckBox>
+                            <DockPanel Margin="24,0,0,8" IsEnabled="{Binding LowBatteryWarning}">
+                                <TextBlock Text="{local:Tr Battery_Level}" Width="116" />
+                                <TextBlock Text="{Binding LowBatteryLevel, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                <Slider Minimum="5" Maximum="50" TickFrequency="5" Value="{Binding LowBatteryLevel}" MaxWidth="300" HorizontalAlignment="Left" Width="300" />
+                            </DockPanel>
+                            <CheckBox IsChecked="{Binding LowBatteryBlink}" Margin="24,0,0,16" IsEnabled="{Binding LowBatteryWarning}">
+                                <TextBlock Text="{local:Tr Battery_Blink}" />
+                            </CheckBox>
+
+                            <!-- Turning off (Bluetooth) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="{local:Tr Power_Idle}" Width="250" VerticalAlignment="Center" />
+                                <ComboBox ItemsSource="{x:Static local:SettingsViewModel.IdleTimeouts}" SelectedItem="{Binding IdleTurnOff}" MinWidth="150" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <Button Content="{local:Tr Power_TurnOff}" Style="{StaticResource ActionButton}" Click="TurnOff_Click"
+                                        IsEnabled="{Binding DataContext.IsBluetooth, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                <TextBlock Text="{Binding DataContext.PowerMessage, RelativeSource={RelativeSource AncestorType=Window}}"
+                                           VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#F59E0B" />
+                            </StackPanel>
+                            <TextBlock Text="{local:Tr Power_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource Panel}">

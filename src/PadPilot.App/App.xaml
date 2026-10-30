@@ -107,6 +107,11 @@
         <DataTemplate x:Key="TriggerEditor">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="{local:Tr Trigger_Preset}" Width="100" VerticalAlignment="Center" />
+                    <ComboBox ItemsSource="{x:Static local:TriggerPresets.All}"
+                              SelectedItem="{Binding Preset}" MinWidth="210" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                     <TextBlock Text="{local:Tr Trigger_Effect}" Width="100" VerticalAlignment="Center" />
                     <ComboBox ItemsSource="{x:Static local:TriggerViewModel.Modes}"
                               SelectedItem="{Binding Mode}" />

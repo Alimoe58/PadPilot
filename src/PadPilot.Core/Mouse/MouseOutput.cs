@@ -6,6 +6,7 @@ public enum MouseButton
 {
     Left,
     Right,
+    Middle,
 }
 
 /// <summary>Where mouse actions go. The real implementation is <see cref="WindowsMouse"/>; tests use a recorder.</summary>
@@ -27,6 +28,8 @@ public sealed class WindowsMouse : IMouseOutput
     private const uint MouseEventLeftUp = 0x0004;
     private const uint MouseEventRightDown = 0x0008;
     private const uint MouseEventRightUp = 0x0010;
+    private const uint MouseEventMiddleDown = 0x0020;
+    private const uint MouseEventMiddleUp = 0x0040;
     private const uint MouseEventWheel = 0x0800;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -64,7 +67,9 @@ public sealed class WindowsMouse : IMouseOutput
             (MouseButton.Left, true) => MouseEventLeftDown,
             (MouseButton.Left, false) => MouseEventLeftUp,
             (MouseButton.Right, true) => MouseEventRightDown,
-            _ => MouseEventRightUp,
+            (MouseButton.Right, false) => MouseEventRightUp,
+            (MouseButton.Middle, true) => MouseEventMiddleDown,
+            _ => MouseEventMiddleUp,
         },
     });
 

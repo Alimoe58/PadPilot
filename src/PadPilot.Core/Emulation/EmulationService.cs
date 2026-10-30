@@ -40,6 +40,9 @@ public sealed class EmulationService : IDisposable
         set => _deadzones = value;
     }
 
+    /// <summary>Rewrites the input before it reaches the virtual controller (button mapping), or null.</summary>
+    public Func<ControllerState, ControllerState>? Transform { get; set; }
+
     public EmulationMode Mode
     {
         get => _mode;
@@ -96,6 +99,8 @@ public sealed class EmulationService : IDisposable
                 return;
             try
             {
+                if (Transform is { } transform)
+                    state = transform(state);
                 _pad.Submit(InputProcessor.Process(state, _deadzones));
             }
             catch (VigemTargetNotPluggedInException)

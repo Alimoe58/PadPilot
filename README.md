@@ -33,18 +33,24 @@ Note: ViGEmBus is no longer actively developed by its author, but it keeps worki
 
 Open **Settings → Support → Copy diagnostics** and paste the text into a [new issue](../../issues/new). It contains the PadPilot and Windows version, controller model and connection type, driver versions and the main settings – nothing personal. This is especially helpful for DualSense Edge owners, as I can't test the Edge myself.
 
+## Privacy
+
+PadPilot doesn't collect or send any data. The only network request is the optional update check: at startup it asks the GitHub API for the latest PadPilot release (switch it off in **Settings → Updates**). Nothing is downloaded or installed automatically.
+
 ## Features
 
 | | |
 |---|---|
 | **Inputs** | Live view of every button, stick, trigger, the touchpad and motion sensors; battery and charging status; USB and Bluetooth with automatic reconnect |
+| **Button mapping** | Remap any button to another button, a key or key combination, a mouse click or scroll, or a special action (mute the microphone, next profile, turn off the controller); sticks as mouse, WASD or arrow keys – for games without controller support |
 | **Sticks & deadzones** | Inner and outer deadzones (round or cross-shaped) for both sticks and both triggers, stick drift display, circularity test |
-| **Outputs** | Lightbar with colour field, intensity and brightness; player LEDs; mic LED; rumble; adaptive triggers: resistance, section, weapon, vibration |
+| **Outputs** | Lightbar with colour field, intensity and brightness, or showing the battery level; player LEDs; mic LED; rumble; adaptive triggers: resistance, section, weapon, vibration, plus ready-made presets (bow, pistol, shotgun, brake, engine…) |
 | **Emulation** | Games see an Xbox 360 or DualShock 4 controller; game rumble is passed to the DualSense; the real controller can be hidden automatically with HidHide |
 | **Mouse** | Touchpad as mouse (move, click, right-click, two-finger scroll, tap to click); gyro as mouse with activation button and calibration |
 | **Mods** | Games and mods can control triggers, lightbar, LEDs and rumble via UDP or a text file – see [docs/MOD-PROTOKOLL.md](docs/MOD-PROTOKOLL.md) |
-| **Profiles** | Save complete setups (e.g. "Desktop", "Shooter") and switch from the window or the tray menu |
-| **Convenience** | Start with Windows, minimize to tray, English and German UI |
+| **Profiles** | Save complete setups (e.g. "Desktop", "Shooter") and switch from the window or the tray menu – or link a game's `.exe` to a profile and PadPilot switches automatically while the game runs |
+| **Battery & power** | Low-battery warning (notification and blinking lightbar); turn a Bluetooth controller off with one click or automatically when it isn't used |
+| **Convenience** | Update check against GitHub releases, start with Windows, minimize to tray, English and German UI |
 
 <p>
   <img src="docs/images/outputs.png" width="49%" alt="Outputs: lightbar and adaptive triggers">

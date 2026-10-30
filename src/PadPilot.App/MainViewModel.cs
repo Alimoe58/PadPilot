@@ -2,6 +2,8 @@ using System.Windows.Threading;
 using HidSharp;
 using PadPilot.Core;
 using PadPilot.Core.Emulation;
+using PadPilot.Core.Mapping;
+using PadPilot.Core.Power;
 
 namespace PadPilot.App;
 
@@ -26,6 +28,16 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private readonly EmulationService _emulation = new();
     private readonly PadPilot.Core.Mouse.MouseService _mouse = new();
+    private readonly MappingService _mapping = new();
+
+    // Battery warning, battery lightbar, idle turn-off and the mic LED as mute indicator.
+    private readonly System.Diagnostics.Stopwatch _clock = System.Diagnostics.Stopwatch.StartNew();
+    private readonly IdleTracker _idle = new();
+    private BatteryWarning _batteryWarning = new();
+    private TimeSpan _blinkUntil;
+    private bool _blinking;
+    private int _lastBatteryPercent = -1;
+    private bool? _micMuted;
 
     // Mods: commands arrive on network/file threads and are laid over the Outputs tab.
     private readonly PadPilot.Core.Mods.ModOverrides _modOverrides = new();
@@ -47,8 +59,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private string _battery = "–";
     private string _reportRate = "–";
     private string _rawHex = "";
-    private ButtonLayout _layout = ButtonLayout.Generic;
+    // PadPilot only supports DualSense controllers, so their drawing is shown even before one connects.
+    private ButtonLayout _layout = ButtonLayout.PlayStation5;
     private string _controllerName = "";
+    private bool _isBluetooth;
+    private string _powerMessage = "";
 
     public ControllerState State { get => _state; private set => Set(ref _state, value); }
     public string Status { get => _status; private set => Set(ref _status, value); }
@@ -59,7 +74,16 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public ButtonLayout Layout { get => _layout; private set => Set(ref _layout, value); }
     public string ControllerName { get => _controllerName; private set => Set(ref _controllerName, value); }
 
+    /// <summary>Connected over Bluetooth: only then can PadPilot turn the controller off.</summary>
+    public bool IsBluetooth { get => _isBluetooth; private set => Set(ref _isBluetooth, value); }
+    public string PowerMessage { get => _powerMessage; private set => Set(ref _powerMessage, value); }
+
+    /// <summary>Raised on the UI thread when the battery reaches the warning level (percent).</summary>
+    public event Action<int>? LowBattery;
+
     public OutputViewModel Output { get; } = new();
+    public UpdateViewModel Update { get; } = new(AppSettings.Current);
+    public MappingViewModel Mapping { get; }
     public DeadzonesViewModel Deadzones { get; } = new(AppSettings.Current);
     public SettingsViewModel Settings { get; } = new(AppSettings.Current);
     public EmulationViewModel Emulation { get; }
@@ -83,6 +107,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             Mouse!.RefreshGyroSwitch();
         };
         Mouse = new MouseViewModel(_mouse, AppSettings.Current, dispatcher);
+        Mapping = new MappingViewModel(_mapping);
+        _emulation.Transform = _mapping.Transform;
+        _mapping.Special += action => _dispatcher.BeginInvoke(() => OnSpecialAction(action));
 
         // The snapshot is refreshed once per second; whether a mod is in control is added live,
         // so the reply to a command already reflects that command.
@@ -125,10 +152,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public string BuildDiagnostics()
     {
         var sb = new System.Text.StringBuilder();
-        string version = System.Reflection.Assembly.GetEntryAssembly()?
-            .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
-            .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ?? "?";
-        sb.AppendLine($"PadPilot {version}");
+        sb.AppendLine($"PadPilot {UpdateViewModel.CurrentText}");
         sb.AppendLine($"Windows: {WindowsDescription()}");
         sb.AppendLine($".NET: {Environment.Version}");
 
@@ -152,6 +176,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                       $"gyro data {(AppSettings.Current.GyroDisabled ? "disabled" : "enabled")}");
         sb.AppendLine($"Mods: UDP {(AppSettings.Current.ModUdpEnabled ? $"on (port {AppSettings.Current.ModUdpPort}, {(Mods.UdpOk ? "listening" : "not listening")})" : "off")}, " +
                       $"text file {(AppSettings.Current.ModFileEnabled ? "on" : "off")}, mod overrides active: {(_modOverrides.IsActive ? "yes" : "no")}");
+        var map = _mapping.Settings;
+        sb.AppendLine($"Mapping: {map.Buttons.Count} button(s) changed" +
+                      $"{(map.Buttons.Count > 0 ? $" ({string.Join(", ", map.Buttons.Select(b => $"{b.Key}→{b.Value.Kind}"))})" : "")}, " +
+                      $"left stick {map.LeftStick}, right stick {map.RightStick}");
+        sb.AppendLine($"Battery warning: {(AppSettings.Current.LowBatteryWarning ? $"at {AppSettings.Current.LowBatteryLevel} %" : "off")}, " +
+                      $"idle turn-off: {AppSettings.Current.IdleTurnOff}, update check: {(AppSettings.Current.CheckForUpdates ? "on" : "off")}");
         sb.Append($"Language: {Loc.Instance.Language}");
         return sb.ToString();
     }
@@ -188,6 +218,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         RumblePassthrough = Emulation.RumblePassthrough,
         TouchpadMouse = Mouse.TouchpadSettings,
         GyroMouse = Mouse.GyroSettings with { Bias = default }, // calibration belongs to the controller, not the profile
+        Mapping = Mapping.Settings,
     };
 
     private void ApplyProfile(Profile p)
@@ -201,6 +232,37 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Emulation.HideController = p.HideControllerWithHidHide;
         Emulation.RumblePassthrough = p.RumblePassthrough;
         Mouse.Apply(p.TouchpadMouse, p.GyroMouse);
+        Mapping.Apply(p.Mapping);
+        _outputDirty = true;
+    }
+
+    /// <summary>A controller button mapped to a special action was pressed.</summary>
+    private void OnSpecialAction(SpecialAction action)
+    {
+        switch (action)
+        {
+            case SpecialAction.ToggleMicMute:
+                _micMuted = Microphone.Toggle();
+                _outputDirty = true;
+                break;
+            case SpecialAction.NextProfile:
+                int next = (Profiles.Names.IndexOf(Profiles.Active) + 1) % Profiles.Names.Count;
+                Profiles.Switch(Profiles.Names[next]);
+                break;
+            case SpecialAction.TurnOffController:
+                TurnOffController();
+                break;
+        }
+    }
+
+    /// <summary>Turns a Bluetooth controller off; over USB this isn't possible.</summary>
+    public void TurnOffController()
+    {
+        if (_device == null)
+            return;
+        PowerMessage = _device.Connection != ConnectionType.Bluetooth ? Loc.Get("Power_UsbOnly")
+            : _device.TurnOff() ? Loc.Get("Power_TurnedOff")
+            : Loc.Get("Power_Failed");
     }
 
     /// <summary>Called on a network or file thread for every mod command.</summary>
@@ -276,6 +338,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         DeviceList.Local.Changed += OnDeviceListChanged;
         TryConnect();
         _uiTimer.Start();
+
+        // Ask GitHub a little later, so the start isn't slowed down.
+        _dispatcher.InvokeAsync(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Update.CheckAtStartupAsync();
+        });
     }
 
     private void OnDeviceListChanged(object? sender, DeviceListChangedEventArgs e) =>
@@ -322,6 +391,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Layout = ButtonLayout.PlayStation5; // DualSense and DualSense Edge share the PS5 layout
         _emulation.Attach(_device);
         _mouse.Attach(_device);
+        _mapping.Attach(_device);
+        _idle.Reset(_clock.Elapsed);
+        _batteryWarning = new BatteryWarning();
+        _lastBatteryPercent = -1;
+        IsBluetooth = _device.Connection == ConnectionType.Bluetooth;
+        PowerMessage = "";
         Connection = _device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth";
         UpdateTexts();
     }
@@ -331,8 +406,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         // Detach first: the device's read thread must not be inside the emulation while it shuts down.
         _emulation.Detach();
         _mouse.Detach();
+        _mapping.Detach();
         _device?.Dispose();
         _device = null;
+        IsBluetooth = false;
         UpdateModStatus();
     }
 
@@ -361,6 +438,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         Emulation.GameRumbleLarge = _gameRumbleLarge / 255.0 * 100;
         Emulation.GameRumbleSmall = _gameRumbleSmall / 255.0 * 100;
 
+        var clock = _clock.Elapsed;
+        if (clock < _blinkUntil || _blinking)
+        {
+            _outputDirty = true; // low-battery blink runs frame by frame, plus one frame to restore the colour
+            _blinking = clock < _blinkUntil;
+        }
         if (_outputDirty)
         {
             _outputDirty = false;
@@ -368,8 +451,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 _outputDirty = true; // retry next frame
         }
 
+        bool hasState = _device.TryGetLatest(out var state, out var raw);
+        if (hasState)
+            _idle.Update(state!, clock);
+
         bool refreshView = IsUiVisible || DateTime.UtcNow - _lastHiddenRefresh >= TimeSpan.FromMilliseconds(500);
-        if (refreshView && _device.TryGetLatest(out var state, out var raw) && !ReferenceEquals(raw, _lastRaw))
+        if (refreshView && hasState && !ReferenceEquals(raw, _lastRaw))
         {
             _lastHiddenRefresh = DateTime.UtcNow;
             _lastRaw = raw;
@@ -387,6 +474,41 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             UpdateModStatus();
             _rateCount = count;
             _rateTime = now;
+            if (hasState)
+                EverySecond(state!, clock);
+        }
+    }
+
+    private void EverySecond(ControllerState state, TimeSpan clock)
+    {
+        var settings = AppSettings.Current;
+
+        if (state.BatteryPercent != _lastBatteryPercent)
+        {
+            _lastBatteryPercent = state.BatteryPercent;
+            if (Output.LightbarBattery)
+                _outputDirty = true;
+        }
+        if (settings.LowBatteryWarning && _batteryWarning.Update(state.BatteryPercent, state.Charge, settings.LowBatteryLevel))
+        {
+            if (settings.LowBatteryBlink)
+                _blinkUntil = clock + TimeSpan.FromSeconds(3);
+            LowBattery?.Invoke(state.BatteryPercent);
+        }
+
+        // The mic LED shows whether the Windows microphone is muted, if a button is set up to mute it.
+        bool? muted = _mapping.Settings.Uses(SpecialAction.ToggleMicMute) ? Microphone.IsMuted() : null;
+        if (muted != _micMuted)
+        {
+            _micMuted = muted;
+            _outputDirty = true;
+        }
+
+        if (settings.IdleTurnOff != IdleTimeout.Never && _device!.Connection == ConnectionType.Bluetooth
+            && _idle.IdleTime(clock) >= TimeSpan.FromMinutes((int)settings.IdleTurnOff))
+        {
+            _idle.Reset(clock); // don't try again every second if Windows refuses
+            TurnOffController();
         }
     }
 
@@ -396,7 +518,24 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     private OutputState BuildOutput()
     {
-        var output = _modOverrides.ApplyTo(Output.ToState());
+        var output = Output.ToState();
+        if (Output.LightbarBattery && _lastBatteryPercent >= 0)
+        {
+            var (r, g, b) = BatteryColor.For(_lastBatteryPercent, Output.Brightness / 100.0);
+            output = output with { LightbarRed = r, LightbarGreen = g, LightbarBlue = b };
+        }
+        if (_micMuted is bool muted)
+            output = output with { MicLed = muted ? MicLed.On : MicLed.Off };
+        output = _modOverrides.ApplyTo(output);
+
+        // Low battery: blink red for a moment, over everything else.
+        var clock = _clock.Elapsed;
+        if (clock < _blinkUntil)
+        {
+            bool on = (int)((_blinkUntil - clock).TotalMilliseconds / 250) % 2 == 0;
+            output = output with { LightbarRed = on ? (byte)255 : (byte)0, LightbarGreen = 0, LightbarBlue = 0 };
+        }
+
         if (!AppSettings.Current.RumblePassthrough)
             return output;
         return output with
@@ -423,6 +562,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         AppSettings.Current.HidHideHiddenInstance = _hidHide.HiddenInstance;
         AppSettings.Current.HidHideCloakSetByUs = _hidHide.CloakSetByUs;
         _mouse.Dispose();
+        _mapping.Dispose();
         _modUdp.Dispose();
         _modFile.Dispose();
         Deadzones.SaveTo(AppSettings.Current);

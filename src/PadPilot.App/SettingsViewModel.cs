@@ -32,6 +32,33 @@ public sealed class SettingsViewModel : ObservableObject
         set => Update(() => _settings.GyroDisabled = value);
     }
 
+    public bool LowBatteryWarning
+    {
+        get => _settings.LowBatteryWarning;
+        set => Update(() => _settings.LowBatteryWarning = value);
+    }
+
+    /// <summary>Warning level in percent (5–50).</summary>
+    public int LowBatteryLevel
+    {
+        get => _settings.LowBatteryLevel;
+        set => Update(() => _settings.LowBatteryLevel = Math.Clamp(value, 5, 50));
+    }
+
+    public bool LowBatteryBlink
+    {
+        get => _settings.LowBatteryBlink;
+        set => Update(() => _settings.LowBatteryBlink = value);
+    }
+
+    public static IReadOnlyList<PadPilot.Core.Power.IdleTimeout> IdleTimeouts { get; } = Enum.GetValues<PadPilot.Core.Power.IdleTimeout>();
+
+    public PadPilot.Core.Power.IdleTimeout IdleTurnOff
+    {
+        get => _settings.IdleTurnOff;
+        set => Update(() => _settings.IdleTurnOff = value);
+    }
+
     /// <summary>Start with Windows (minimized in the tray). Stored in Windows' autostart list, not in the settings file.</summary>
     public bool StartWithWindows
     {

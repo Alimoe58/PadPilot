@@ -13,6 +13,7 @@ public sealed class DualSenseDevice : IDisposable
     public const int DualSenseEdgeProductId = 0x0DF2;
 
     private const byte CalibrationFeatureReportId = 0x05;
+    private const byte PairingInfoFeatureReportId = 0x09;
 
     private readonly HidDevice _device;
     private readonly HidStream _stream;
@@ -110,6 +111,38 @@ public sealed class DualSenseDevice : IDisposable
             _startupLightReleased = true;
             _lastOutput = state;
             return true;
+        }
+    }
+
+    /// <summary>
+    /// Turns a Bluetooth controller off by ending the connection (like holding the PS button).
+    /// Releases the triggers first. Returns false over USB or when Windows refused.
+    /// </summary>
+    public bool TurnOff()
+    {
+        if (Connection != ConnectionType.Bluetooth || ReadBluetoothAddress() is not ulong address)
+            return false;
+        if (_lastOutput != null)
+            Send(_lastOutput.Released());
+        return Power.BluetoothControl.Disconnect(address);
+    }
+
+    /// <summary>The controller's Bluetooth address from the pairing-info feature report (bytes 1–6, lowest byte first).</summary>
+    private ulong? ReadBluetoothAddress()
+    {
+        try
+        {
+            var buffer = new byte[Math.Max(_device.GetMaxFeatureReportLength(), 20)];
+            buffer[0] = PairingInfoFeatureReportId;
+            _stream.GetFeature(buffer);
+            ulong address = 0;
+            for (int i = 6; i >= 1; i--)
+                address = (address << 8) | buffer[i];
+            return address == 0 ? null : address;
+        }
+        catch (Exception ex) when (ex is IOException or ObjectDisposedException)
+        {
+            return null;
         }
     }
 

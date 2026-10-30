@@ -26,6 +26,9 @@ public sealed record OutputProfile
     public MicLed MicLed { get; init; } = MicLed.Off;
     public TriggerProfile LeftTrigger { get; init; } = new();
     public TriggerProfile RightTrigger { get; init; } = new();
+
+    /// <summary>The lightbar shows the battery level (green → red) instead of the colour.</summary>
+    public bool LightbarShowsBattery { get; init; }
 }
 
 /// <summary>
@@ -48,6 +51,11 @@ public sealed record Profile
 
     public TouchpadMouseSettings TouchpadMouse { get; init; } = new();
     public GyroMouseSettings GyroMouse { get; init; } = new();
+
+    public PadPilot.Core.Mapping.MappingSettings Mapping { get; init; } = new();
+
+    /// <summary>Games (file names like "game.exe") that switch to this profile when they are in the foreground.</summary>
+    public string[] Games { get; init; } = [];
 }
 
 /// <summary>Profiles as one JSON file each in %AppData%\PadPilot\profiles.</summary>

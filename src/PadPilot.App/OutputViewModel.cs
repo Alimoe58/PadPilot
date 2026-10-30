@@ -12,6 +12,58 @@ public enum TriggerMode
     Vibration,
 }
 
+/// <summary>Ready-made trigger settings. Custom means the current settings match none of them.</summary>
+public enum TriggerPreset
+{
+    Custom,
+    Off,
+    Light,
+    Heavy,
+    Brake,
+    Bow,
+    Click,
+    Pistol,
+    Shotgun,
+    MachineGun,
+    Engine,
+}
+
+public static class TriggerPresets
+{
+    public static IReadOnlyList<TriggerPreset> All { get; } = Enum.GetValues<TriggerPreset>();
+
+    public static TriggerProfile? Get(TriggerPreset preset) => preset switch
+    {
+        TriggerPreset.Off => new() { Mode = TriggerMode.Off },
+        TriggerPreset.Light => new() { Mode = TriggerMode.Resistance, Start = 0, Strength = 2 },
+        TriggerPreset.Heavy => new() { Mode = TriggerMode.Resistance, Start = 0, Strength = 7 },
+        TriggerPreset.Brake => new() { Mode = TriggerMode.Resistance, Start = 3, Strength = 6 },
+        TriggerPreset.Bow => new() { Mode = TriggerMode.Section, Start = 2, End = 8, Strength = 6 },
+        TriggerPreset.Click => new() { Mode = TriggerMode.Weapon, Start = 2, End = 3, Strength = 3 },
+        TriggerPreset.Pistol => new() { Mode = TriggerMode.Weapon, Start = 3, End = 5, Strength = 5 },
+        TriggerPreset.Shotgun => new() { Mode = TriggerMode.Weapon, Start = 2, End = 7, Strength = 8 },
+        TriggerPreset.MachineGun => new() { Mode = TriggerMode.Vibration, Start = 3, Strength = 6, Frequency = 12 },
+        TriggerPreset.Engine => new() { Mode = TriggerMode.Vibration, Start = 1, Strength = 3, Frequency = 30 },
+        _ => null,
+    };
+
+    /// <summary>The preset these settings correspond to, or Custom.</summary>
+    public static TriggerPreset Match(TriggerProfile settings)
+    {
+        var wanted = Normalize(settings);
+        return All.FirstOrDefault(p => Get(p) is TriggerProfile v && Normalize(v) == wanted, TriggerPreset.Custom);
+    }
+
+    /// <summary>Clears the values the mode doesn't use, so they don't affect the comparison.</summary>
+    private static TriggerProfile Normalize(TriggerProfile p) => p.Mode switch
+    {
+        TriggerMode.Off => new() { Mode = TriggerMode.Off, Start = 0, End = 0, Strength = 0, Frequency = 0 },
+        TriggerMode.Resistance => p with { End = 0, Frequency = 0 },
+        TriggerMode.Vibration => p with { End = 0 },
+        _ => p with { Frequency = 0 },
+    };
+}
+
 /// <summary>Settings for one adaptive trigger.</summary>
 public sealed class TriggerViewModel : ObservableObject
 {
@@ -24,6 +76,21 @@ public sealed class TriggerViewModel : ObservableObject
     public static IReadOnlyList<TriggerMode> Modes { get; } = Enum.GetValues<TriggerMode>();
 
     public event Action? Changed;
+
+    public TriggerViewModel() => Changed += () => OnPropertyChanged(nameof(Preset));
+
+    /// <summary>Picking a preset fills in mode and sliders; afterwards they can still be adjusted.</summary>
+    public TriggerPreset Preset
+    {
+        get => TriggerPresets.Match(ToProfile());
+        set
+        {
+            if (TriggerPresets.Get(value) is TriggerProfile p)
+                Apply(p);
+            else // "Custom" picked: show what the settings actually are (after the ComboBox has finished its update)
+                System.Windows.Application.Current?.Dispatcher.BeginInvoke(() => OnPropertyChanged(nameof(Preset)));
+        }
+    }
 
     public TriggerMode Mode
     {
@@ -79,6 +146,7 @@ public sealed class OutputViewModel : ObservableObject
     private bool _led1, _led2, _led3 = true, _led4, _led5;
     private LedBrightness _ledBrightness = LedBrightness.High;
     private MicLed _micLed = MicLed.Off;
+    private bool _lightbarBattery;
     private int _rumbleLeft;
     private int _rumbleRight;
 
@@ -134,6 +202,9 @@ public sealed class OutputViewModel : ObservableObject
 
     public MicLed MicLed { get => _micLed; set => SetAndRaise(ref _micLed, value); }
 
+    /// <summary>Lightbar shows the battery level (green → red) instead of the chosen colour; brightness still applies.</summary>
+    public bool LightbarBattery { get => _lightbarBattery; set => SetAndRaise(ref _lightbarBattery, value); }
+
     public int RumbleLeft { get => _rumbleLeft; set => SetAndRaise(ref _rumbleLeft, value); }
     public int RumbleRight { get => _rumbleRight; set => SetAndRaise(ref _rumbleRight, value); }
 
@@ -152,6 +223,7 @@ public sealed class OutputViewModel : ObservableObject
         MicLed = MicLed,
         LeftTrigger = LeftTrigger.ToProfile(),
         RightTrigger = RightTrigger.ToProfile(),
+        LightbarShowsBattery = LightbarBattery,
     };
 
     public void Apply(OutputProfile p)
@@ -167,6 +239,7 @@ public sealed class OutputViewModel : ObservableObject
         MicLed = p.MicLed;
         LeftTrigger.Apply(p.LeftTrigger);
         RightTrigger.Apply(p.RightTrigger);
+        LightbarBattery = p.LightbarShowsBattery;
     }
 
     public void SetColor(Color color)

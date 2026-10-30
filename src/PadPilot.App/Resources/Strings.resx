@@ -42,6 +42,18 @@
   <data name="Trigger_Frequency" xml:space="preserve"><value>Frequency (Hz)</value></data>
   <data name="Trigger_Live" xml:space="preserve"><value>Live</value></data>
   <data name="Trigger_Hint" xml:space="preserve"><value>Positions: 0 = trigger released, 9 = fully pressed. Weapon: start 2–7, end must be after start (up to 8).</value></data>
+  <data name="Trigger_Preset" xml:space="preserve"><value>Preset</value></data>
+  <data name="TriggerPreset_Custom" xml:space="preserve"><value>Custom</value></data>
+  <data name="TriggerPreset_Off" xml:space="preserve"><value>Off (no effect)</value></data>
+  <data name="TriggerPreset_Light" xml:space="preserve"><value>Light resistance (gas pedal)</value></data>
+  <data name="TriggerPreset_Heavy" xml:space="preserve"><value>Heavy resistance</value></data>
+  <data name="TriggerPreset_Brake" xml:space="preserve"><value>Brake pedal</value></data>
+  <data name="TriggerPreset_Bow" xml:space="preserve"><value>Bow / slingshot</value></data>
+  <data name="TriggerPreset_Click" xml:space="preserve"><value>Light click</value></data>
+  <data name="TriggerPreset_Pistol" xml:space="preserve"><value>Pistol</value></data>
+  <data name="TriggerPreset_Shotgun" xml:space="preserve"><value>Shotgun / heavy weapon</value></data>
+  <data name="TriggerPreset_MachineGun" xml:space="preserve"><value>Machine gun (rattle)</value></data>
+  <data name="TriggerPreset_Engine" xml:space="preserve"><value>Engine rumble</value></data>
   <data name="TriggerMode_Off" xml:space="preserve"><value>Off</value></data>
   <data name="TriggerMode_Resistance" xml:space="preserve"><value>Resistance</value></data>
   <data name="TriggerMode_Section" xml:space="preserve"><value>Section</value></data>
@@ -176,6 +188,23 @@
   <data name="Profiles_Deleted" xml:space="preserve"><value>Profile &quot;{0}&quot; deleted.</value></data>
   <data name="Profiles_LastOne" xml:space="preserve"><value>The last profile can&apos;t be deleted.</value></data>
   <data name="Profiles_LoadFailed" xml:space="preserve"><value>Profile &quot;{0}&quot; could not be read.</value></data>
+  <data name="Heading_Games" xml:space="preserve"><value>GAMES</value></data>
+  <data name="Games_AutoSwitch" xml:space="preserve"><value>Switch to a game&apos;s profile automatically while the game runs</value></data>
+  <data name="Games_Pick" xml:space="preserve"><value>Running program</value></data>
+  <data name="Games_Link" xml:space="preserve"><value>Link to this profile</value></data>
+  <data name="Games_Browse" xml:space="preserve"><value>Choose .exe…</value></data>
+  <data name="Games_BrowseTitle" xml:space="preserve"><value>Choose the game&apos;s program file</value></data>
+  <data name="Games_BrowseFilter" xml:space="preserve"><value>Programs</value></data>
+  <data name="Games_LinkedTo" xml:space="preserve"><value>Linked to</value></data>
+  <data name="Games_None" xml:space="preserve"><value>No games linked to this profile yet.</value></data>
+  <data name="Games_Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Games_PickFirst" xml:space="preserve"><value>Pick a running program or choose an .exe file first.</value></data>
+  <data name="Games_AlreadyLinked" xml:space="preserve"><value>{0} is already linked to &quot;{1}&quot;.</value></data>
+  <data name="Games_Linked" xml:space="preserve"><value>{0} is now linked to &quot;{1}&quot;.</value></data>
+  <data name="Games_Moved" xml:space="preserve"><value>{0} was linked to &quot;{1}&quot; and is now linked to &quot;{2}&quot; (a game can only have one profile).</value></data>
+  <data name="Games_Removed" xml:space="preserve"><value>{0} removed.</value></data>
+  <data name="Games_Running" xml:space="preserve"><value>{0} is running – profile &quot;{1}&quot; is active.</value></data>
+  <data name="Games_Hint" xml:space="preserve"><value>Start the game, then pick it from the list and link it to the active profile (or choose its .exe). When the game comes to the foreground, PadPilot switches to its profile; when you close the game, the previous profile comes back. Alt-tabbing out keeps the game&apos;s profile, so the virtual controller isn&apos;t taken away mid-game. Picking a profile by hand pauses this until the game is closed.</value></data>
   <data name="Set_StartWithWindows" xml:space="preserve"><value>Start with Windows (minimized in the tray)</value></data>
   <data name="Heading_Language" xml:space="preserve"><value>LANGUAGE</value></data>
   <data name="Label_Language" xml:space="preserve"><value>Language</value></data>
@@ -198,4 +227,83 @@
   <data name="Support_Report" xml:space="preserve"><value>Report a problem on GitHub</value></data>
   <data name="Support_Copied" xml:space="preserve"><value>Copied to the clipboard.</value></data>
   <data name="Support_CopyFailed" xml:space="preserve"><value>Couldn&apos;t access the clipboard – copy the text below by hand.</value></data>
+  <data name="Tab_Buttons" xml:space="preserve"><value>Buttons</value></data>
+  <data name="Heading_ButtonMapping" xml:space="preserve"><value>BUTTONS</value></data>
+  <data name="Heading_StickMapping" xml:space="preserve"><value>STICKS</value></data>
+  <data name="Heading_QuickSetup" xml:space="preserve"><value>QUICK SETUP</value></data>
+  <data name="Mapping_LeftStick" xml:space="preserve"><value>Left stick</value></data>
+  <data name="Mapping_RightStick" xml:space="preserve"><value>Right stick</value></data>
+  <data name="Mapping_StickSpeed" xml:space="preserve"><value>Mouse speed</value></data>
+  <data name="Mapping_StickHint" xml:space="preserve"><value>A stick set to mouse or keys no longer moves the stick of the virtual controller. Mouse speed applies to sticks in mouse mode.</value></data>
+  <data name="Mapping_MicMute" xml:space="preserve"><value>Mic button mutes the microphone</value></data>
+  <data name="Mapping_ResetAll" xml:space="preserve"><value>Reset all buttons and sticks</value></data>
+  <data name="Mapping_MicHint" xml:space="preserve"><value>Muting switches the Windows default microphone on or off for all apps, like the mute button in the sound settings. The mic LED on the controller lights up while the microphone is muted.</value></data>
+  <data name="Mapping_Hint" xml:space="preserve"><value>"Other button" and "Off" change what the virtual controller (Emulation tab) sees, so they only matter while emulation is on. Keys, mouse and special actions always work. Without emulation, a game that reads the DualSense directly still sees the original button too. The mapping is saved in the active profile.</value></data>
+  <data name="Mapping_PressKey" xml:space="preserve"><value>Press a key…</value></data>
+  <data name="Mapping_ChooseKey" xml:space="preserve"><value>Click, then press a key</value></data>
+  <data name="ActionKind_Default" xml:space="preserve"><value>Normal</value></data>
+  <data name="ActionKind_Disabled" xml:space="preserve"><value>Off</value></data>
+  <data name="ActionKind_Button" xml:space="preserve"><value>Other button</value></data>
+  <data name="ActionKind_Key" xml:space="preserve"><value>Keyboard key</value></data>
+  <data name="ActionKind_Mouse" xml:space="preserve"><value>Mouse</value></data>
+  <data name="ActionKind_Special" xml:space="preserve"><value>Special</value></data>
+  <data name="MouseAction_LeftClick" xml:space="preserve"><value>Left click</value></data>
+  <data name="MouseAction_RightClick" xml:space="preserve"><value>Right click</value></data>
+  <data name="MouseAction_MiddleClick" xml:space="preserve"><value>Middle click</value></data>
+  <data name="MouseAction_WheelUp" xml:space="preserve"><value>Scroll up</value></data>
+  <data name="MouseAction_WheelDown" xml:space="preserve"><value>Scroll down</value></data>
+  <data name="SpecialAction_ToggleMicMute" xml:space="preserve"><value>Mute / unmute microphone</value></data>
+  <data name="SpecialAction_NextProfile" xml:space="preserve"><value>Next profile</value></data>
+  <data name="SpecialAction_TurnOffController" xml:space="preserve"><value>Turn off controller</value></data>
+  <data name="StickMode_Default" xml:space="preserve"><value>Normal</value></data>
+  <data name="StickMode_Mouse" xml:space="preserve"><value>Mouse</value></data>
+  <data name="StickMode_Wasd" xml:space="preserve"><value>W A S D keys</value></data>
+  <data name="StickMode_ArrowKeys" xml:space="preserve"><value>Arrow keys</value></data>
+  <data name="Buttons_Cross" xml:space="preserve"><value>Cross ✕</value></data>
+  <data name="Buttons_Circle" xml:space="preserve"><value>Circle ○</value></data>
+  <data name="Buttons_Square" xml:space="preserve"><value>Square □</value></data>
+  <data name="Buttons_Triangle" xml:space="preserve"><value>Triangle △</value></data>
+  <data name="Buttons_L1" xml:space="preserve"><value>L1</value></data>
+  <data name="Buttons_R1" xml:space="preserve"><value>R1</value></data>
+  <data name="Buttons_L2" xml:space="preserve"><value>L2</value></data>
+  <data name="Buttons_R2" xml:space="preserve"><value>R2</value></data>
+  <data name="Buttons_L3" xml:space="preserve"><value>L3 (left stick)</value></data>
+  <data name="Buttons_R3" xml:space="preserve"><value>R3 (right stick)</value></data>
+  <data name="Buttons_DPadUp" xml:space="preserve"><value>D-pad up</value></data>
+  <data name="Buttons_DPadDown" xml:space="preserve"><value>D-pad down</value></data>
+  <data name="Buttons_DPadLeft" xml:space="preserve"><value>D-pad left</value></data>
+  <data name="Buttons_DPadRight" xml:space="preserve"><value>D-pad right</value></data>
+  <data name="Buttons_Options" xml:space="preserve"><value>Options</value></data>
+  <data name="Buttons_Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Buttons_PS" xml:space="preserve"><value>PS button</value></data>
+  <data name="Buttons_TouchpadClick" xml:space="preserve"><value>Touchpad click</value></data>
+  <data name="Buttons_Mute" xml:space="preserve"><value>Mic button</value></data>
+  <data name="IdleTimeout_Never" xml:space="preserve"><value>Never</value></data>
+  <data name="IdleTimeout_Minutes5" xml:space="preserve"><value>5 minutes</value></data>
+  <data name="IdleTimeout_Minutes10" xml:space="preserve"><value>10 minutes</value></data>
+  <data name="IdleTimeout_Minutes15" xml:space="preserve"><value>15 minutes</value></data>
+  <data name="IdleTimeout_Minutes30" xml:space="preserve"><value>30 minutes</value></data>
+  <data name="IdleTimeout_Minutes60" xml:space="preserve"><value>1 hour</value></data>
+  <data name="Heading_Updates" xml:space="preserve"><value>UPDATES</value></data>
+  <data name="Update_CheckAtStartup" xml:space="preserve"><value>Check for new versions at startup</value></data>
+  <data name="Update_CheckNow" xml:space="preserve"><value>Check now</value></data>
+  <data name="Update_Hint" xml:space="preserve"><value>PadPilot asks GitHub (github.com/Alimoe58/PadPilot) for the latest release. Nothing is downloaded or installed automatically, and nothing about you or your PC is sent.</value></data>
+  <data name="Update_Checking" xml:space="preserve"><value>Checking…</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>PadPilot {0} is available (you have {1}).</value></data>
+  <data name="Update_UpToDate" xml:space="preserve"><value>You have the latest version ({0}).</value></data>
+  <data name="Update_Failed" xml:space="preserve"><value>Couldn't reach GitHub. Check your internet connection and try again.</value></data>
+  <data name="Update_Download" xml:space="preserve"><value>Download</value></data>
+  <data name="Update_Skip" xml:space="preserve"><value>Skip this version</value></data>
+  <data name="Update_Later" xml:space="preserve"><value>Remind me next time</value></data>
+  <data name="Lightbar_Battery" xml:space="preserve"><value>Lightbar shows the battery level instead (green → yellow → red, brightness still applies)</value></data>
+  <data name="Battery_Warn" xml:space="preserve"><value>Warn me when the battery is low</value></data>
+  <data name="Battery_Level" xml:space="preserve"><value>Warning level</value></data>
+  <data name="Battery_Blink" xml:space="preserve"><value>Also blink the lightbar red</value></data>
+  <data name="Battery_Low" xml:space="preserve"><value>Controller battery low: {0} %. Time to charge.</value></data>
+  <data name="Power_Idle" xml:space="preserve"><value>Turn off when not used for</value></data>
+  <data name="Power_TurnOff" xml:space="preserve"><value>Turn off controller now</value></data>
+  <data name="Power_Hint" xml:space="preserve"><value>Turning off only works over Bluetooth (over USB the controller is powered by the cable). Only real use counts as activity: pressed buttons, moved sticks, triggers, touches and turning the controller.</value></data>
+  <data name="Power_UsbOnly" xml:space="preserve"><value>Only possible over Bluetooth.</value></data>
+  <data name="Power_TurnedOff" xml:space="preserve"><value>Controller turned off.</value></data>
+  <data name="Power_Failed" xml:space="preserve"><value>Windows didn't let PadPilot end the Bluetooth connection.</value></data>
 </root>

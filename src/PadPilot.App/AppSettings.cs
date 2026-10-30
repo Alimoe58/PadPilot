@@ -29,8 +29,23 @@ public sealed class AppSettings
     /// <summary>Name of the profile in use (see ProfileStore).</summary>
     public string? ActiveProfile { get; set; }
 
+    /// <summary>Switch to a game's profile while it runs (see Profile.Games).</summary>
+    public bool AutoSwitchProfiles { get; set; } = true;
+
     /// <summary>Gyro and accelerometer switched off in the controller.</summary>
     public bool GyroDisabled { get; set; }
+
+    public bool CheckForUpdates { get; set; } = true;
+
+    /// <summary>Version the user chose to skip ("1.2.0"); not offered again at startup.</summary>
+    public string? SkippedUpdate { get; set; }
+
+    public bool LowBatteryWarning { get; set; } = true;
+    public int LowBatteryLevel { get; set; } = 20;
+    public bool LowBatteryBlink { get; set; } = true;
+
+    /// <summary>Turn a Bluetooth controller off after this long without input.</summary>
+    public PadPilot.Core.Power.IdleTimeout IdleTurnOff { get; set; } = PadPilot.Core.Power.IdleTimeout.Never;
 
     public PadPilot.Core.Emulation.EmulationMode EmulationMode { get; set; } = PadPilot.Core.Emulation.EmulationMode.Off;
     public bool RumblePassthrough { get; set; } = true;

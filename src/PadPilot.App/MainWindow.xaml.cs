@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using PadPilot.Core.Mapping;
 
 namespace PadPilot.App;
 
@@ -26,6 +28,7 @@ public partial class MainWindow : Window
                 UpdateTrayToolTip();
         };
         UpdateTrayToolTip();
+        _viewModel.LowBattery += percent => _tray.ShowWarning(Loc.Format("Battery_Low", percent));
         _viewModel.Profiles.ProfilesChanged += UpdateTrayProfiles;
         UpdateTrayProfiles();
 
@@ -115,6 +118,59 @@ public partial class MainWindow : Window
     private void ReportProblem_Click(object sender, RoutedEventArgs e) =>
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(IssuesUrl) { UseShellExecute = true });
 
+    private void CheckUpdate_Click(object sender, RoutedEventArgs e) => _ = _viewModel.Update.CheckAsync();
+    private void DownloadUpdate_Click(object sender, RoutedEventArgs e) => _viewModel.Update.Download();
+    private void SkipUpdate_Click(object sender, RoutedEventArgs e) => _viewModel.Update.Skip();
+    private void DismissUpdate_Click(object sender, RoutedEventArgs e) => _viewModel.Update.Dismiss();
+    private void TurnOff_Click(object sender, RoutedEventArgs e) => _viewModel.TurnOffController();
+
+    // Key capture for the "Buttons" tab: the next key goes to the row waiting for it. A modifier
+    // pressed on its own (e.g. Shift for sprinting) is taken when it is released without another key.
+    private Key? _pendingModifier;
+
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        if (_viewModel.Mapping.IsCapturing)
+        {
+            var key = e.Key == Key.System ? e.SystemKey : e.Key;
+            if (IsModifier(key))
+                _pendingModifier = key;
+            else
+            {
+                _pendingModifier = null;
+                _viewModel.Mapping.CaptureKey(KeyInterop.VirtualKeyFromKey(key), CurrentModifiers());
+            }
+            e.Handled = true;
+            return;
+        }
+        base.OnPreviewKeyDown(e);
+    }
+
+    protected override void OnPreviewKeyUp(KeyEventArgs e)
+    {
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (_viewModel.Mapping.IsCapturing && _pendingModifier == key)
+        {
+            _pendingModifier = null;
+            _viewModel.Mapping.CaptureKey(KeyInterop.VirtualKeyFromKey(key), KeyModifiers.None);
+            e.Handled = true;
+            return;
+        }
+        base.OnPreviewKeyUp(e);
+    }
+
+    private static bool IsModifier(Key key) => key is Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift
+        or Key.LeftAlt or Key.RightAlt or Key.LWin or Key.RWin;
+
+    private static KeyModifiers CurrentModifiers()
+    {
+        var m = Keyboard.Modifiers;
+        return (m.HasFlag(ModifierKeys.Control) ? KeyModifiers.Ctrl : 0)
+             | (m.HasFlag(ModifierKeys.Shift) ? KeyModifiers.Shift : 0)
+             | (m.HasFlag(ModifierKeys.Alt) ? KeyModifiers.Alt : 0)
+             | (m.HasFlag(ModifierKeys.Windows) ? KeyModifiers.Win : 0);
+    }
+
     private void InstallViGEm_Click(object sender, RoutedEventArgs e) => _viewModel.Emulation.InstallViGEm();
     private void CheckDrivers_Click(object sender, RoutedEventArgs e) => _viewModel.Emulation.CheckDrivers();
     private void DismissBanner_Click(object sender, RoutedEventArgs e) => _viewModel.Emulation.DismissBanner();
@@ -123,6 +179,26 @@ public partial class MainWindow : Window
     private void RenameProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.RenameActive();
     private void DeleteProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.DeleteActive();
     private void ProfileFolder_Click(object sender, RoutedEventArgs e) => ProfilesViewModel.OpenFolder();
+
+    private void RunningApps_DropDownOpened(object sender, EventArgs e) => _viewModel.Profiles.RefreshRunningApps();
+    private void LinkRunningGame_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.AddGame(_viewModel.Profiles.SelectedApp?.Exe);
+
+    private void BrowseGame_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = Loc.Get("Games_BrowseTitle"),
+            Filter = $"{Loc.Get("Games_BrowseFilter")} (*.exe)|*.exe",
+        };
+        if (dialog.ShowDialog(this) == true)
+            _viewModel.Profiles.AddGame(dialog.FileName);
+    }
+
+    private void RemoveGame_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: string exe })
+            _viewModel.Profiles.RemoveGame(exe);
+    }
 
     private void Swatch_Click(object sender, RoutedEventArgs e)
     {

@@ -12,7 +12,7 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 | DualSense über USB und Bluetooth | ✅ | ✅ |
 | DualSense Edge | ✅ | ✅ erkannt, Zusatztasten (Fn, Rückseite) fehlen noch ➕ |
 | DualShock 4 als echter Controller | ✅ (Steam) | ➕ |
-| Akkustand | ✅ | ✅ (inkl. Ladestatus) |
+| Akkustand | ✅ | ✅ (inkl. Ladestatus), Warnung bei niedrigem Akku (Benachrichtigung + Lightbar blinkt) |
 | Tasten-/Stick-Tester | ✅ | ✅ inkl. Deadzones, Drift-Anzeige, Rundheitstest |
 | Automatisch verbinden beim Start | ✅ | ✅ inkl. Hotplug |
 | Option „Steam beenden“ beim Verbinden | ✅ | ➕ (Steam Input greift sonst evtl. auch auf den Controller zu) |
@@ -32,10 +32,10 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 | Feature | DSX | PadPilot |
 |---|---|---|
 | Lightbar-Farbe | ✅ | ✅ |
-| Lichtszenen / Effekte (Atmen, Regenbogen, Akku-Farbe …) | ✅ (Steam) | ➕ |
+| Lichtszenen / Effekte (Atmen, Regenbogen, Akku-Farbe …) | ✅ (Steam) | ✅ Akku-Farbe (grün → rot); Atmen/Regenbogen ➕ |
 | Spieler-LEDs, Mikrofon-LED | ✅ | ✅ |
 | Rumble | ✅ | ✅ |
-| Adaptive Trigger mit Presets | ✅ | ✅ Widerstand, Abschnitt, Waffe, Vibration |
+| Adaptive Trigger mit Presets | ✅ | ✅ Widerstand, Abschnitt, Waffe, Vibration; fertige Vorlagen (Bogen, Pistole, Bremse …) |
 | Weitere Trigger-Modi (DSX nennt 17 eigene Modi) | ✅ | ➕ z. B. Galopp, Maschinengewehr, Bogen, mehrstufiger Widerstand |
 | Audio über Lautsprecher/Kopfhörer am Controller (USB) | ✅ | ➕ später, Windows erkennt den DualSense per USB schon als Audiogerät |
 | Audio-Haptik (Ton → Vibration, USB) | ✅ | ➕ später, aufwendig |
@@ -47,9 +47,9 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 |---|---|---|
 | Touchpad als Maus | ✅ | ✅ Bewegen, Klicken (rechte Hälfte = Rechtsklick), Zwei-Finger-Scrollen, Antippen |
 | Gyro als Maus | ✅ | ✅ mit Aktivierungstaste und Kalibrierung |
-| Tasten neu belegen | ✅ | ➕ |
-| Controller → Tastatur/Maus (für Spiele ohne Controller-Support) | ✅ | ➕ |
-| Tastatur-Kürzel / Makros | ✅ (Shortcuts) | ➕ |
+| Tasten neu belegen | ✅ | ✅ andere Taste, Aus, Taste/Kombination, Maus, Spezialaktion (pro Profil) |
+| Controller → Tastatur/Maus (für Spiele ohne Controller-Support) | ✅ | ✅ Tasten → Tastatur/Maus, Sticks → Maus, WASD oder Pfeiltasten |
+| Tastatur-Kürzel / Makros | ✅ (Shortcuts) | ✅ Tastenkombinationen (z. B. Strg+Umschalt+M); Makros ➕ |
 
 ## Spiele-Anbindung
 
@@ -64,11 +64,14 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 | Feature | DSX | PadPilot |
 |---|---|---|
 | Profile speichern | ✅ | ✅ benannte Profile, Wechsel oben im Fenster und im Tray-Menü |
+| Profil pro Spiel automatisch | – | ✅ Spiel (.exe) mit Profil verknüpfen, Wechsel beim Spielstart, zurück beim Beenden |
+| Mikrofon stummschalten mit der Mic-Taste | ✅ | ✅ Windows-Mikrofon, Mic-LED zeigt den Zustand |
+| Controller ausschalten (Bluetooth), automatisch bei Inaktivität | ✅ | ✅ |
 | Mit Windows starten | ✅ | ✅ minimiert im Infobereich, ohne Admin-Rechte |
 | In den Infobereich minimieren, minimiert starten | (nicht beschrieben) | ✅ |
 | Mehrere Sprachen | ✅ 20+ | ✅ Deutsch, Englisch (weitere über .resx-Dateien) |
 | Helles/dunkles Design, Hintergrundbilder, Rahmenfarbe | ✅ | ➕ |
-| Selbst-Update | ✅ | ➕ (z. B. über GitHub-Releases) |
+| Selbst-Update | ✅ | ✅ Update-Hinweis über GitHub-Releases (Download per Klick, keine automatische Installation) |
 | Firmware-Prüfung | ✅ (Steam) | ❌ |
 | Statistiken, Erfolge, Steam Cloud | ✅ (Steam) | ❌ |
 
