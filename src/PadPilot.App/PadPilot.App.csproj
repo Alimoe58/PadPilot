@@ -11,7 +11,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>PadPilot</AssemblyName>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <!-- Show "1.0.0" in the file properties instead of "1.0.0+<git hash>" -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>PadPilot</Product>

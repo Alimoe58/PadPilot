@@ -87,6 +87,35 @@ public sealed record MappingSettings
     public ButtonAction For(Buttons button) =>
         Buttons.TryGetValue(button, out var action) ? action : Default;
 
+    /// <summary>
+    /// A copy that is safe to use when the settings come from a file someone shared: unknown buttons,
+    /// impossible key codes and missing values are dropped, the mouse speed is limited.
+    /// </summary>
+    public MappingSettings Sanitized()
+    {
+        var buttons = new Dictionary<Buttons, ButtonAction>();
+        foreach (var (button, action) in Buttons ?? [])
+        {
+            if (action == null || !IsSingleButton(button) || !Enum.IsDefined(action.Kind))
+                continue;
+            if (action.Kind == ActionKind.Key && action.Key is < 1 or > 254)
+                continue;
+            if (action.Kind == ActionKind.Button && !IsSingleButton(action.Target))
+                continue;
+            buttons[button] = action with { Modifiers = action.Modifiers & (KeyModifiers.Ctrl | KeyModifiers.Shift | KeyModifiers.Alt | KeyModifiers.Win) };
+        }
+        return this with
+        {
+            Buttons = buttons,
+            LeftStick = Enum.IsDefined(LeftStick) ? LeftStick : StickMode.Default,
+            RightStick = Enum.IsDefined(RightStick) ? RightStick : StickMode.Default,
+            StickMouseSpeed = double.IsFinite(StickMouseSpeed) ? Math.Clamp(StickMouseSpeed, 30, 3000) : 1200,
+        };
+    }
+
+    private static bool IsSingleButton(Buttons b) =>
+        b != Core.Buttons.None && ((uint)b & ((uint)b - 1)) == 0 && (uint)b <= (uint)Core.Buttons.DPadLeft;
+
     public bool Uses(SpecialAction special) =>
         Buttons.Values.Any(a => a.Kind == ActionKind.Special && a.Special == special);
 

@@ -424,6 +424,10 @@
                                 <Button Content="{local:Tr Profiles_Delete}" Style="{StaticResource ActionButton}" Click="DeleteProfile_Click" />
                                 <Button Content="{local:Tr Profiles_OpenFolder}" Style="{StaticResource ActionButton}" Click="ProfileFolder_Click" />
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="140,0,0,8">
+                                <Button Content="{local:Tr Profiles_Export}" Style="{StaticResource ActionButton}" Click="ExportProfile_Click" />
+                                <Button Content="{local:Tr Profiles_Import}" Style="{StaticResource ActionButton}" Click="ImportProfile_Click" />
+                            </StackPanel>
                             <TextBlock Text="{Binding Message}" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,0,0,6" />
                             <TextBlock Text="{local:Tr Profiles_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
                         </StackPanel>

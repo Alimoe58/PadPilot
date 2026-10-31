@@ -180,6 +180,27 @@ public partial class MainWindow : Window
     private void DeleteProfile_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.DeleteActive();
     private void ProfileFolder_Click(object sender, RoutedEventArgs e) => ProfilesViewModel.OpenFolder();
 
+    private static string ProfileFilter => $"{Loc.Get("Profiles_FileType")} (*.json)|*.json";
+
+    private void ExportProfile_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = Loc.Get("Profiles_Export"),
+            Filter = ProfileFilter,
+            FileName = _viewModel.Profiles.ExportFileName,
+        };
+        if (dialog.ShowDialog(this) == true)
+            _viewModel.Profiles.Export(dialog.FileName);
+    }
+
+    private void ImportProfile_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog { Title = Loc.Get("Profiles_Import"), Filter = ProfileFilter };
+        if (dialog.ShowDialog(this) == true)
+            _viewModel.Profiles.Import(dialog.FileName);
+    }
+
     private void RunningApps_DropDownOpened(object sender, EventArgs e) => _viewModel.Profiles.RefreshRunningApps();
     private void LinkRunningGame_Click(object sender, RoutedEventArgs e) => _viewModel.Profiles.AddGame(_viewModel.Profiles.SelectedApp?.Exe);
 

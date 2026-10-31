@@ -306,4 +306,13 @@
   <data name="Power_UsbOnly" xml:space="preserve"><value>Only possible over Bluetooth.</value></data>
   <data name="Power_TurnedOff" xml:space="preserve"><value>Controller turned off.</value></data>
   <data name="Power_Failed" xml:space="preserve"><value>Windows didn't let PadPilot end the Bluetooth connection.</value></data>
+  <data name="Profiles_Export" xml:space="preserve"><value>Export active…</value></data>
+  <data name="Profiles_Import" xml:space="preserve"><value>Import…</value></data>
+  <data name="Profiles_FileType" xml:space="preserve"><value>PadPilot profile</value></data>
+  <data name="Profiles_Exported" xml:space="preserve"><value>Profile &quot;{0}&quot; saved as {1}. You can share this file.</value></data>
+  <data name="Profiles_ExportFailed" xml:space="preserve"><value>Could not save the file: {0}</value></data>
+  <data name="Profiles_Imported" xml:space="preserve"><value>Profile &quot;{0}&quot; imported and active. Check the Buttons tab if it changes your button mapping.</value></data>
+  <data name="Profiles_ImportGamesMoved" xml:space="preserve"><value>These games are now linked to it: {0}.</value></data>
+  <data name="Profiles_ImportFailed" xml:space="preserve"><value>This file isn&apos;t a PadPilot profile.</value></data>
+  <data name="Profiles_ImportedName" xml:space="preserve"><value>Imported</value></data>
 </root>

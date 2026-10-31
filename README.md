@@ -48,7 +48,7 @@ PadPilot doesn't collect or send any data. The only network request is the optio
 | **Emulation** | Games see an Xbox 360 or DualShock 4 controller; game rumble is passed to the DualSense; the real controller can be hidden automatically with HidHide |
 | **Mouse** | Touchpad as mouse (move, click, right-click, two-finger scroll, tap to click); gyro as mouse with activation button and calibration |
 | **Mods** | Games and mods can control triggers, lightbar, LEDs and rumble via UDP or a text file – see [docs/MOD-PROTOKOLL.md](docs/MOD-PROTOKOLL.md) |
-| **Profiles** | Save complete setups (e.g. "Desktop", "Shooter") and switch from the window or the tray menu – or link a game's `.exe` to a profile and PadPilot switches automatically while the game runs |
+| **Profiles** | Save complete setups (e.g. "Desktop", "Shooter") and switch from the window or the tray menu – or link a game's `.exe` to a profile and PadPilot switches automatically while the game runs; export and import profiles to share them |
 | **Battery & power** | Low-battery warning (notification and blinking lightbar); turn a Bluetooth controller off with one click or automatically when it isn't used |
 | **Convenience** | Update check against GitHub releases, start with Windows, minimize to tray, English and German UI |
 
@@ -56,6 +56,10 @@ PadPilot doesn't collect or send any data. The only network request is the optio
   <img src="docs/images/outputs.png" width="49%" alt="Outputs: lightbar and adaptive triggers">
   <img src="docs/images/deadzones.png" width="49%" alt="Sticks and deadzones">
 </p>
+
+## Sharing profiles
+
+Every profile is a plain JSON file: trigger settings, lightbar, button mapping, deadzones, emulation mode and the linked game(s). Use **Settings → Profiles → Export active…** to save one and **Import…** to add one someone shared – it becomes a new profile named after the file. Settings that belong to your own controller or PC (gyro calibration, language, window options) are never part of a profile. Imported files are checked: anything that isn't a PadPilot profile is rejected, and impossible values are dropped or limited.
 
 ## For mod developers
 

@@ -171,12 +171,9 @@ public sealed class ProfilesViewModel : ObservableObject
         }
 
         GameMessage = Loc.Format("Games_Linked", exe, _active);
-        if (_links.TryGetValue(exe, out string? other) && ProfileStore.Load(other) is Profile otherProfile)
+        if (_links.TryGetValue(exe, out string? other))
         {
-            ProfileStore.Save(other, otherProfile with
-            {
-                Games = otherProfile.Games.Where(g => !g.Equals(exe, StringComparison.OrdinalIgnoreCase)).ToArray(),
-            });
+            RemoveGameFrom(other, exe);
             GameMessage = Loc.Format("Games_Moved", exe, other, _active);
         }
 
@@ -193,6 +190,70 @@ public sealed class ProfilesViewModel : ObservableObject
         SaveActive();
         RebuildLinks();
         GameMessage = Loc.Format("Games_Removed", exe);
+    }
+
+    /// <summary>Suggested file name when exporting the active profile.</summary>
+    public string ExportFileName => _active + ".json";
+
+    /// <summary>Saves the active profile (with its linked games) to a file to share.</summary>
+    public void Export(string path)
+    {
+        try
+        {
+            ProfileStore.Export(path, _capture() with { Games = Games.ToArray() });
+            Message = Loc.Format("Profiles_Exported", _active, Path.GetFileName(path));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Message = Loc.Format("Profiles_ExportFailed", ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Adds a shared profile file as a new profile (named after the file) and switches to it.
+    /// Its games are taken away from other profiles, since a game can only have one.
+    /// </summary>
+    public void Import(string path)
+    {
+        if (ProfileStore.ReadShared(path) is not Profile profile)
+        {
+            Message = Loc.Get("Profiles_ImportFailed");
+            return;
+        }
+        string name = ProfileStore.UniqueName(
+            ProfileStore.CleanName(Path.GetFileNameWithoutExtension(path)) ?? Loc.Get("Profiles_ImportedName"), Names);
+
+        SaveActive();
+        var moved = profile.Games.Where(g => _links.ContainsKey(g)).ToList();
+        foreach (string game in moved)
+            RemoveGameFrom(_links[game], game);
+
+        ProfileStore.Save(name, profile);
+        Names.Add(name);
+        _switcher.UserSwitched();
+        _active = name;
+        Load(profile);
+        RebuildLinks();
+        Message = Loc.Format("Profiles_Imported", name)
+                  + (moved.Count > 0 ? " " + Loc.Format("Profiles_ImportGamesMoved", string.Join(", ", moved)) : "");
+        RememberActive();
+    }
+
+    private void RemoveGameFrom(string profileName, string exe)
+    {
+        if (profileName == _active)
+        {
+            if (Games.FirstOrDefault(g => g.Equals(exe, StringComparison.OrdinalIgnoreCase)) is string linked)
+                Games.Remove(linked);
+            SaveActive();
+        }
+        else if (ProfileStore.Load(profileName) is Profile other)
+        {
+            ProfileStore.Save(profileName, other with
+            {
+                Games = other.Games.Where(g => !g.Equals(exe, StringComparison.OrdinalIgnoreCase)).ToArray(),
+            });
+        }
     }
 
     public static void OpenFolder()

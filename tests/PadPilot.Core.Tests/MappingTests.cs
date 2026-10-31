@@ -171,6 +171,33 @@ public class MappingTests
     }
 
     [Fact]
+    public void SharedMappingIsCleanedUp()
+    {
+        var m = new MappingSettings
+        {
+            Buttons = new()
+            {
+                [Buttons.Cross] = new ButtonAction { Kind = ActionKind.Key, Key = 0x20, Modifiers = (KeyModifiers)0xFF },
+                [Buttons.Circle] = new ButtonAction { Kind = ActionKind.Key, Key = 9999 },
+                [Buttons.Square] = new ButtonAction { Kind = ActionKind.Button, Target = Buttons.Cross | Buttons.Circle },
+                [Buttons.Cross | Buttons.Triangle] = new ButtonAction { Kind = ActionKind.Disabled },
+                [(Buttons)(1u << 25)] = new ButtonAction { Kind = ActionKind.Disabled },
+                [Buttons.R1] = new ButtonAction { Kind = (ActionKind)42 },
+                [Buttons.L1] = new ButtonAction { Kind = ActionKind.Mouse, Mouse = MouseAction.RightClick },
+            },
+            LeftStick = (StickMode)7,
+            StickMouseSpeed = 1e9,
+        };
+
+        var clean = m.Sanitized();
+
+        Assert.Equal([Buttons.Cross, Buttons.L1], clean.Buttons.Keys.OrderBy(b => b));
+        Assert.Equal(KeyModifiers.Ctrl | KeyModifiers.Shift | KeyModifiers.Alt | KeyModifiers.Win, clean.Buttons[Buttons.Cross].Modifiers);
+        Assert.Equal(StickMode.Default, clean.LeftStick);
+        Assert.Equal(3000, clean.StickMouseSpeed);
+    }
+
+    [Fact]
     public void EmptyMappingLeavesTheInputAlone()
     {
         var s = new ControllerState { Buttons = Buttons.Cross, LeftX = 3 };

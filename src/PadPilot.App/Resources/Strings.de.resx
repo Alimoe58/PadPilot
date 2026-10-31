@@ -306,4 +306,13 @@
   <data name="Power_UsbOnly" xml:space="preserve"><value>Nur über Bluetooth möglich.</value></data>
   <data name="Power_TurnedOff" xml:space="preserve"><value>Controller ausgeschaltet.</value></data>
   <data name="Power_Failed" xml:space="preserve"><value>Windows hat das Trennen der Bluetooth-Verbindung nicht erlaubt.</value></data>
+  <data name="Profiles_Export" xml:space="preserve"><value>Aktives exportieren …</value></data>
+  <data name="Profiles_Import" xml:space="preserve"><value>Importieren …</value></data>
+  <data name="Profiles_FileType" xml:space="preserve"><value>PadPilot-Profil</value></data>
+  <data name="Profiles_Exported" xml:space="preserve"><value>Profil „{0}“ als {1} gespeichert. Diese Datei kannst du teilen.</value></data>
+  <data name="Profiles_ExportFailed" xml:space="preserve"><value>Die Datei konnte nicht gespeichert werden: {0}</value></data>
+  <data name="Profiles_Imported" xml:space="preserve"><value>Profil „{0}“ importiert und aktiv. Schau im Tab Tasten nach, ob es deine Tastenbelegung ändert.</value></data>
+  <data name="Profiles_ImportGamesMoved" xml:space="preserve"><value>Diese Spiele sind jetzt damit verknüpft: {0}.</value></data>
+  <data name="Profiles_ImportFailed" xml:space="preserve"><value>Diese Datei ist kein PadPilot-Profil.</value></data>
+  <data name="Profiles_ImportedName" xml:space="preserve"><value>Importiert</value></data>
 </root>
