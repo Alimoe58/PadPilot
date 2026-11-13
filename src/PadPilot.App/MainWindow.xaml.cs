@@ -121,6 +121,24 @@ public partial class MainWindow : Window
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(IssuesUrl) { UseShellExecute = true });
 
     private void CheckUpdate_Click(object sender, RoutedEventArgs e) => _ = _viewModel.Update.CheckAsync();
+
+    /// <summary>Asks once, then downloads, swaps and restarts; this window closes when the new version runs.</summary>
+    private async void InstallUpdate_Click(object sender, RoutedEventArgs e)
+    {
+        var (version, megabytes) = _viewModel.Update.Pending;
+        if (MessageBox.Show(this, Loc.Format("Update_Confirm", version, megabytes), "PadPilot",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            return;
+        if (await _viewModel.Update.InstallAsync())
+            Exit();
+    }
+
+    /// <summary>Called in the new version after an update.</summary>
+    public void UpdateFinished()
+    {
+        _viewModel.Update.FinishUpdate();
+        _tray.ShowInfo(Loc.Format("Update_Done", UpdateViewModel.CurrentText));
+    }
     private void DownloadUpdate_Click(object sender, RoutedEventArgs e) => _viewModel.Update.Download();
     private void SkipUpdate_Click(object sender, RoutedEventArgs e) => _viewModel.Update.Skip();
     private void DismissUpdate_Click(object sender, RoutedEventArgs e) => _viewModel.Update.Dismiss();

@@ -30,7 +30,18 @@ public partial class App : Application
         };
 
         bool fromAutostart = e.Args.Contains(Autostart.Argument);
-        _instance = new Mutex(true, InstanceName, out bool firstInstance);
+        bool afterUpdate = e.Args.Contains(UpdateViewModel.UpdatedArgument);
+        _instance = new Mutex(false, InstanceName);
+        bool firstInstance;
+        try
+        {
+            // Right after an update the old version is still closing: wait for it instead of giving up.
+            firstInstance = _instance.WaitOne(afterUpdate ? TimeSpan.FromSeconds(20) : TimeSpan.Zero);
+        }
+        catch (AbandonedMutexException)
+        {
+            firstInstance = true; // the previous PadPilot ended without letting go; the mutex is ours now
+        }
         if (!firstInstance)
         {
             // Already running: bring that window up (unless Windows is just starting us automatically) and leave.
@@ -56,6 +67,11 @@ public partial class App : Application
             window.HideToTray();
         else
             window.Show();
+
+        if (afterUpdate)
+            window.UpdateFinished();
+        else
+            _ = PadPilot.Core.Updates.Updater.CleanUpAsync(Environment.ProcessPath ?? "", TimeSpan.Zero); // leftovers of an interrupted update
 
         _showWindow = new EventWaitHandle(false, EventResetMode.AutoReset, ShowWindowSignal);
         var waiter = new Thread(() =>
@@ -99,7 +115,14 @@ public partial class App : Application
         _showWindow?.Dispose();
         if (_instance != null)
         {
-            _instance.ReleaseMutex();
+            try
+            {
+                _instance.ReleaseMutex();
+            }
+            catch (ApplicationException)
+            {
+                // Not owned (closing after a failed start); nothing to release.
+            }
             _instance.Dispose();
         }
         base.OnExit(e);

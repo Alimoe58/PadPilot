@@ -59,6 +59,8 @@ public sealed class TrayIcon : IDisposable
         _icon.ShowBalloonTip(3000, "PadPilot", Loc.Get("Tray_Balloon"), Forms.ToolTipIcon.None);
     }
 
+    public void ShowInfo(string text) => _icon.ShowBalloonTip(4000, "PadPilot", text, Forms.ToolTipIcon.Info);
+
     /// <summary>A Windows notification from the tray icon, e.g. the low-battery warning.</summary>
     public void ShowWarning(string text) => _icon.ShowBalloonTip(5000, "PadPilot", text, Forms.ToolTipIcon.Warning);
 

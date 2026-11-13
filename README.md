@@ -37,7 +37,11 @@ If PadPilot ever crashes, it writes the details to `%AppData%\PadPilot\crash.log
 
 ## Privacy
 
-PadPilot doesn't collect or send any data. The only network request is the optional update check: at startup it asks the GitHub API for the latest PadPilot release (switch it off in **Settings → Updates**). Nothing is downloaded or installed automatically.
+PadPilot doesn't collect or send any data. The only network request is the optional update check: at startup it asks the GitHub API for the latest PadPilot release (switch it off in **Settings → Updates**).
+
+## Updating
+
+When a new version is out, PadPilot shows a banner. **Update now** downloads the new `PadPilot.exe` from this repository's releases, checks it against the SHA-256 checksum GitHub publishes for the file, puts it in place of the running one and restarts – settings and profiles are kept. Nothing is downloaded until you click. If PadPilot is in a folder it may not write to (e.g. `C:\Program Files`), the banner offers the download page instead.
 
 ## Features
 

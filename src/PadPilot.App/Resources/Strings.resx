@@ -286,7 +286,6 @@
   <data name="Heading_Updates" xml:space="preserve"><value>UPDATES</value></data>
   <data name="Update_CheckAtStartup" xml:space="preserve"><value>Check for new versions at startup</value></data>
   <data name="Update_CheckNow" xml:space="preserve"><value>Check now</value></data>
-  <data name="Update_Hint" xml:space="preserve"><value>PadPilot asks GitHub (github.com/Alimoe58/PadPilot) for the latest release. Nothing is downloaded or installed automatically, and nothing about you or your PC is sent.</value></data>
   <data name="Update_Checking" xml:space="preserve"><value>Checking…</value></data>
   <data name="Update_Available" xml:space="preserve"><value>PadPilot {0} is available (you have {1}).</value></data>
   <data name="Update_UpToDate" xml:space="preserve"><value>You have the latest version ({0}).</value></data>
@@ -336,4 +335,17 @@ The details are in {0}. You can add them to a bug report via Settings → Suppor
   <data name="Lightbar_EffectHint" xml:space="preserve"><value>Breathing uses the colour above. Rainbow and battery level use its brightness. The battery level breathes while the controller is charging.</value></data>
   <data name="Steam_Title" xml:space="preserve"><value>Steam is running</value></data>
   <data name="Steam_Hint" xml:space="preserve"><value>If buttons act twice or the controller behaves oddly in Steam games, Steam Input is reading it as well. Turn off "PlayStation Controller Support" in Steam → Settings → Controller, or just for one game: right-click it → Properties → Controller → "Disable Steam Input".</value></data>
+  <data name="Update_Now" xml:space="preserve"><value>Update now</value></data>
+  <data name="Update_WhatsNew" xml:space="preserve"><value>What's new</value></data>
+  <data name="Update_Confirm" xml:space="preserve"><value>PadPilot will download version {0} from GitHub (about {1} MB), check it and restart. Your settings and profiles are kept.
+
+If emulation is on, the virtual controller disconnects for a moment.
+
+Update now?</value></data>
+  <data name="Update_Downloading" xml:space="preserve"><value>Downloading PadPilot {0} …</value></data>
+  <data name="Update_Restarting" xml:space="preserve"><value>Checked – restarting …</value></data>
+  <data name="Update_InstallFailed" xml:space="preserve"><value>The update couldn't be installed ({0}). PadPilot keeps working as before; you can download the new version manually.</value></data>
+  <data name="Update_Done" xml:space="preserve"><value>PadPilot was updated to {0}.</value></data>
+  <data name="Update_NoWriteAccess" xml:space="preserve"><value>It can't be installed automatically here because PadPilot may not write to its own folder – please download it.</value></data>
+  <data name="Update_Hint" xml:space="preserve"><value>PadPilot asks GitHub (github.com/Alimoe58/PadPilot) for the latest release; nothing about you or your PC is sent. A new version is only downloaded when you click "Update now". It is checked against the checksum GitHub publishes before it replaces this one.</value></data>
 </root>
