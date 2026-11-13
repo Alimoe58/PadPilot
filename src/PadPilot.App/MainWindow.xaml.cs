@@ -45,7 +45,8 @@ public partial class MainWindow : Window
         _tray.ShowHiddenHint();
     }
 
-    private void ShowFromTray()
+    /// <summary>Shows the window in front, also when PadPilot is started a second time.</summary>
+    public void ShowFromTray()
     {
         Show();
         if (WindowState == WindowState.Minimized)
@@ -53,7 +54,8 @@ public partial class MainWindow : Window
         Activate();
     }
 
-    private void Exit()
+    /// <summary>Closes for real (not to the tray), releasing the controller.</summary>
+    public void Exit()
     {
         _exiting = true;
         Close();

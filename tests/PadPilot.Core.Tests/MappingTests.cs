@@ -98,6 +98,38 @@ public class MappingTests
     }
 
     [Fact]
+    public void HeldButtonUsesTheNewKeyOnlyAfterBeingPressedAgain()
+    {
+        _engine.Process(Press(Buttons.Cross), Map(Buttons.Cross, new ButtonAction { Kind = ActionKind.Key, Key = 0x20 }), 0.004);
+        var next = Map(Buttons.Cross, new ButtonAction { Kind = ActionKind.Key, Key = 0x45 });
+        _engine.Process(Press(Buttons.Cross), next, 0.004);
+        Assert.Equal(["+20", "-20"], _out.Events);
+        _engine.Process(Press(Buttons.None), next, 0.004);
+        _engine.Process(Press(Buttons.Cross), next, 0.004);
+        Assert.Equal(["+20", "-20", "+45"], _out.Events);
+    }
+
+    [Fact]
+    public void HeldButtonDoesNotFireAgainAfterTheMappingChanges()
+    {
+        var fired = 0;
+        _engine.Special += _ => fired++;
+        var action = new ButtonAction { Kind = ActionKind.Special, Special = SpecialAction.NextProfile };
+        _engine.Process(Press(Buttons.PS), Map(Buttons.PS, action), 0.004);
+        Assert.Equal(1, fired);
+
+        // The profile switch brings a new mapping object with the same button; it is still held.
+        var next = Map(Buttons.PS, action);
+        _engine.Process(Press(Buttons.PS), next, 0.004);
+        _engine.Process(Press(Buttons.PS), next, 0.004);
+        Assert.Equal(1, fired);
+
+        _engine.Process(Press(Buttons.None), next, 0.004);
+        _engine.Process(Press(Buttons.PS), next, 0.004);
+        Assert.Equal(2, fired);
+    }
+
+    [Fact]
     public void ResetReleasesEverything()
     {
         var m = new MappingSettings

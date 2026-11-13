@@ -49,6 +49,10 @@ Stärke `1`–`8`. Fehlende Werte bekommen einen Standard.
 | `section` | `start`, `end`, `strength` | Widerstand nur zwischen `start` und `end` |
 | `weapon` | `start` (2–7), `end` (bis 8), `strength` | Widerstand baut sich auf und gibt nach – wie ein Abzug |
 | `vibration` | `start`, `strength`, `frequency` (Hz) | Trigger vibriert ab `start` |
+| `slope` | `start`, `end`, `strength`, `endStrength` | Widerstand ändert sich gleichmäßig von `strength` (bei `start`) bis `endStrength` (bei `end`) und bleibt dann so – z. B. ein Gaspedal, das immer schwerer wird |
+| `bow` | `start` (0–7), `end` (bis 8), `strength`, `snapForce` | Spannung zwischen `start` und `end`, danach schnellt der Trigger mit `snapForce` zurück – wie ein Bogen |
+| `galloping` | `start`, `end`, `firstFoot` (0–6), `secondFoot` (bis 7), `frequency` (Takte/s) | Rhythmischer Doppelschlag wie ein galoppierendes Pferd |
+| `machine` | `start`, `end`, `strength`, `strengthB`, `frequency` (Hz), `period` (Zehntelsekunden) | Vibration, die zwischen zwei Stärken wechselt – z. B. ein Maschinengewehr |
 
 ## Vorrang
 

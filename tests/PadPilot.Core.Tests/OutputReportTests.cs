@@ -77,6 +77,52 @@ public class OutputReportTests
     }
 
     [Fact]
+    public void SlopeRisesEvenlyAndHoldsTheEndStrength()
+    {
+        var b = TriggerEffect.Slope(2, 5, 1, 4).Bytes.ToArray();
+
+        Assert.Equal(0x21, b[0]);
+        uint active = (uint)(b[1] | b[2] << 8);
+        Assert.Equal(0b11_1111_1100u, active);             // zones 2–9
+        uint forces = (uint)(b[3] | b[4] << 8 | b[5] << 16 | b[6] << 24);
+        int Force(int zone) => (int)((forces >> (3 * zone)) & 7) + 1;
+        Assert.Equal([1, 2, 3, 4, 4, 4, 4, 4], Enumerable.Range(2, 8).Select(Force));
+    }
+
+    [Fact]
+    public void BowPacksZonesAndForces()
+    {
+        var b = TriggerEffect.Bow(1, 6, 5, 8).Bytes.ToArray();
+        // zones 1 and 6; strength 5 → 4, snap 8 → 7 in bits 3–5
+        Assert.Equal(new byte[] { 0x22, 0x42, 0x00, 4 | 7 << 3, 0, 0, 0, 0, 0, 0, 0 }, b);
+    }
+
+    [Fact]
+    public void GallopingPacksFeetAndFrequency()
+    {
+        var b = TriggerEffect.Galloping(0, 9, 2, 5, 3).Bytes.ToArray();
+        Assert.Equal(new byte[] { 0x23, 0x01, 0x02, 5 | 2 << 3, 3, 0, 0, 0, 0, 0, 0 }, b);
+    }
+
+    [Fact]
+    public void MachinePacksBothStrengthsFrequencyAndPeriod()
+    {
+        var b = TriggerEffect.Machine(1, 9, 8, 3, 12, 4).Bytes.ToArray();
+        Assert.Equal(new byte[] { 0x27, 0x02, 0x02, 7 | 2 << 3, 12, 4, 0, 0, 0, 0, 0 }, b);
+    }
+
+    [Fact]
+    public void NewEffectsKeepTheirRules()
+    {
+        // End is always after start; feet stay in order.
+        var bow = TriggerEffect.Bow(8, 3, 1, 1).Bytes.ToArray();
+        Assert.Equal((1 << 7) | (1 << 8), bow[1] | bow[2] << 8);
+        var gallop = TriggerEffect.Galloping(0, 9, 6, 2, 0).Bytes.ToArray();
+        Assert.Equal(7 | 6 << 3, gallop[3]);
+        Assert.Equal(1, gallop[4]);
+    }
+
+    [Fact]
     public void VibrationSetsFrequency()
     {
         var b = TriggerEffect.Vibration(0, 8, 30).Bytes.ToArray();

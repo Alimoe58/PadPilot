@@ -15,7 +15,13 @@ public sealed record TriggerProfile
     public int Start { get; init; } = 2;
     public int End { get; init; } = 6;
     public int Strength { get; init; } = 5;
+
+    /// <summary>End strength (slope), snap force (bow) or the weaker pulse (machine).</summary>
+    public int Strength2 { get; init; } = 8;
     public int Frequency { get; init; } = 20;
+
+    /// <summary>Machine mode: tenths of a second per strength.</summary>
+    public int Period { get; init; } = 4;
 }
 
 /// <summary>Everything on the Outputs tab except the rumble test sliders.</summary>
@@ -28,7 +34,12 @@ public sealed record OutputProfile
     public TriggerProfile LeftTrigger { get; init; } = new();
     public TriggerProfile RightTrigger { get; init; } = new();
 
-    /// <summary>The lightbar shows the battery level (green → red) instead of the colour.</summary>
+    public LightbarEffect LightbarEffect { get; init; }
+
+    /// <summary>Speed of breathing and rainbow, 1–10.</summary>
+    public int EffectSpeed { get; init; } = 5;
+
+    /// <summary>Written for PadPilot 1.2, which only knew this switch; <see cref="LightbarEffect"/> wins when set.</summary>
     public bool LightbarShowsBattery { get; init; }
 }
 
@@ -152,6 +163,8 @@ public static class ProfileStore
                 Lightbar = outputs.Lightbar ?? "#3B82F6",
                 LedBrightness = Enum.IsDefined(outputs.LedBrightness) ? outputs.LedBrightness : LedBrightness.High,
                 MicLed = Enum.IsDefined(outputs.MicLed) ? outputs.MicLed : MicLed.Off,
+                LightbarEffect = Enum.IsDefined(outputs.LightbarEffect) ? outputs.LightbarEffect : LightbarEffect.Static,
+                EffectSpeed = Math.Clamp(outputs.EffectSpeed, 1, 10),
                 PlayerLeds = outputs.PlayerLeds ?? [],
                 LeftTrigger = outputs.LeftTrigger ?? new TriggerProfile(),
                 RightTrigger = outputs.RightTrigger ?? new TriggerProfile(),

@@ -5,7 +5,16 @@ namespace PadPilot.App.Views;
 
 public partial class MappingView : UserControl
 {
-    public MappingView() => InitializeComponent();
+    public MappingView()
+    {
+        InitializeComponent();
+        // Leaving the tab ends a waiting key capture, so typing elsewhere (e.g. a profile name) isn't swallowed.
+        IsVisibleChanged += (_, e) =>
+        {
+            if (e.NewValue is false)
+                ViewModel?.StopCapture();
+        };
+    }
 
     private MappingViewModel? ViewModel => DataContext as MappingViewModel;
 

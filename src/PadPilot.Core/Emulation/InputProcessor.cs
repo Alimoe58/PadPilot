@@ -9,8 +9,19 @@ public sealed record DeadzoneProfile
     public DeadzoneSettings R2 { get; init; } = new() { Inner = 0 };
 }
 
-/// <summary>Controller input after deadzones. Sticks −1…1 (Y down is positive, like the DualSense), triggers 0…1.</summary>
-public readonly record struct ProcessedInput(StickVector Left, StickVector Right, double L2, double R2, Buttons Buttons);
+/// <summary>
+/// Controller input after deadzones. Sticks −1…1 (Y down is positive, like the DualSense), triggers 0…1.
+/// Touch, motion and battery are passed through unchanged for virtual controllers that have them (DualShock 4).
+/// </summary>
+public readonly record struct ProcessedInput(StickVector Left, StickVector Right, double L2, double R2, Buttons Buttons)
+{
+    public TouchPoint Touch1 { get; init; }
+    public TouchPoint Touch2 { get; init; }
+    public Vector3S Gyro { get; init; }
+    public Vector3S Accel { get; init; }
+    public int BatteryPercent { get; init; }
+    public bool Charging { get; init; }
+}
 
 public static class InputProcessor
 {
@@ -19,7 +30,15 @@ public static class InputProcessor
         Deadzones.ApplyStick(Deadzones.NormalizeStick(s.RightX, s.RightY), p.RightStick),
         Deadzones.ApplyTrigger(s.L2, p.L2),
         Deadzones.ApplyTrigger(s.R2, p.R2),
-        s.Buttons);
+        s.Buttons)
+    {
+        Touch1 = s.Touch1,
+        Touch2 = s.Touch2,
+        Gyro = s.Gyro,
+        Accel = s.Accel,
+        BatteryPercent = s.BatteryPercent,
+        Charging = s.Charge is ChargeStatus.Charging or ChargeStatus.Full,
+    };
 
     /// <summary>−1…1 to an Xbox stick axis. Xbox counts up as positive, so pass −Y for vertical axes.</summary>
     public static short ToXboxAxis(double value) => (short)Math.Round(Math.Clamp(value, -1, 1) * short.MaxValue);

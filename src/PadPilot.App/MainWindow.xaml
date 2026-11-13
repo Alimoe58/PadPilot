@@ -264,9 +264,16 @@
                                         <Button Style="{StaticResource Swatch}" Background="#FFFFFF" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#000000" Click="Swatch_Click" />
                                     </StackPanel>
-                                    <CheckBox IsChecked="{Binding LightbarBattery}" Margin="0,12,0,0">
-                                        <TextBlock Text="{local:Tr Lightbar_Battery}" TextWrapping="Wrap" />
-                                    </CheckBox>
+                                    <StackPanel Orientation="Horizontal" Margin="0,14,0,8">
+                                        <TextBlock Text="{local:Tr Lightbar_Effect}" Width="86" VerticalAlignment="Center" />
+                                        <ComboBox ItemsSource="{x:Static local:OutputViewModel.Effects}" SelectedItem="{Binding LightbarEffect}" MinWidth="230" />
+                                    </StackPanel>
+                                    <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,6" IsEnabled="{Binding UsesEffectSpeed}">
+                                        <TextBlock Text="{local:Tr Lightbar_Speed}" Width="86" />
+                                        <TextBlock Text="{Binding EffectSpeed}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="1" Maximum="10" Value="{Binding EffectSpeed}" />
+                                    </DockPanel>
+                                    <TextBlock Text="{local:Tr Lightbar_EffectHint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>
 

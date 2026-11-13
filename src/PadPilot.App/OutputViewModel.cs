@@ -10,6 +10,10 @@ public enum TriggerMode
     Section,
     Weapon,
     Vibration,
+    Slope,
+    Bow,
+    Galloping,
+    Machine,
 }
 
 /// <summary>Ready-made trigger settings. Custom means the current settings match none of them.</summary>
@@ -18,6 +22,7 @@ public enum TriggerPreset
     Custom,
     Off,
     Light,
+    Rising,
     Heavy,
     Brake,
     Bow,
@@ -25,6 +30,7 @@ public enum TriggerPreset
     Pistol,
     Shotgun,
     MachineGun,
+    Gallop,
     Engine,
 }
 
@@ -36,13 +42,15 @@ public static class TriggerPresets
     {
         TriggerPreset.Off => new() { Mode = TriggerMode.Off },
         TriggerPreset.Light => new() { Mode = TriggerMode.Resistance, Start = 0, Strength = 2 },
+        TriggerPreset.Rising => new() { Mode = TriggerMode.Slope, Start = 0, End = 9, Strength = 1, Strength2 = 7 },
         TriggerPreset.Heavy => new() { Mode = TriggerMode.Resistance, Start = 0, Strength = 7 },
         TriggerPreset.Brake => new() { Mode = TriggerMode.Resistance, Start = 3, Strength = 6 },
-        TriggerPreset.Bow => new() { Mode = TriggerMode.Section, Start = 2, End = 8, Strength = 6 },
+        TriggerPreset.Bow => new() { Mode = TriggerMode.Bow, Start = 1, End = 6, Strength = 6, Strength2 = 8 },
         TriggerPreset.Click => new() { Mode = TriggerMode.Weapon, Start = 2, End = 3, Strength = 3 },
         TriggerPreset.Pistol => new() { Mode = TriggerMode.Weapon, Start = 3, End = 5, Strength = 5 },
         TriggerPreset.Shotgun => new() { Mode = TriggerMode.Weapon, Start = 2, End = 7, Strength = 8 },
-        TriggerPreset.MachineGun => new() { Mode = TriggerMode.Vibration, Start = 3, Strength = 6, Frequency = 12 },
+        TriggerPreset.MachineGun => new() { Mode = TriggerMode.Machine, Start = 1, End = 9, Strength = 8, Strength2 = 3, Frequency = 12, Period = 4 },
+        TriggerPreset.Gallop => new() { Mode = TriggerMode.Galloping, Start = 0, End = 9, Frequency = 3 },
         TriggerPreset.Engine => new() { Mode = TriggerMode.Vibration, Start = 1, Strength = 3, Frequency = 30 },
         _ => null,
     };
@@ -57,27 +65,39 @@ public static class TriggerPresets
     /// <summary>Clears the values the mode doesn't use, so they don't affect the comparison.</summary>
     private static TriggerProfile Normalize(TriggerProfile p) => p.Mode switch
     {
-        TriggerMode.Off => new() { Mode = TriggerMode.Off, Start = 0, End = 0, Strength = 0, Frequency = 0 },
-        TriggerMode.Resistance => p with { End = 0, Frequency = 0 },
-        TriggerMode.Vibration => p with { End = 0 },
-        _ => p with { Frequency = 0 },
+        TriggerMode.Off => new() { Mode = TriggerMode.Off, Start = 0, End = 0, Strength = 0, Strength2 = 0, Frequency = 0, Period = 0 },
+        TriggerMode.Resistance => p with { End = 0, Strength2 = 0, Frequency = 0, Period = 0 },
+        TriggerMode.Vibration => p with { End = 0, Strength2 = 0, Period = 0 },
+        TriggerMode.Section or TriggerMode.Weapon => p with { Strength2 = 0, Frequency = 0, Period = 0 },
+        TriggerMode.Slope or TriggerMode.Bow => p with { Frequency = 0, Period = 0 },
+        TriggerMode.Galloping => p with { Strength = 0, Strength2 = 0, Period = 0 },
+        _ => p,
     };
 }
 
 /// <summary>Settings for one adaptive trigger.</summary>
 public sealed class TriggerViewModel : ObservableObject
 {
+    // Galloping: where in the 8-step cycle the two beats fall (fixed; frequency sets the speed).
+    private const int GallopFirstFoot = 2, GallopSecondFoot = 5;
+
     private TriggerMode _mode;
     private int _start = 2;
     private int _end = 6;
     private int _strength = 5;
+    private int _strength2 = 8;
     private int _frequency = 20;
+    private int _period = 4;
 
     public static IReadOnlyList<TriggerMode> Modes { get; } = Enum.GetValues<TriggerMode>();
 
     public event Action? Changed;
 
-    public TriggerViewModel() => Changed += () => OnPropertyChanged(nameof(Preset));
+    public TriggerViewModel()
+    {
+        Changed += () => OnPropertyChanged(nameof(Preset));
+        Loc.Instance.PropertyChanged += (_, _) => OnPropertyChanged(nameof(Strength2Label));
+    }
 
     /// <summary>Picking a preset fills in mode and sliders; afterwards they can still be adjusted.</summary>
     public TriggerPreset Preset
@@ -101,7 +121,10 @@ public sealed class TriggerViewModel : ObservableObject
             OnPropertyChanged(nameof(UsesStart));
             OnPropertyChanged(nameof(UsesEnd));
             OnPropertyChanged(nameof(UsesStrength));
+            OnPropertyChanged(nameof(UsesStrength2));
             OnPropertyChanged(nameof(UsesFrequency));
+            OnPropertyChanged(nameof(UsesPeriod));
+            OnPropertyChanged(nameof(Strength2Label));
             Changed?.Invoke();
         }
     }
@@ -109,12 +132,27 @@ public sealed class TriggerViewModel : ObservableObject
     public int Start { get => _start; set { if (Set(ref _start, value)) Changed?.Invoke(); } }
     public int End { get => _end; set { if (Set(ref _end, value)) Changed?.Invoke(); } }
     public int Strength { get => _strength; set { if (Set(ref _strength, value)) Changed?.Invoke(); } }
+
+    /// <summary>Second strength: end strength (slope), snap force (bow) or the weaker pulse (machine).</summary>
+    public int Strength2 { get => _strength2; set { if (Set(ref _strength2, value)) Changed?.Invoke(); } }
     public int Frequency { get => _frequency; set { if (Set(ref _frequency, value)) Changed?.Invoke(); } }
 
+    /// <summary>Machine: how long each strength lasts, in tenths of a second.</summary>
+    public int Period { get => _period; set { if (Set(ref _period, value)) Changed?.Invoke(); } }
+
     public bool UsesStart => Mode != TriggerMode.Off;
-    public bool UsesEnd => Mode is TriggerMode.Section or TriggerMode.Weapon;
-    public bool UsesStrength => Mode != TriggerMode.Off;
-    public bool UsesFrequency => Mode == TriggerMode.Vibration;
+    public bool UsesEnd => Mode is not (TriggerMode.Off or TriggerMode.Resistance or TriggerMode.Vibration);
+    public bool UsesStrength => Mode is not (TriggerMode.Off or TriggerMode.Galloping);
+    public bool UsesStrength2 => Mode is TriggerMode.Slope or TriggerMode.Bow or TriggerMode.Machine;
+    public bool UsesFrequency => Mode is TriggerMode.Vibration or TriggerMode.Galloping or TriggerMode.Machine;
+    public bool UsesPeriod => Mode == TriggerMode.Machine;
+
+    public string Strength2Label => Loc.Get(Mode switch
+    {
+        TriggerMode.Bow => "Trigger_SnapForce",
+        TriggerMode.Machine => "Trigger_StrengthB",
+        _ => "Trigger_EndStrength",
+    });
 
     public TriggerEffect ToEffect() => Mode switch
     {
@@ -122,18 +160,27 @@ public sealed class TriggerViewModel : ObservableObject
         TriggerMode.Section => TriggerEffect.Section(Start, End, Strength),
         TriggerMode.Weapon => TriggerEffect.Weapon(Start, End, Strength),
         TriggerMode.Vibration => TriggerEffect.Vibration(Start, Strength, Frequency),
+        TriggerMode.Slope => TriggerEffect.Slope(Start, End, Strength, Strength2),
+        TriggerMode.Bow => TriggerEffect.Bow(Start, End, Strength, Strength2),
+        TriggerMode.Galloping => TriggerEffect.Galloping(Start, End, GallopFirstFoot, GallopSecondFoot, Frequency),
+        TriggerMode.Machine => TriggerEffect.Machine(Start, End, Strength, Strength2, Frequency, Period),
         _ => TriggerEffect.Off,
     };
 
-    public TriggerProfile ToProfile() => new() { Mode = Mode, Start = Start, End = End, Strength = Strength, Frequency = Frequency };
+    public TriggerProfile ToProfile() => new()
+    {
+        Mode = Mode, Start = Start, End = End, Strength = Strength, Strength2 = Strength2, Frequency = Frequency, Period = Period,
+    };
 
     public void Apply(TriggerProfile p)
     {
         Start = p.Start;
         End = p.End;
         Strength = p.Strength;
+        Strength2 = p.Strength2;
         Frequency = p.Frequency;
-        Mode = p.Mode;
+        Period = p.Period;
+        Mode = Enum.IsDefined(p.Mode) ? p.Mode : TriggerMode.Off;
     }
 }
 
@@ -146,7 +193,8 @@ public sealed class OutputViewModel : ObservableObject
     private bool _led1, _led2, _led3 = true, _led4, _led5;
     private LedBrightness _ledBrightness = LedBrightness.High;
     private MicLed _micLed = MicLed.Off;
-    private bool _lightbarBattery;
+    private LightbarEffect _lightbarEffect;
+    private int _effectSpeed = 5;
     private int _rumbleLeft;
     private int _rumbleRight;
 
@@ -202,8 +250,23 @@ public sealed class OutputViewModel : ObservableObject
 
     public MicLed MicLed { get => _micLed; set => SetAndRaise(ref _micLed, value); }
 
-    /// <summary>Lightbar shows the battery level (green → red) instead of the chosen colour; brightness still applies.</summary>
-    public bool LightbarBattery { get => _lightbarBattery; set => SetAndRaise(ref _lightbarBattery, value); }
+    public static IReadOnlyList<LightbarEffect> Effects { get; } = Enum.GetValues<LightbarEffect>();
+
+    /// <summary>Fixed colour, breathing, rainbow or battery level (green → red); brightness still applies.</summary>
+    public LightbarEffect LightbarEffect
+    {
+        get => _lightbarEffect;
+        set
+        {
+            SetAndRaise(ref _lightbarEffect, value);
+            OnPropertyChanged(nameof(UsesEffectSpeed));
+        }
+    }
+
+    /// <summary>1 (slow) to 10 (fast).</summary>
+    public int EffectSpeed { get => _effectSpeed; set => SetAndRaise(ref _effectSpeed, Math.Clamp(value, 1, 10)); }
+
+    public bool UsesEffectSpeed => LightbarEffect != LightbarEffect.Static;
 
     public int RumbleLeft { get => _rumbleLeft; set => SetAndRaise(ref _rumbleLeft, value); }
     public int RumbleRight { get => _rumbleRight; set => SetAndRaise(ref _rumbleRight, value); }
@@ -223,7 +286,9 @@ public sealed class OutputViewModel : ObservableObject
         MicLed = MicLed,
         LeftTrigger = LeftTrigger.ToProfile(),
         RightTrigger = RightTrigger.ToProfile(),
-        LightbarShowsBattery = LightbarBattery,
+        LightbarEffect = LightbarEffect,
+        EffectSpeed = EffectSpeed,
+        LightbarShowsBattery = LightbarEffect == LightbarEffect.Battery, // for PadPilot 1.2
     };
 
     public void Apply(OutputProfile p)
@@ -239,7 +304,10 @@ public sealed class OutputViewModel : ObservableObject
         MicLed = p.MicLed;
         LeftTrigger.Apply(p.LeftTrigger);
         RightTrigger.Apply(p.RightTrigger);
-        LightbarBattery = p.LightbarShowsBattery;
+        // Profiles from PadPilot 1.2 only have the battery switch.
+        LightbarEffect = p.LightbarEffect != LightbarEffect.Static ? p.LightbarEffect
+            : p.LightbarShowsBattery ? LightbarEffect.Battery : LightbarEffect.Static;
+        EffectSpeed = p.EffectSpeed;
     }
 
     public void SetColor(Color color)

@@ -15,14 +15,14 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 | Akkustand | ✅ | ✅ (inkl. Ladestatus), Warnung bei niedrigem Akku (Benachrichtigung + Lightbar blinkt) |
 | Tasten-/Stick-Tester | ✅ | ✅ inkl. Deadzones, Drift-Anzeige, Rundheitstest |
 | Automatisch verbinden beim Start | ✅ | ✅ inkl. Hotplug |
-| Option „Steam beenden“ beim Verbinden | ✅ | ➕ (Steam Input greift sonst evtl. auch auf den Controller zu) |
+| Option „Steam beenden“ beim Verbinden | ✅ | ✅ Hinweis im Tab Emulation, wenn Steam läuft, wie man Steam Input abschaltet |
 
 ## Emulation
 
 | Feature | DSX | PadPilot |
 |---|---|---|
 | Xbox-360-Emulation (ViGEmBus) | ✅ | ✅ inkl. Deadzones und Rumble aus Spielen |
-| DualShock-4-Emulation (inkl. Touchpad/Gyro) | ✅ | ✅ Tasten, Sticks, Trigger, Rumble; Touchpad-Bewegung und Gyro ➕ |
+| DualShock-4-Emulation (inkl. Touchpad/Gyro) | ✅ | ✅ Tasten, Sticks, Trigger, Rumble, Touchpad und Bewegungssensoren (Gyro-Zielen) |
 | Echten Controller verstecken (HidHide) | ✅ optional | ✅ automatisch während der Emulation, Installation per Knopf |
 | Keine Emulation (nur Trigger/LEDs) | ✅ | ✅ |
 | Virtueller DualSense | ✅ (DSX+, kostenpflichtig) | ❌ (kein offener Treiber dafür) |
@@ -32,11 +32,11 @@ Legende: ✅ vorhanden · 🗓️ im Fahrplan · ➕ Vorschlag für den Fahrplan
 | Feature | DSX | PadPilot |
 |---|---|---|
 | Lightbar-Farbe | ✅ | ✅ |
-| Lichtszenen / Effekte (Atmen, Regenbogen, Akku-Farbe …) | ✅ (Steam) | ✅ Akku-Farbe (grün → rot); Atmen/Regenbogen ➕ |
+| Lichtszenen / Effekte (Atmen, Regenbogen, Akku-Farbe …) | ✅ (Steam) | ✅ Atmen, Regenbogen, Akkustand (atmet beim Laden) |
 | Spieler-LEDs, Mikrofon-LED | ✅ | ✅ |
 | Rumble | ✅ | ✅ |
 | Adaptive Trigger mit Presets | ✅ | ✅ Widerstand, Abschnitt, Waffe, Vibration; fertige Vorlagen (Bogen, Pistole, Bremse …) |
-| Weitere Trigger-Modi (DSX nennt 17 eigene Modi) | ✅ | ➕ z. B. Galopp, Maschinengewehr, Bogen, mehrstufiger Widerstand |
+| Weitere Trigger-Modi (DSX nennt 17 eigene Modi) | ✅ | ✅ 8 Modi: Widerstand, Abschnitt, Waffe, Vibration, Verlauf, Bogen, Galopp, Maschine |
 | Audio über Lautsprecher/Kopfhörer am Controller (USB) | ✅ | ➕ später, Windows erkennt den DualSense per USB schon als Audiogerät |
 | Audio-Haptik (Ton → Vibration, USB) | ✅ | ➕ später, aufwendig |
 | Audio/Haptik über Bluetooth | ✅ (DSX+, kostenpflichtig) | ❌ (undokumentiert) |

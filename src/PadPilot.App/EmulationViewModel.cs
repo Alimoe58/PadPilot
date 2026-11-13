@@ -26,7 +26,24 @@ public sealed class EmulationViewModel : ObservableObject
         };
         UpdateStatus();
         UpdateHidHideText();
+
+        RefreshSteam();
+        _steamTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(5),
+            System.Windows.Threading.DispatcherPriority.Background, (_, _) => RefreshSteam(),
+            System.Windows.Threading.Dispatcher.CurrentDispatcher);
+        _steamTimer.Start();
     }
+
+    private readonly System.Windows.Threading.DispatcherTimer _steamTimer;
+    private bool _steamRunning;
+
+    /// <summary>
+    /// Steam is running. With "PlayStation Controller Support" (Steam Input) on, Steam reads the DualSense
+    /// or the virtual controller itself, and games can see inputs twice – the Emulation tab explains how to avoid that.
+    /// </summary>
+    public bool SteamRunning { get => _steamRunning; private set => Set(ref _steamRunning, value); }
+
+    private void RefreshSteam() => SteamRunning = PadPilot.Core.Games.RunningApps.IsRunning("steam.exe");
 
     public static IReadOnlyList<EmulationMode> Modes { get; } = Enum.GetValues<EmulationMode>();
 

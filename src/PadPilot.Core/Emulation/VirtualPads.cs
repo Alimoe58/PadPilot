@@ -79,6 +79,11 @@ public sealed class Xbox360Pad : IVirtualPad
 public sealed class DualShock4Pad : IVirtualPad
 {
     private readonly IDualShock4Controller _pad;
+    private readonly System.Diagnostics.Stopwatch _clock = System.Diagnostics.Stopwatch.StartNew();
+    private byte _touchCounter;
+
+    // The extended report (with touch and motion) needs ViGEmBus 1.17 or newer; older drivers get buttons and sticks only.
+    private bool _extendedReport = true;
 
     public event Action<byte, byte>? RumbleRequested;
 
@@ -95,6 +100,26 @@ public sealed class DualShock4Pad : IVirtualPad
     }
 
     public void Submit(ProcessedInput input)
+    {
+        if (_extendedReport)
+        {
+            // DS4 clock: one tick is 16/3 µs.
+            ushort timestamp = (ushort)(_clock.Elapsed.TotalMicroseconds * 3 / 16);
+            try
+            {
+                _pad.SubmitRawReport(Ds4Report.Build(input, timestamp, _touchCounter++));
+                return;
+            }
+            catch (Exception ex) when (ex is not Nefarius.ViGEm.Client.Exceptions.VigemTargetNotPluggedInException
+                                       && ex.GetType().Namespace == typeof(Nefarius.ViGEm.Client.Exceptions.VigemTargetNotPluggedInException).Namespace)
+            {
+                _extendedReport = false;
+            }
+        }
+        SubmitBasic(input);
+    }
+
+    private void SubmitBasic(ProcessedInput input)
     {
         var b = input.Buttons;
         _pad.SetButtonState(DualShock4Button.Cross, b.HasFlag(Buttons.Cross));

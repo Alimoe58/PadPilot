@@ -131,10 +131,20 @@
                     <TextBlock Text="{Binding Strength}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
                     <Slider Minimum="1" Maximum="8" Value="{Binding Strength}" />
                 </DockPanel>
-                <DockPanel Style="{StaticResource SettingRow}" IsEnabled="{Binding UsesFrequency}">
+                <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesStrength2}">
+                    <TextBlock Text="{Binding Strength2Label}" Width="100" />
+                    <TextBlock Text="{Binding Strength2}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="1" Maximum="8" Value="{Binding Strength2}" />
+                </DockPanel>
+                <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,4" IsEnabled="{Binding UsesFrequency}">
                     <TextBlock Text="{local:Tr Trigger_Frequency}" Width="100" />
                     <TextBlock Text="{Binding Frequency}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
                     <Slider Minimum="1" Maximum="60" Value="{Binding Frequency}" />
+                </DockPanel>
+                <DockPanel Style="{StaticResource SettingRow}" IsEnabled="{Binding UsesPeriod}">
+                    <TextBlock Text="{local:Tr Trigger_Period}" Width="100" />
+                    <TextBlock Text="{Binding Period}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                    <Slider Minimum="1" Maximum="20" Value="{Binding Period}" />
                 </DockPanel>
             </StackPanel>
         </DataTemplate>

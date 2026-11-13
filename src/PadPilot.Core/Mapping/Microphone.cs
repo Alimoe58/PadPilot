@@ -6,6 +6,7 @@ namespace PadPilot.Core.Mapping;
 /// Mutes the default Windows microphone (for normal apps and for calls, if those are different
 /// devices) through the Core Audio API, like the mute button in the Windows sound settings.
 /// </summary>
+[System.Runtime.Versioning.SupportedOSPlatform("windows")]
 public static class Microphone
 {
     private const int Capture = 1;                 // EDataFlow.eCapture
@@ -53,9 +54,9 @@ public static class Microphone
     {
         try
         {
-            return Endpoint(Console) is IAudioEndpointVolume volume && volume.GetMute(out bool muted) == 0 ? muted : null;
+            return WithEndpoint(Console, v => v.GetMute(out bool muted) == 0 ? muted : (bool?)null);
         }
-        catch (COMException)
+        catch (Exception ex) when (ex is COMException or InvalidCastException)
         {
             return null;
         }
@@ -69,21 +70,35 @@ public static class Microphone
         try
         {
             foreach (int role in new[] { Console, Communications })
-                (Endpoint(role) as IAudioEndpointVolume)?.SetMute(!muted, IntPtr.Zero);
+                WithEndpoint(role, v => v.SetMute(!muted, IntPtr.Zero) == 0 ? true : (bool?)null);
             return !muted;
         }
-        catch (COMException)
+        catch (Exception ex) when (ex is COMException or InvalidCastException)
         {
             return null;
         }
     }
 
-    private static object? Endpoint(int role)
+    /// <summary>Runs <paramref name="use"/> on the default microphone's volume control and frees the COM objects right after (this runs every second).</summary>
+    private static bool? WithEndpoint(int role, Func<IAudioEndpointVolume, bool?> use)
     {
-        var enumerator = (IMMDeviceEnumerator)new DeviceEnumerator();
-        if (enumerator.GetDefaultAudioEndpoint(Capture, role, out var device) != 0 || device == null)
-            return null;
-        var id = EndpointVolumeId;
-        return device.Activate(ref id, ClsctxAll, IntPtr.Zero, out object endpoint) == 0 ? endpoint : null;
+        object? enumerator = null, device = null, endpoint = null;
+        try
+        {
+            enumerator = new DeviceEnumerator();
+            if (((IMMDeviceEnumerator)enumerator).GetDefaultAudioEndpoint(Capture, role, out var d) != 0 || d == null)
+                return null;
+            device = d;
+            var id = EndpointVolumeId;
+            if (d.Activate(ref id, ClsctxAll, IntPtr.Zero, out endpoint) != 0 || endpoint is not IAudioEndpointVolume volume)
+                return null;
+            return use(volume);
+        }
+        finally
+        {
+            foreach (var com in new[] { endpoint, device, enumerator })
+                if (com != null && Marshal.IsComObject(com))
+                    Marshal.ReleaseComObject(com);
+        }
     }
 }

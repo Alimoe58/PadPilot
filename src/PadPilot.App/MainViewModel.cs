@@ -37,6 +37,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private TimeSpan _blinkUntil;
     private bool _blinking;
     private int _lastBatteryPercent = -1;
+    private bool _charging;
+    private TimeSpan _lastAnimationFrame;
     private bool? _micMuted;
 
     // Mods: commands arrive on network/file threads and are laid over the Outputs tab.
@@ -183,6 +185,11 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         sb.AppendLine($"Battery warning: {(AppSettings.Current.LowBatteryWarning ? $"at {AppSettings.Current.LowBatteryLevel} %" : "off")}, " +
                       $"idle turn-off: {AppSettings.Current.IdleTurnOff}, update check: {(AppSettings.Current.CheckForUpdates ? "on" : "off")}");
         sb.Append($"Language: {Loc.Instance.Language}");
+        if (CrashLog.LastEntry() is string crash)
+        {
+            sb.AppendLine().AppendLine().AppendLine("Last error:");
+            sb.Append(crash.Length > 4000 ? crash[..4000] + " …" : crash);
+        }
         return sb.ToString();
     }
 
@@ -444,6 +451,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _outputDirty = true; // low-battery blink runs frame by frame, plus one frame to restore the colour
             _blinking = clock < _blinkUntil;
         }
+        // Breathing / rainbow: about 30 updates per second are smooth and leave Bluetooth room for the rest.
+        if (LightbarEffects.IsAnimated(Output.LightbarEffect, _charging) && clock - _lastAnimationFrame >= TimeSpan.FromMilliseconds(33))
+        {
+            _lastAnimationFrame = clock;
+            _outputDirty = true;
+        }
         if (_outputDirty)
         {
             _outputDirty = false;
@@ -483,10 +496,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         var settings = AppSettings.Current;
 
-        if (state.BatteryPercent != _lastBatteryPercent)
+        bool charging = state.Charge is ChargeStatus.Charging;
+        if (state.BatteryPercent != _lastBatteryPercent || charging != _charging)
         {
             _lastBatteryPercent = state.BatteryPercent;
-            if (Output.LightbarBattery)
+            _charging = charging;
+            if (Output.LightbarEffect == LightbarEffect.Battery)
                 _outputDirty = true;
         }
         if (settings.LowBatteryWarning && _batteryWarning.Update(state.BatteryPercent, state.Charge, settings.LowBatteryLevel))
@@ -519,9 +534,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private OutputState BuildOutput()
     {
         var output = Output.ToState();
-        if (Output.LightbarBattery && _lastBatteryPercent >= 0)
+        if (Output.LightbarEffect != LightbarEffect.Static && (Output.LightbarEffect != LightbarEffect.Battery || _lastBatteryPercent >= 0))
         {
-            var (r, g, b) = BatteryColor.For(_lastBatteryPercent, Output.Brightness / 100.0);
+            var (r, g, b) = LightbarEffects.Color(Output.LightbarEffect, (output.LightbarRed, output.LightbarGreen, output.LightbarBlue),
+                Output.Brightness / 100.0, _lastBatteryPercent, _charging, _clock.Elapsed.TotalSeconds, Output.EffectSpeed);
             output = output with { LightbarRed = r, LightbarGreen = g, LightbarBlue = b };
         }
         if (_micMuted is bool muted)

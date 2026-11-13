@@ -100,7 +100,7 @@ public static class ModCommandParser
         return leds;
     }
 
-    /// <summary>"off" or { "mode": "off|resistance|section|weapon|vibration", ...parameters }.</summary>
+    /// <summary>"off" or { "mode": "off|resistance|section|weapon|vibration|slope|bow|galloping|machine", ...parameters }.</summary>
     private static TriggerEffect ParseTrigger(JsonElement v)
     {
         string mode = v.ValueKind == JsonValueKind.String ? v.GetString()! : Get(v, "mode")?.GetString() ?? "";
@@ -111,7 +111,11 @@ public static class ModCommandParser
             "section" => TriggerEffect.Section(Int(v, "start", 2), Int(v, "end", 6), Int(v, "strength", 5)),
             "weapon" => TriggerEffect.Weapon(Int(v, "start", 2), Int(v, "end", 6), Int(v, "strength", 8)),
             "vibration" => TriggerEffect.Vibration(Int(v, "start", 0), Int(v, "strength", 5), Int(v, "frequency", 20)),
-            _ => throw new FormatException($"unknown trigger mode \"{mode}\" (off, resistance, section, weapon, vibration)"),
+            "slope" => TriggerEffect.Slope(Int(v, "start", 0), Int(v, "end", 9), Int(v, "strength", 1), Int(v, "endStrength", 8)),
+            "bow" => TriggerEffect.Bow(Int(v, "start", 1), Int(v, "end", 6), Int(v, "strength", 6), Int(v, "snapForce", 8)),
+            "galloping" => TriggerEffect.Galloping(Int(v, "start", 0), Int(v, "end", 9), Int(v, "firstFoot", 2), Int(v, "secondFoot", 5), Int(v, "frequency", 3)),
+            "machine" => TriggerEffect.Machine(Int(v, "start", 1), Int(v, "end", 9), Int(v, "strength", 8), Int(v, "strengthB", 3), Int(v, "frequency", 12), Int(v, "period", 4)),
+            _ => throw new FormatException($"unknown trigger mode \"{mode}\" (off, resistance, section, weapon, vibration, slope, bow, galloping, machine)"),
         };
     }
 

@@ -78,7 +78,10 @@ public sealed class MappingEngine
     {
         if (!ReferenceEquals(m, _settings))
         {
-            Reset();
+            // New mapping (e.g. a profile switch): let go of everything the old one held. Buttons that
+            // are still down stay "known", so they only act under the new mapping after being pressed
+            // again – otherwise a button mapped to "next profile" would switch again on every report.
+            ReleaseAll();
             _settings = m;
         }
         if (m.IsEmpty)
@@ -108,8 +111,15 @@ public sealed class MappingEngine
         Stick(Deadzones.NormalizeStick(s.RightX, s.RightY), m.RightStick, 1, m.StickMouseSpeed, seconds);
     }
 
-    /// <summary>Lets go of every key and mouse button this engine holds.</summary>
+    /// <summary>Lets go of every key and mouse button and forgets the controller state (e.g. on disconnect).</summary>
     public void Reset()
+    {
+        ReleaseAll();
+        _lastButtons = Buttons.None;
+        _settings = null;
+    }
+
+    private void ReleaseAll()
     {
         foreach (int key in _keyHolds.Keys.ToList())
             _keyboard.Key(key, false);
@@ -119,8 +129,6 @@ public sealed class MappingEngine
         _mouseHolds.Clear();
         Array.Clear(_stickKeys);
         Array.Clear(_fraction);
-        _lastButtons = Buttons.None;
-        _settings = null;
     }
 
     private void PressKey(ButtonAction a, bool down)

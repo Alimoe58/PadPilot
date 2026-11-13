@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: Alimoe58.PadPilot
+PackageVersion: 1.2.1
+InstallerType: portable
+Commands:
+- padpilot
+MinimumOSVersion: 10.0.17763.0
+ReleaseDate: 2026-10-31
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/Alimoe58/PadPilot/releases/download/v1.2.1/PadPilot.exe
+  InstallerSha256: F634F5CA0283BA5536BE280B54210BBBE06B311F483ACFE17EBE35E4F0FA97B3
+ManifestType: installer
+ManifestVersion: 1.6.0

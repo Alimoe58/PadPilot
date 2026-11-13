@@ -184,6 +184,7 @@ public sealed class MappingViewModel : ObservableObject
 
     public void Apply(MappingSettings settings)
     {
+        settings = settings.Sanitized(); // profile files can be edited by hand
         _applying = true;
         StopCapture();
         foreach (var row in Rows)

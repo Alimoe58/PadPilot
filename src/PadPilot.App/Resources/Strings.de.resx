@@ -41,7 +41,6 @@
   <data name="Trigger_Strength" xml:space="preserve"><value>Stärke</value></data>
   <data name="Trigger_Frequency" xml:space="preserve"><value>Frequenz (Hz)</value></data>
   <data name="Trigger_Live" xml:space="preserve"><value>Live</value></data>
-  <data name="Trigger_Hint" xml:space="preserve"><value>Positionen: 0 = Trigger losgelassen, 9 = ganz durchgedrückt. Waffe: Start 2–7, Ende muss hinter Start liegen (bis 8).</value></data>
   <data name="Trigger_Preset" xml:space="preserve"><value>Vorlage</value></data>
   <data name="TriggerPreset_Custom" xml:space="preserve"><value>Eigene Einstellung</value></data>
   <data name="TriggerPreset_Off" xml:space="preserve"><value>Aus (kein Effekt)</value></data>
@@ -295,7 +294,6 @@
   <data name="Update_Download" xml:space="preserve"><value>Herunterladen</value></data>
   <data name="Update_Skip" xml:space="preserve"><value>Diese Version überspringen</value></data>
   <data name="Update_Later" xml:space="preserve"><value>Beim nächsten Start erinnern</value></data>
-  <data name="Lightbar_Battery" xml:space="preserve"><value>Lightbar zeigt stattdessen den Akkustand (grün → gelb → rot, die Helligkeit gilt weiter)</value></data>
   <data name="Battery_Warn" xml:space="preserve"><value>Bei niedrigem Akku warnen</value></data>
   <data name="Battery_Level" xml:space="preserve"><value>Warnen ab</value></data>
   <data name="Battery_Blink" xml:space="preserve"><value>Zusätzlich die Lightbar rot blinken lassen</value></data>
@@ -315,4 +313,27 @@
   <data name="Profiles_ImportGamesMoved" xml:space="preserve"><value>Diese Spiele sind jetzt damit verknüpft: {0}.</value></data>
   <data name="Profiles_ImportFailed" xml:space="preserve"><value>Diese Datei ist kein PadPilot-Profil.</value></data>
   <data name="Profiles_ImportedName" xml:space="preserve"><value>Importiert</value></data>
+  <data name="Crash_Message" xml:space="preserve"><value>PadPilot ist auf einen unerwarteten Fehler gestoßen und muss beendet werden. Der Controller wird freigegeben.
+
+Die Details stehen in {0}. Du kannst sie über Einstellungen → Support → Diagnose kopieren an einen Fehlerbericht anhängen.</value></data>
+  <data name="TriggerMode_Slope" xml:space="preserve"><value>Verlauf (steigend oder fallend)</value></data>
+  <data name="TriggerMode_Bow" xml:space="preserve"><value>Bogen (Spannung, dann Zurückschnellen)</value></data>
+  <data name="TriggerMode_Galloping" xml:space="preserve"><value>Galopp (Doppelschlag)</value></data>
+  <data name="TriggerMode_Machine" xml:space="preserve"><value>Maschine (zwei Stärken)</value></data>
+  <data name="TriggerPreset_Rising" xml:space="preserve"><value>Steigender Widerstand</value></data>
+  <data name="TriggerPreset_Gallop" xml:space="preserve"><value>Galoppierendes Pferd</value></data>
+  <data name="Trigger_EndStrength" xml:space="preserve"><value>Endstärke</value></data>
+  <data name="Trigger_SnapForce" xml:space="preserve"><value>Rückschnellen</value></data>
+  <data name="Trigger_StrengthB" xml:space="preserve"><value>Stärke 2</value></data>
+  <data name="Trigger_Period" xml:space="preserve"><value>Intervall (0,1 s)</value></data>
+  <data name="Trigger_Hint" xml:space="preserve"><value>Positionen: 0 = Trigger losgelassen, 9 = ganz durchgedrückt. Das Ende liegt immer hinter dem Start. Waffe: Start 2–7. Bogen: Start 0–7, Ende bis 8. Galopp: Frequenz = Schläge pro Sekunde.</value></data>
+  <data name="LightbarEffect_Static" xml:space="preserve"><value>Feste Farbe</value></data>
+  <data name="LightbarEffect_Breathing" xml:space="preserve"><value>Atmen</value></data>
+  <data name="LightbarEffect_Rainbow" xml:space="preserve"><value>Regenbogen</value></data>
+  <data name="LightbarEffect_Battery" xml:space="preserve"><value>Akkustand (grün → rot)</value></data>
+  <data name="Lightbar_Effect" xml:space="preserve"><value>Effekt</value></data>
+  <data name="Lightbar_Speed" xml:space="preserve"><value>Tempo</value></data>
+  <data name="Lightbar_EffectHint" xml:space="preserve"><value>Atmen nutzt die Farbe oben. Regenbogen und Akkustand nutzen deren Helligkeit. Der Akkustand atmet, während der Controller lädt.</value></data>
+  <data name="Steam_Title" xml:space="preserve"><value>Steam läuft</value></data>
+  <data name="Steam_Hint" xml:space="preserve"><value>Wenn Tasten in Steam-Spielen doppelt auslösen oder sich der Controller seltsam verhält, liest Steam Input ihn mit. Schalte „Unterstützung für PlayStation-Controller“ in Steam → Einstellungen → Controller aus – oder nur für ein Spiel: Rechtsklick → Eigenschaften → Controller → „Steam Input deaktivieren“.</value></data>
 </root>

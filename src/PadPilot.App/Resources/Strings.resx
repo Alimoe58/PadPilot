@@ -41,7 +41,6 @@
   <data name="Trigger_Strength" xml:space="preserve"><value>Strength</value></data>
   <data name="Trigger_Frequency" xml:space="preserve"><value>Frequency (Hz)</value></data>
   <data name="Trigger_Live" xml:space="preserve"><value>Live</value></data>
-  <data name="Trigger_Hint" xml:space="preserve"><value>Positions: 0 = trigger released, 9 = fully pressed. Weapon: start 2–7, end must be after start (up to 8).</value></data>
   <data name="Trigger_Preset" xml:space="preserve"><value>Preset</value></data>
   <data name="TriggerPreset_Custom" xml:space="preserve"><value>Custom</value></data>
   <data name="TriggerPreset_Off" xml:space="preserve"><value>Off (no effect)</value></data>
@@ -295,7 +294,6 @@
   <data name="Update_Download" xml:space="preserve"><value>Download</value></data>
   <data name="Update_Skip" xml:space="preserve"><value>Skip this version</value></data>
   <data name="Update_Later" xml:space="preserve"><value>Remind me next time</value></data>
-  <data name="Lightbar_Battery" xml:space="preserve"><value>Lightbar shows the battery level instead (green → yellow → red, brightness still applies)</value></data>
   <data name="Battery_Warn" xml:space="preserve"><value>Warn me when the battery is low</value></data>
   <data name="Battery_Level" xml:space="preserve"><value>Warning level</value></data>
   <data name="Battery_Blink" xml:space="preserve"><value>Also blink the lightbar red</value></data>
@@ -315,4 +313,27 @@
   <data name="Profiles_ImportGamesMoved" xml:space="preserve"><value>These games are now linked to it: {0}.</value></data>
   <data name="Profiles_ImportFailed" xml:space="preserve"><value>This file isn&apos;t a PadPilot profile.</value></data>
   <data name="Profiles_ImportedName" xml:space="preserve"><value>Imported</value></data>
+  <data name="Crash_Message" xml:space="preserve"><value>PadPilot ran into an unexpected error and has to close. The controller is released.
+
+The details are in {0}. You can add them to a bug report via Settings → Support → Copy diagnostics.</value></data>
+  <data name="TriggerMode_Slope" xml:space="preserve"><value>Slope (rising or falling)</value></data>
+  <data name="TriggerMode_Bow" xml:space="preserve"><value>Bow (tension, then snap)</value></data>
+  <data name="TriggerMode_Galloping" xml:space="preserve"><value>Gallop (double beat)</value></data>
+  <data name="TriggerMode_Machine" xml:space="preserve"><value>Machine (two strengths)</value></data>
+  <data name="TriggerPreset_Rising" xml:space="preserve"><value>Rising resistance</value></data>
+  <data name="TriggerPreset_Gallop" xml:space="preserve"><value>Galloping horse</value></data>
+  <data name="Trigger_EndStrength" xml:space="preserve"><value>End strength</value></data>
+  <data name="Trigger_SnapForce" xml:space="preserve"><value>Snap force</value></data>
+  <data name="Trigger_StrengthB" xml:space="preserve"><value>Strength 2</value></data>
+  <data name="Trigger_Period" xml:space="preserve"><value>Interval (0.1 s)</value></data>
+  <data name="Trigger_Hint" xml:space="preserve"><value>Positions: 0 = trigger released, 9 = fully pressed. The end is always kept behind the start. Weapon: start 2–7. Bow: start 0–7, end up to 8. Gallop: frequency = beats per second.</value></data>
+  <data name="LightbarEffect_Static" xml:space="preserve"><value>Fixed colour</value></data>
+  <data name="LightbarEffect_Breathing" xml:space="preserve"><value>Breathing</value></data>
+  <data name="LightbarEffect_Rainbow" xml:space="preserve"><value>Rainbow</value></data>
+  <data name="LightbarEffect_Battery" xml:space="preserve"><value>Battery level (green → red)</value></data>
+  <data name="Lightbar_Effect" xml:space="preserve"><value>Effect</value></data>
+  <data name="Lightbar_Speed" xml:space="preserve"><value>Speed</value></data>
+  <data name="Lightbar_EffectHint" xml:space="preserve"><value>Breathing uses the colour above. Rainbow and battery level use its brightness. The battery level breathes while the controller is charging.</value></data>
+  <data name="Steam_Title" xml:space="preserve"><value>Steam is running</value></data>
+  <data name="Steam_Hint" xml:space="preserve"><value>If buttons act twice or the controller behaves oddly in Steam games, Steam Input is reading it as well. Turn off "PlayStation Controller Support" in Steam → Settings → Controller, or just for one game: right-click it → Properties → Controller → "Disable Steam Input".</value></data>
 </root>
