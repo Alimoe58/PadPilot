@@ -3,7 +3,7 @@
 **A free, open-source tool for the PlayStation 5 DualSense controller on Windows.**
 Adaptive triggers, lightbar, Xbox / DualShock 4 emulation, touchpad and gyro mouse, deadzones and profiles – in one small app.
 
-![PadPilot – live view of the controller](docs/images/inputs.png)
+![PadPilot – overview with quick switches and the live controller view](docs/images/overview.png)
 
 > PadPilot is an independent project and is not affiliated with Sony or Microsoft.
 
@@ -60,7 +60,11 @@ When a new version is out, PadPilot shows a banner. **Update now** downloads the
 | **Convenience** | Update check against GitHub releases, start with Windows, minimize to tray, English and German UI |
 
 <p>
-  <img src="docs/images/outputs.png" width="49%" alt="Outputs: lightbar and adaptive triggers">
+  <img src="docs/images/triggers.png" width="49%" alt="Triggers: preset cards and the resistance graph">
+  <img src="docs/images/lightbar.png" width="49%" alt="Lightbar: colour field, effects and LEDs">
+</p>
+<p>
+  <img src="docs/images/emulation.png" width="49%" alt="Emulation: drivers, virtual controller and HidHide">
   <img src="docs/images/deadzones.png" width="49%" alt="Sticks and deadzones">
 </p>
 

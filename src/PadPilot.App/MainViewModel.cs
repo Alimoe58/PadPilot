@@ -453,10 +453,18 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private void ShowBattery(ControllerState state)
     {
         Battery = FormatBattery(state);
-        // Segoe icons: Battery0–10 at E850, BatteryCharging0–10 at E85B.
+        // Segoe icons: Battery0–9 at E850–E859 and BatteryCharging0–9 at E85A–E863;
+        // the full ones sit elsewhere (Battery10 E83F, BatteryCharging10 EA93).
         int level = Math.Clamp((int)Math.Round(state.BatteryPercent / 10.0), 0, 10);
         bool charging = state.Charge is ChargeStatus.Charging or ChargeStatus.Full;
-        BatteryGlyph = ((char)((charging ? 0xE85B : 0xE850) + level)).ToString();
+        int glyph = (charging, level) switch
+        {
+            (false, 10) => 0xE83F,
+            (true, 10) => 0xEA93,
+            (false, _) => 0xE850 + level,
+            (true, _) => 0xE85A + level,
+        };
+        BatteryGlyph = ((char)glyph).ToString();
     }
 
     private static string FormatBattery(ControllerState state) => state.Charge switch

@@ -115,7 +115,8 @@
                                         </DataTemplate>
                                     </ContentPresenter.ContentTemplate>
                                 </ContentPresenter>
-                                <ContentPresenter ContentSource="SelectedContent" />
+                                <!-- This name lets accessibility tools (screen readers, automation) see the page's content -->
+                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                             </DockPanel>
                         </Grid>
                     </ControlTemplate>
@@ -282,6 +283,15 @@
         </Style>
         <Style TargetType="ComboBoxItem">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <!-- Screen readers read the translated label, not the internal enum name -->
+            <Setter Property="AutomationProperties.Name">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource EnumLabel}">
+                        <Binding />
+                        <Binding Path="Language" Source="{x:Static local:Loc.Instance}" />
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Padding" Value="10,6" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -523,6 +533,15 @@
                 <Setter.Value>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                        <Setter Property="AutomationProperties.Name">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource EnumLabel}">
+                                    <Binding />
+                                    <Binding Path="Language" Source="{x:Static local:Loc.Instance}" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
