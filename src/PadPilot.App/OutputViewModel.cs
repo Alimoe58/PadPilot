@@ -38,6 +38,9 @@ public static class TriggerPresets
 {
     public static IReadOnlyList<TriggerPreset> All { get; } = Enum.GetValues<TriggerPreset>();
 
+    /// <summary>Presets shown as cards on the Triggers page ("Custom" is a state, not a choice).</summary>
+    public static IReadOnlyList<TriggerPreset> Cards { get; } = All.Where(p => p != TriggerPreset.Custom).ToList();
+
     public static TriggerProfile? Get(TriggerPreset preset) => preset switch
     {
         TriggerPreset.Off => new() { Mode = TriggerMode.Off },
@@ -93,9 +96,21 @@ public sealed class TriggerViewModel : ObservableObject
 
     public event Action? Changed;
 
+    private double _live = -1;
+
+    /// <summary>How far the trigger is pressed right now (0–255), for the line in the graph; −1 while unknown.</summary>
+    public double Live { get => _live; set => Set(ref _live, value); }
+
+    /// <summary>The current settings as one value, for the graph.</summary>
+    public TriggerProfile Current => ToProfile();
+
     public TriggerViewModel()
     {
-        Changed += () => OnPropertyChanged(nameof(Preset));
+        Changed += () =>
+        {
+            OnPropertyChanged(nameof(Preset));
+            OnPropertyChanged(nameof(Current));
+        };
         Loc.Instance.PropertyChanged += (_, _) => OnPropertyChanged(nameof(Strength2Label));
     }
 

@@ -1,4 +1,4 @@
-﻿<Window x:Class="PadPilot.App.MainWindow"
+<Window x:Class="PadPilot.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
         xmlns:views="clr-namespace:PadPilot.App.Views"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
-        Title="PadPilot" Width="1040" Height="760" MinWidth="880" MinHeight="600"
+        Title="PadPilot" Width="1180" Height="800" MinWidth="980" MinHeight="620"
         Background="{StaticResource WindowBrush}" Icon="app.ico">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -16,43 +16,58 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Status bar -->
-        <Border Style="{StaticResource Panel}">
+        <!-- Header: controller status, connection, battery and the active profile -->
+        <Border Background="{StaticResource SidebarBrush}" CornerRadius="10" Padding="16,10" Margin="0,0,0,4">
             <DockPanel>
-                <TextBlock Text="{Binding Status}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="{local:Tr Label_Connection}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Connection}" Margin="0,0,24,0" VerticalAlignment="Center" />
-                    <TextBlock Text="{local:Tr Label_Battery}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Battery}" Margin="0,0,24,0" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding ReportRate}" Foreground="{StaticResource MutedBrush}" Margin="0,0,24,0" VerticalAlignment="Center" />
-                    <TextBlock Text="{local:Tr Label_Profile}" Foreground="{StaticResource MutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <ComboBox ItemsSource="{Binding Profiles.Names}" SelectedItem="{Binding Profiles.Active}" MinWidth="130">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="&#xE7FC;" Style="{StaticResource Icon}" FontSize="20" Foreground="{StaticResource AccentBrush}" Margin="0,0,10,0" />
+                    <TextBlock Text="PadPilot" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <TextBlock Text="{Binding Status}" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0" ToolTip="{local:Tr Label_Connection}"
+                                Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Text="{Binding ConnectionGlyph}" Style="{StaticResource Icon}" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding Connection}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0" ToolTip="{local:Tr Label_Battery}"
+                                Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Text="{Binding BatteryGlyph}" Style="{StaticResource Icon}" FontSize="18" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding Battery}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock Text="&#xE8F1;" Style="{StaticResource Icon}" Margin="0,0,8,0" ToolTip="{local:Tr Label_Profile}" />
+                    <ComboBox ItemsSource="{Binding Profiles.Names}" SelectedItem="{Binding Profiles.Active}" MinWidth="150">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" Foreground="Black" />
+                                <TextBlock Text="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                    <!-- Set by a running game -->
+                    <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="8,3" Margin="8,0,0,0"
+                            Visibility="{Binding Profiles.HasActiveGame, Converter={StaticResource BoolToVisibility}}"
+                            ToolTip="{Binding Profiles.GameStatus}">
+                        <TextBlock Text="{Binding Profiles.ActiveGame}" FontSize="12" Foreground="{StaticResource TextBrush}" />
+                    </Border>
                 </StackPanel>
             </DockPanel>
         </Border>
 
         <StackPanel Grid.Row="1">
             <!-- Shown at startup when the emulation driver is missing -->
-            <Border Style="{StaticResource Panel}" Background="#3A2A12" BorderBrush="#F59E0B" BorderThickness="1"
+            <Border Style="{StaticResource Panel}" Background="#3A2A12" BorderBrush="#F59E0B" BorderThickness="1" Margin="0,6"
                     Visibility="{Binding Emulation.ShowDriverBanner, Converter={StaticResource BoolToVisibility}}">
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Content="✕" Style="{StaticResource ActionButton}" Margin="6,0,0,0"
                             ToolTip="{local:Tr Banner_Dismiss}" Click="DismissBanner_Click" />
                     <Button DockPanel.Dock="Right" Content="{local:Tr Driver_CheckAgain}" Style="{StaticResource ActionButton}" Click="CheckDrivers_Click" />
-                    <Button DockPanel.Dock="Right" Content="{local:Tr Banner_InstallViGEm}" Style="{StaticResource ActionButton}" Click="InstallViGEm_Click" />
+                    <Button DockPanel.Dock="Right" Content="{local:Tr Banner_InstallViGEm}" Style="{StaticResource PrimaryButton}" Click="InstallViGEm_Click" />
                     <TextBlock Text="{local:Tr Banner_ViGEmMissing}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" />
                 </DockPanel>
             </Border>
 
             <!-- A newer release is on GitHub -->
-            <Border Style="{StaticResource Panel}" Background="#12283A" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+            <Border Style="{StaticResource Panel}" Background="#12283A" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" Margin="0,6"
                     Visibility="{Binding Update.ShowBanner, Converter={StaticResource BoolToVisibility}}">
                 <StackPanel>
                     <DockPanel>
@@ -66,8 +81,8 @@
                                 Visibility="{Binding Update.CanInstall, Converter={StaticResource BoolToVisibility}}" />
                         <Button DockPanel.Dock="Right" Content="{local:Tr Update_Download}" Style="{StaticResource ActionButton}" Click="DownloadUpdate_Click"
                                 Visibility="{Binding Update.ManualOnly, Converter={StaticResource BoolToVisibility}}" />
-                        <Button DockPanel.Dock="Right" Content="{local:Tr Update_Now}" Style="{StaticResource ActionButton}" Click="InstallUpdate_Click"
-                                FontWeight="SemiBold" Visibility="{Binding Update.CanInstall, Converter={StaticResource BoolToVisibility}}" />
+                        <Button DockPanel.Dock="Right" Content="{local:Tr Update_Now}" Style="{StaticResource PrimaryButton}" Click="InstallUpdate_Click"
+                                Visibility="{Binding Update.CanInstall, Converter={StaticResource BoolToVisibility}}" />
                         <TextBlock Text="{Binding Update.BannerText}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" />
                     </DockPanel>
                     <!-- While installing: progress and what is happening -->
@@ -79,196 +94,250 @@
             </Border>
         </StackPanel>
 
-        <TabControl Grid.Row="2">
-            <TabItem Header="{local:Tr Tab_Inputs}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+        <TabControl Grid.Row="2" x:Name="Pages">
+            <!-- Overview: quick switches and the live controller view -->
+            <TabItem Header="{local:Tr Tab_Overview}" Tag="&#xE80F;" x:Name="OverviewTab">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
 
-                        <!-- Sticks and triggers -->
-                        <StackPanel>
-                            <Border Style="{StaticResource Panel}">
+                        <!-- Quick switches -->
+                        <UniformGrid Columns="5">
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Emulation}">
                                 <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_Sticks}" Style="{StaticResource Heading}" />
-                                    <StackPanel Orientation="Horizontal">
-                                        <StackPanel Margin="0,0,16,0">
-                                            <Canvas Width="100" Height="100">
-                                                <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
-                                                <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
-                                                         Canvas.Left="{Binding State.LeftX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
-                                                         Canvas.Top="{Binding State.LeftY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
-                                            </Canvas>
-                                            <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
-                                                <Run Text="L " /><Run Text="{Binding State.LeftX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.LeftY, Mode=OneWay}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                        <StackPanel>
-                                            <Canvas Width="100" Height="100">
-                                                <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
-                                                <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
-                                                         Canvas.Left="{Binding State.RightX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
-                                                         Canvas.Top="{Binding State.RightY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
-                                            </Canvas>
-                                            <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
-                                                <Run Text="R " /><Run Text="{Binding State.RightX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.RightY, Mode=OneWay}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </StackPanel>
+                                    <DockPanel Margin="0,0,0,10">
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Tag="EmulationTab" Click="GoTo_Click" ToolTip="{local:Tr Tab_Emulation}" />
+                                        <TextBlock Text="{local:Tr Overview_Emulation}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <CheckBox IsChecked="{Binding IsOn}">
+                                        <TextBlock TextWrapping="Wrap">
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource EnumLabel}">
+                                                    <Binding Path="Mode" />
+                                                    <Binding Path="Language" Source="{x:Static local:Loc.Instance}" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </CheckBox>
                                 </StackPanel>
                             </Border>
-
-                            <Border Style="{StaticResource Panel}">
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Mouse}">
                                 <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_Triggers}" Style="{StaticResource Heading}" />
+                                    <DockPanel Margin="0,0,0,10">
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Tag="MouseTab" Click="GoTo_Click" ToolTip="{local:Tr Tab_Mouse}" />
+                                        <TextBlock Text="{local:Tr Overview_GyroMouse}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <CheckBox IsChecked="{Binding GyroEnabled}">
+                                        <TextBlock TextWrapping="Wrap">
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource EnumLabel}">
+                                                    <Binding Path="Activation" />
+                                                    <Binding Path="Language" Source="{x:Static local:Loc.Instance}" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </CheckBox>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Mouse}">
+                                <StackPanel>
+                                    <DockPanel Margin="0,0,0,10">
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Tag="MouseTab" Click="GoTo_Click" ToolTip="{local:Tr Tab_Mouse}" />
+                                        <TextBlock Text="{local:Tr Overview_TouchpadMouse}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <CheckBox IsChecked="{Binding TouchpadEnabled}">
+                                        <TextBlock Text="{local:Tr Overview_On}" />
+                                    </CheckBox>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Output}">
+                                <StackPanel>
                                     <DockPanel Margin="0,0,0,8">
-                                        <TextBlock Text="L2" Width="26" />
-                                        <TextBlock Text="{Binding State.L2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <ProgressBar Value="{Binding State.L2, Mode=OneWay}" />
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Tag="LightbarTab" Click="GoTo_Click" ToolTip="{local:Tr Tab_Lightbar}" />
+                                        <Border Width="12" Height="12" CornerRadius="6" Background="{Binding LightbarPreview}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="{local:Tr Overview_Lightbar}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     </DockPanel>
-                                    <DockPanel>
-                                        <TextBlock Text="R2" Width="26" />
-                                        <TextBlock Text="{Binding State.R2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <ProgressBar Value="{Binding State.R2, Mode=OneWay}" />
-                                    </DockPanel>
+                                    <ComboBox ItemsSource="{x:Static local:OutputViewModel.Effects}" SelectedItem="{Binding LightbarEffect}" MinWidth="0" />
                                 </StackPanel>
                             </Border>
-                        </StackPanel>
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Output}">
+                                <StackPanel>
+                                    <DockPanel Margin="0,0,0,8">
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Tag="TriggersTab" Click="GoTo_Click" ToolTip="{local:Tr Tab_Triggers}" />
+                                        <TextBlock Text="{local:Tr Overview_Triggers}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <TextBlock Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis">
+                                        <Run Text="L2 · " /><Run>
+                                            <Run.Text>
+                                                <MultiBinding Converter="{StaticResource EnumLabel}" Mode="OneWay">
+                                                    <Binding Path="LeftTrigger.Preset" Mode="OneWay" />
+                                                    <Binding Path="Language" Source="{x:Static local:Loc.Instance}" Mode="OneWay" />
+                                                </MultiBinding>
+                                            </Run.Text>
+                                        </Run>
+                                    </TextBlock>
+                                    <TextBlock Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0">
+                                        <Run Text="R2 · " /><Run>
+                                            <Run.Text>
+                                                <MultiBinding Converter="{StaticResource EnumLabel}" Mode="OneWay">
+                                                    <Binding Path="RightTrigger.Preset" Mode="OneWay" />
+                                                    <Binding Path="Language" Source="{x:Static local:Loc.Instance}" Mode="OneWay" />
+                                                </MultiBinding>
+                                            </Run.Text>
+                                        </Run>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
 
-                        <!-- Buttons: the view matches the connected controller -->
-                        <Border Grid.Column="1" Style="{StaticResource Panel}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource Heading}">
-                                    <Run Text="{local:Tr Heading_Buttons}" /><Run Text="{Binding ControllerName, Mode=OneWay, StringFormat='  ·  {0}'}" />
-                                </TextBlock>
-                                <views:GenericButtonsView Visibility="{Binding Layout, Converter={StaticResource EqualsVisibility}, ConverterParameter=Generic}" />
-                                <views:PlayStation5ButtonsView Visibility="{Binding Layout, Converter={StaticResource EqualsVisibility}, ConverterParameter=PlayStation5}" />
+                        <!-- No controller: say what to do instead of showing zeros -->
+                        <Border Style="{StaticResource Panel}" Padding="28" Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}"
+                                x:Name="DisconnectedPanel">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE7FC;" Style="{StaticResource Icon}" FontSize="44" HorizontalAlignment="Center" Margin="0,0,0,12" />
+                                <TextBlock Text="{local:Tr Overview_Disconnected}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6" />
+                                <TextBlock Text="{local:Tr Overview_DisconnectedHint}" Style="{StaticResource Hint}" FontSize="13" TextAlignment="Center" MaxWidth="460" />
                             </StackPanel>
                         </Border>
 
-                        <!-- Touchpad and motion sensors -->
-                        <StackPanel Grid.Column="2">
-                            <Border Style="{StaticResource Panel}">
+                        <!-- Live view -->
+                        <Grid x:Name="LiveView">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Sticks and triggers -->
+                            <StackPanel>
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Heading_Sticks}" Style="{StaticResource Heading}" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel Margin="0,0,16,0">
+                                                <Canvas Width="100" Height="100">
+                                                    <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
+                                                    <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
+                                                             Canvas.Left="{Binding State.LeftX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
+                                                             Canvas.Top="{Binding State.LeftY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
+                                                </Canvas>
+                                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                                    <Run Text="L " /><Run Text="{Binding State.LeftX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.LeftY, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <Canvas Width="100" Height="100">
+                                                    <Ellipse Width="100" Height="100" Stroke="{StaticResource TrackBrush}" StrokeThickness="2" />
+                                                    <Ellipse Width="16" Height="16" Fill="{StaticResource AccentBrush}"
+                                                             Canvas.Left="{Binding State.RightX, Converter={StaticResource Scale}, ConverterParameter=0.32941}"
+                                                             Canvas.Top="{Binding State.RightY, Converter={StaticResource Scale}, ConverterParameter=0.32941}" />
+                                                </Canvas>
+                                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
+                                                    <Run Text="R " /><Run Text="{Binding State.RightX, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.RightY, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Heading_Triggers}" Style="{StaticResource Heading}" />
+                                        <DockPanel Margin="0,0,0,8">
+                                            <TextBlock Text="L2" Width="26" />
+                                            <TextBlock Text="{Binding State.L2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <ProgressBar Value="{Binding State.L2, Mode=OneWay}" />
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="R2" Width="26" />
+                                            <TextBlock Text="{Binding State.R2}" Width="30" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <ProgressBar Value="{Binding State.R2, Mode=OneWay}" />
+                                        </DockPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Buttons: the view matches the connected controller -->
+                            <Border Grid.Column="1" Style="{StaticResource Panel}">
                                 <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_Touchpad}" Style="{StaticResource Heading}" />
-                                    <Border Width="288" Height="162" Background="{StaticResource TrackBrush}" CornerRadius="6" ClipToBounds="True">
-                                        <Canvas>
-                                            <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBrush}"
-                                                     Visibility="{Binding State.Touch1.Active, Converter={StaticResource BoolToVisibility}}"
-                                                     Canvas.Left="{Binding State.Touch1.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
-                                                     Canvas.Top="{Binding State.Touch1.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
-                                                <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
-                                            </Ellipse>
-                                            <Ellipse Width="14" Height="14" Fill="#F59E0B"
-                                                     Visibility="{Binding State.Touch2.Active, Converter={StaticResource BoolToVisibility}}"
-                                                     Canvas.Left="{Binding State.Touch2.X, Converter={StaticResource Scale}, ConverterParameter=0.15}"
-                                                     Canvas.Top="{Binding State.Touch2.Y, Converter={StaticResource Scale}, ConverterParameter=0.15}">
-                                                <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
-                                            </Ellipse>
-                                        </Canvas>
-                                    </Border>
-                                    <TextBlock Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}">
-                                        <Run Text="{local:Tr Touch_Finger1}" /><Run Text=": " /><Run Text="{Binding State.Touch1.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch1.Y, Mode=OneWay}" />
-                                        <Run Text="   " /><Run Text="{local:Tr Touch_Finger2}" /><Run Text=": " /><Run Text="{Binding State.Touch2.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch2.Y, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource Heading}">
+                                        <Run Text="{local:Tr Heading_Buttons}" /><Run Text="{Binding ControllerName, Mode=OneWay, StringFormat='  ·  {0}'}" />
                                     </TextBlock>
+                                    <views:GenericButtonsView Visibility="{Binding Layout, Converter={StaticResource EqualsVisibility}, ConverterParameter=Generic}" />
+                                    <views:PlayStation5ButtonsView Visibility="{Binding Layout, Converter={StaticResource EqualsVisibility}, ConverterParameter=PlayStation5}" />
                                 </StackPanel>
                             </Border>
 
-                            <Border Style="{StaticResource Panel}">
-                                <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_Motion}" Style="{StaticResource Heading}" />
-                                    <TextBlock Text="{local:Tr Motion_Disabled}" Foreground="#F59E0B" Margin="0,0,0,6" TextWrapping="Wrap"
-                                               Visibility="{Binding Settings.GyroDisabled, Converter={StaticResource BoolToVisibility}}" />
-                                    <TextBlock FontFamily="Consolas">
-                                        <Run Text="Gyro   X " /><Run Text="{Binding State.Gyro.X, Mode=OneWay}" />
-                                        <Run Text="  Y " /><Run Text="{Binding State.Gyro.Y, Mode=OneWay}" />
-                                        <Run Text="  Z " /><Run Text="{Binding State.Gyro.Z, Mode=OneWay}" />
-                                    </TextBlock>
-                                    <TextBlock FontFamily="Consolas" Margin="0,4,0,0">
-                                        <Run Text="Accel  X " /><Run Text="{Binding State.Accel.X, Mode=OneWay}" />
-                                        <Run Text="  Y " /><Run Text="{Binding State.Accel.Y, Mode=OneWay}" />
-                                        <Run Text="  Z " /><Run Text="{Binding State.Accel.Z, Mode=OneWay}" />
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Grid>
+                            <!-- Touchpad and motion sensors -->
+                            <StackPanel Grid.Column="2">
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Heading_Touchpad}" Style="{StaticResource Heading}" />
+                                        <Border Width="256" Height="144" Background="{StaticResource TrackBrush}" CornerRadius="6" ClipToBounds="True">
+                                            <Canvas>
+                                                <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBrush}"
+                                                         Visibility="{Binding State.Touch1.Active, Converter={StaticResource BoolToVisibility}}"
+                                                         Canvas.Left="{Binding State.Touch1.X, Converter={StaticResource Scale}, ConverterParameter=0.13333}"
+                                                         Canvas.Top="{Binding State.Touch1.Y, Converter={StaticResource Scale}, ConverterParameter=0.13333}">
+                                                    <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                                                </Ellipse>
+                                                <Ellipse Width="14" Height="14" Fill="#F59E0B"
+                                                         Visibility="{Binding State.Touch2.Active, Converter={StaticResource BoolToVisibility}}"
+                                                         Canvas.Left="{Binding State.Touch2.X, Converter={StaticResource Scale}, ConverterParameter=0.13333}"
+                                                         Canvas.Top="{Binding State.Touch2.Y, Converter={StaticResource Scale}, ConverterParameter=0.13333}">
+                                                    <Ellipse.RenderTransform><TranslateTransform X="-7" Y="-7" /></Ellipse.RenderTransform>
+                                                </Ellipse>
+                                            </Canvas>
+                                        </Border>
+                                        <TextBlock Margin="0,6,0,0" Foreground="{StaticResource MutedBrush}" FontSize="12">
+                                            <Run Text="{local:Tr Touch_Finger1}" /><Run Text=": " /><Run Text="{Binding State.Touch1.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch1.Y, Mode=OneWay}" />
+                                            <Run Text="   " /><Run Text="{local:Tr Touch_Finger2}" /><Run Text=": " /><Run Text="{Binding State.Touch2.X, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding State.Touch2.Y, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
 
-                    <!-- Raw report for debugging -->
-                    <Border Grid.Row="1" Style="{StaticResource Panel}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Raw}" Style="{StaticResource Heading}" />
-                            <TextBox Text="{Binding RawHex, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
-                                     Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
-                </Grid>
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Heading_Motion}" Style="{StaticResource Heading}" />
+                                        <TextBlock Text="{local:Tr Motion_Disabled}" Foreground="{StaticResource WarningBrush}" Margin="0,0,0,6" TextWrapping="Wrap" MaxWidth="256"
+                                                   Visibility="{Binding Settings.GyroDisabled, Converter={StaticResource BoolToVisibility}}" />
+                                        <TextBlock FontFamily="Consolas" FontSize="12">
+                                            <Run Text="Gyro   X " /><Run Text="{Binding State.Gyro.X, Mode=OneWay}" />
+                                            <Run Text="  Y " /><Run Text="{Binding State.Gyro.Y, Mode=OneWay}" />
+                                            <Run Text="  Z " /><Run Text="{Binding State.Gyro.Z, Mode=OneWay}" />
+                                        </TextBlock>
+                                        <TextBlock FontFamily="Consolas" FontSize="12" Margin="0,4,0,0">
+                                            <Run Text="Accel  X " /><Run Text="{Binding State.Accel.X, Mode=OneWay}" />
+                                            <Run Text="  Y " /><Run Text="{Binding State.Accel.Y, Mode=OneWay}" />
+                                            <Run Text="  Z " /><Run Text="{Binding State.Accel.Z, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
 
-            <TabItem Header="{local:Tr Tab_Sticks}">
-                <views:DeadzonesView DataContext="{Binding Deadzones}" />
-            </TabItem>
-
-            <TabItem Header="{local:Tr Tab_Outputs}">
+            <!-- Lightbar, LEDs and the rumble test -->
+            <TabItem Header="{local:Tr Tab_Lightbar}" Tag="&#xEA80;" x:Name="LightbarTab">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <Grid DataContext="{Binding Output}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <StackPanel DataContext="{Binding Output}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel>
-                            <!-- Lightbar -->
-                            <Border Style="{StaticResource Panel}">
+                            <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
                                 <StackPanel>
                                     <TextBlock Text="{local:Tr Heading_Lightbar}" Style="{StaticResource Heading}" />
-                                    <!-- Colour field (hue × intensity) with preview and hex input -->
-                                    <DockPanel Margin="0,0,0,12">
-                                        <StackPanel Margin="0,0,14,0">
-                                            <Border Width="72" Height="72" CornerRadius="8" Background="{Binding LightbarPreview}"
-                                                    BorderBrush="{StaticResource TrackBrush}" BorderThickness="1" />
-                                            <TextBox Text="{Binding Hex, UpdateSourceTrigger=LostFocus}" Width="72" Margin="0,8,0,0"
-                                                     FontFamily="Consolas" TextAlignment="Center" KeyDown="HexBox_KeyDown"
-                                                     Background="{StaticResource TrackBrush}" Foreground="{StaticResource TextBrush}"
-                                                     BorderThickness="0" Padding="2,4" />
-                                        </StackPanel>
+                                    <!-- Colour field (hue × intensity) with preview -->
+                                    <DockPanel Margin="0,0,0,14">
+                                        <Border Width="72" Height="110" CornerRadius="10" Background="{Binding LightbarPreview}" Margin="0,0,14,0"
+                                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" />
                                         <views:ColorField Height="110" Hue="{Binding Hue}" Saturation="{Binding Saturation}" />
                                     </DockPanel>
-
-                                    <DockPanel Margin="0,0,0,4">
-                                        <TextBlock Text="{local:Tr Color_Intensity}" Width="86" />
-                                        <TextBlock Text="{Binding Saturation, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="100" Value="{Binding Saturation}" />
-                                    </DockPanel>
-                                    <DockPanel Margin="0,0,0,12">
-                                        <TextBlock Text="{local:Tr Color_Brightness}" Width="86" />
-                                        <TextBlock Text="{Binding Brightness, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="100" Value="{Binding Brightness}" />
-                                    </DockPanel>
-
-                                    <DockPanel Margin="0,0,0,4">
-                                        <TextBlock Text="{local:Tr Color_Red}" Width="86" />
-                                        <TextBlock Text="{Binding Red}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
-                                    </DockPanel>
-                                    <DockPanel Margin="0,0,0,4">
-                                        <TextBlock Text="{local:Tr Color_Green}" Width="86" />
-                                        <TextBlock Text="{Binding Green}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
-                                    </DockPanel>
-                                    <DockPanel>
-                                        <TextBlock Text="{local:Tr Color_Blue}" Width="86" />
-                                        <TextBlock Text="{Binding Blue}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
-                                    </DockPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="86,12,0,0">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
                                         <Button Style="{StaticResource Swatch}" Background="#FF0000" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#FF8000" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#FFFF00" Click="Swatch_Click" />
@@ -279,288 +348,350 @@
                                         <Button Style="{StaticResource Swatch}" Background="#FFFFFF" Click="Swatch_Click" />
                                         <Button Style="{StaticResource Swatch}" Background="#000000" Click="Swatch_Click" />
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,14,0,8">
-                                        <TextBlock Text="{local:Tr Lightbar_Effect}" Width="86" VerticalAlignment="Center" />
-                                        <ComboBox ItemsSource="{x:Static local:OutputViewModel.Effects}" SelectedItem="{Binding LightbarEffect}" MinWidth="230" />
+                                    <DockPanel Margin="0,0,0,6">
+                                        <TextBlock Text="{local:Tr Color_Intensity}" Width="100" />
+                                        <TextBlock Text="{Binding Saturation, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="100" Value="{Binding Saturation}" />
+                                    </DockPanel>
+                                    <DockPanel Margin="0,0,0,14">
+                                        <TextBlock Text="{local:Tr Color_Brightness}" Width="100" />
+                                        <TextBlock Text="{Binding Brightness, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="0" Maximum="100" Value="{Binding Brightness}" />
+                                    </DockPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <TextBlock Text="{local:Tr Lightbar_Effect}" Width="100" VerticalAlignment="Center" />
+                                        <ComboBox ItemsSource="{x:Static local:OutputViewModel.Effects}" SelectedItem="{Binding LightbarEffect}" MinWidth="240" />
+                                        <TextBlock Text="&#xE946;" Style="{StaticResource Icon}" Margin="10,0,0,0" ToolTip="{local:Tr Lightbar_EffectHint}" Cursor="Help" />
                                     </StackPanel>
-                                    <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,6" IsEnabled="{Binding UsesEffectSpeed}">
-                                        <TextBlock Text="{local:Tr Lightbar_Speed}" Width="86" />
+                                    <DockPanel Style="{StaticResource SettingRow}" Margin="0,0,0,14" IsEnabled="{Binding UsesEffectSpeed}">
+                                        <TextBlock Text="{local:Tr Lightbar_Speed}" Width="100" />
                                         <TextBlock Text="{Binding EffectSpeed}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
                                         <Slider Minimum="1" Maximum="10" Value="{Binding EffectSpeed}" />
                                     </DockPanel>
-                                    <TextBlock Text="{local:Tr Lightbar_EffectHint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
-                                </StackPanel>
-                            </Border>
 
-                            <!-- LEDs -->
-                            <Border Style="{StaticResource Panel}">
-                                <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_Leds}" Style="{StaticResource Heading}" />
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                        <TextBlock Text="{local:Tr Label_PlayerLeds}" Width="100" VerticalAlignment="Center" />
-                                        <CheckBox IsChecked="{Binding Led1}" />
-                                        <CheckBox IsChecked="{Binding Led2}" />
-                                        <CheckBox IsChecked="{Binding Led3}" />
-                                        <CheckBox IsChecked="{Binding Led4}" />
-                                        <CheckBox IsChecked="{Binding Led5}" />
-                                        <ComboBox ItemsSource="{Binding BrightnessLevels}" SelectedItem="{Binding LedBrightness}" Margin="10,0,0,0" />
+                                    <!-- Exact values for people who want them -->
+                                    <CheckBox x:Name="ShowRgb" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Lightbar_ShowAdvanced}" />
+                                    </CheckBox>
+                                    <StackPanel Visibility="{Binding IsChecked, ElementName=ShowRgb, Converter={StaticResource BoolToVisibility}}">
+                                        <DockPanel Margin="0,0,0,6">
+                                            <TextBlock Text="{local:Tr Color_Red}" Width="100" />
+                                            <TextBlock Text="{Binding Red}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding Red}" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,0,0,6">
+                                            <TextBlock Text="{local:Tr Color_Green}" Width="100" />
+                                            <TextBlock Text="{Binding Green}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding Green}" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,0,0,8">
+                                            <TextBlock Text="{local:Tr Color_Blue}" Width="100" />
+                                            <TextBlock Text="{Binding Blue}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding Blue}" />
+                                        </DockPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Hex" Width="100" VerticalAlignment="Center" />
+                                            <TextBox Text="{Binding Hex, UpdateSourceTrigger=LostFocus}" Width="90" FontFamily="Consolas"
+                                                     TextAlignment="Center" KeyDown="HexBox_KeyDown" />
+                                        </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{local:Tr Label_MicLed}" Width="100" VerticalAlignment="Center" />
-                                        <ComboBox ItemsSource="{Binding MicLedModes}" SelectedItem="{Binding MicLed}" />
+                                </StackPanel>
+                            </Border>
+
+                            <StackPanel Grid.Column="1">
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Heading_Leds}" Style="{StaticResource Heading}" />
+                                        <TextBlock Text="{local:Tr Label_PlayerLeds}" Margin="0,0,0,8" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                            <CheckBox IsChecked="{Binding Led1}" Style="{StaticResource LedToggle}" />
+                                            <CheckBox IsChecked="{Binding Led2}" Style="{StaticResource LedToggle}" />
+                                            <CheckBox IsChecked="{Binding Led3}" Style="{StaticResource LedToggle}" />
+                                            <CheckBox IsChecked="{Binding Led4}" Style="{StaticResource LedToggle}" />
+                                            <CheckBox IsChecked="{Binding Led5}" Style="{StaticResource LedToggle}" />
+                                        </StackPanel>
+                                        <ComboBox ItemsSource="{Binding BrightnessLevels}" SelectedItem="{Binding LedBrightness}" HorizontalAlignment="Left" Margin="0,0,0,14" />
+                                        <TextBlock Text="{local:Tr Label_MicLed}" Margin="0,0,0,8" />
+                                        <ComboBox ItemsSource="{Binding MicLedModes}" SelectedItem="{Binding MicLed}" HorizontalAlignment="Left" />
                                     </StackPanel>
-                                </StackPanel>
-                            </Border>
+                                </Border>
 
-                            <!-- Rumble -->
-                            <Border Style="{StaticResource Panel}">
-                                <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_Rumble}" Style="{StaticResource Heading}" />
-                                    <DockPanel Margin="0,0,0,4">
-                                        <TextBlock Text="{local:Tr Rumble_Left}" Width="100" />
-                                        <TextBlock Text="{Binding RumbleLeft}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="255" Value="{Binding RumbleLeft}" />
-                                    </DockPanel>
-                                    <DockPanel Margin="0,0,0,10">
-                                        <TextBlock Text="{local:Tr Rumble_Right}" Width="100" />
-                                        <TextBlock Text="{Binding RumbleRight}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
-                                        <Slider Minimum="0" Maximum="255" Value="{Binding RumbleRight}" />
-                                    </DockPanel>
-                                    <Button Content="{local:Tr Rumble_Stop}" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="StopRumble_Click" />
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-
-                        <!-- Adaptive triggers -->
-                        <StackPanel Grid.Column="1">
-                            <Border Style="{StaticResource Panel}">
-                                <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_TriggerL2}" Style="{StaticResource Heading}" />
-                                    <ContentControl Content="{Binding LeftTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
-                                    <DockPanel Margin="0,8,0,0">
-                                        <TextBlock Text="{local:Tr Trigger_Live}" Width="100" Foreground="{StaticResource MutedBrush}" />
-                                        <ProgressBar Value="{Binding DataContext.State.L2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
-                                    </DockPanel>
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource Panel}">
-                                <StackPanel>
-                                    <TextBlock Text="{local:Tr Heading_TriggerR2}" Style="{StaticResource Heading}" />
-                                    <ContentControl Content="{Binding RightTrigger}" ContentTemplate="{StaticResource TriggerEditor}" />
-                                    <DockPanel Margin="0,8,0,0">
-                                        <TextBlock Text="{local:Tr Trigger_Live}" Width="100" Foreground="{StaticResource MutedBrush}" />
-                                        <ProgressBar Value="{Binding DataContext.State.R2, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" />
-                                    </DockPanel>
-                                </StackPanel>
-                            </Border>
-                            <TextBlock Margin="10,4" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" FontSize="12"
-                                       Text="{local:Tr Trigger_Hint}" />
-                        </StackPanel>
-                    </Grid>
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Heading_Rumble}" Style="{StaticResource Heading}" />
+                                        <DockPanel Margin="0,0,0,6">
+                                            <TextBlock Text="{local:Tr Rumble_Left}" Width="100" />
+                                            <TextBlock Text="{Binding RumbleLeft}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding RumbleLeft}" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,0,0,12">
+                                            <TextBlock Text="{local:Tr Rumble_Right}" Width="100" />
+                                            <TextBlock Text="{Binding RumbleRight}" Width="32" DockPanel.Dock="Right" TextAlignment="Right" />
+                                            <Slider Minimum="0" Maximum="255" Value="{Binding RumbleRight}" />
+                                        </DockPanel>
+                                        <Button Content="{local:Tr Rumble_Stop}" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Click="StopRumble_Click" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
                 </ScrollViewer>
             </TabItem>
 
-            <TabItem Header="{local:Tr Tab_Buttons}">
+            <!-- Adaptive triggers: one trigger at a time -->
+            <TabItem Header="{local:Tr Tab_Triggers}" Tag="&#xE9E9;" x:Name="TriggersTab">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel DataContext="{Binding Output}" MaxWidth="900" HorizontalAlignment="Left">
+                        <DockPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,6,0">
+                                <RadioButton x:Name="EditL2" Content="L2" Style="{StaticResource Segment}" GroupName="Trigger" IsChecked="True" />
+                                <RadioButton x:Name="EditR2" Content="R2" Style="{StaticResource Segment}" GroupName="Trigger" />
+                            </StackPanel>
+                        </DockPanel>
+                        <Border Style="{StaticResource Panel}">
+                            <Grid>
+                                <ContentControl Content="{Binding LeftTrigger}" ContentTemplate="{StaticResource TriggerEditor}"
+                                                Visibility="{Binding IsChecked, ElementName=EditL2, Converter={StaticResource BoolToVisibility}}" />
+                                <ContentControl Content="{Binding RightTrigger}" ContentTemplate="{StaticResource TriggerEditor}"
+                                                Visibility="{Binding IsChecked, ElementName=EditR2, Converter={StaticResource BoolToVisibility}}" />
+                            </Grid>
+                        </Border>
+                        <TextBlock Margin="10,4,10,10" Style="{StaticResource Hint}" Text="{local:Tr Trigger_Hint}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{local:Tr Tab_Buttons}" Tag="&#xE765;">
                 <views:MappingView DataContext="{Binding Mapping}" />
             </TabItem>
 
-            <TabItem Header="{local:Tr Tab_Emulation}">
-                <views:EmulationView DataContext="{Binding Emulation}" />
+            <TabItem Header="{local:Tr Tab_Sticks}" Tag="&#xEA3A;">
+                <views:DeadzonesView DataContext="{Binding Deadzones}" />
             </TabItem>
 
-            <TabItem Header="{local:Tr Tab_Mouse}">
+            <TabItem Header="{local:Tr Tab_Mouse}" Tag="&#xE962;" x:Name="MouseTab">
                 <views:MouseView DataContext="{Binding Mouse}" />
             </TabItem>
 
-            <TabItem Header="{local:Tr Tab_Mods}">
+            <TabItem Header="{local:Tr Tab_Emulation}" Tag="&#xE7FC;" x:Name="EmulationTab">
+                <views:EmulationView DataContext="{Binding Emulation}" />
+            </TabItem>
+
+            <!-- Profiles and the games that switch them -->
+            <TabItem Header="{local:Tr Tab_Profiles}" Tag="&#xE8F1;">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel DataContext="{Binding Profiles}">
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="{local:Tr Heading_Profiles}" Style="{StaticResource Heading}" />
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <TextBlock Text="{local:Tr Profiles_Active}" Width="140" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Active}" FontWeight="SemiBold" FontSize="15" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="{local:Tr Profiles_Name}" Width="140" VerticalAlignment="Center" />
+                                    <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Width="220" Margin="0,0,10,0" />
+                                    <Button Content="{local:Tr Profiles_New}" Style="{StaticResource PrimaryButton}" Click="NewProfile_Click" />
+                                    <Button Content="{local:Tr Profiles_Rename}" Style="{StaticResource ActionButton}" Click="RenameProfile_Click" />
+                                </StackPanel>
+                                <WrapPanel Margin="140,0,0,8">
+                                    <Button Content="{local:Tr Profiles_Delete}" Style="{StaticResource ActionButton}" Click="DeleteProfile_Click" Margin="0,0,8,8" />
+                                    <Button Content="{local:Tr Profiles_Export}" Style="{StaticResource ActionButton}" Click="ExportProfile_Click" Margin="0,0,8,8" />
+                                    <Button Content="{local:Tr Profiles_Import}" Style="{StaticResource ActionButton}" Click="ImportProfile_Click" Margin="0,0,8,8" />
+                                    <Button Content="{local:Tr Profiles_OpenFolder}" Style="{StaticResource ActionButton}" Click="ProfileFolder_Click" Margin="0,0,8,8" />
+                                </WrapPanel>
+                                <TextBlock Text="{Binding Message}" Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                                <TextBlock Text="{local:Tr Profiles_Hint}" Style="{StaticResource Hint}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Games linked to the active profile -->
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="{local:Tr Heading_Games}" Style="{StaticResource Heading}" />
+                                <CheckBox IsChecked="{Binding AutoSwitch}" Margin="0,0,0,12">
+                                    <TextBlock Text="{local:Tr Games_AutoSwitch}" />
+                                </CheckBox>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <TextBlock Text="{local:Tr Games_Pick}" Width="140" VerticalAlignment="Center" />
+                                    <ComboBox ItemsSource="{Binding RunningApps}" SelectedItem="{Binding SelectedApp}" Width="320" Margin="0,0,10,0"
+                                              DropDownOpened="RunningApps_DropDownOpened" />
+                                    <Button Content="{local:Tr Games_Link}" Style="{StaticResource PrimaryButton}" Click="LinkRunningGame_Click" />
+                                    <Button Content="{local:Tr Games_Browse}" Style="{StaticResource ActionButton}" Click="BrowseGame_Click" />
+                                </StackPanel>
+                                <DockPanel Margin="0,0,0,8">
+                                    <TextBlock DockPanel.Dock="Left" Width="140" Margin="0,4,0,0">
+                                        <Run Text="{local:Tr Games_LinkedTo}" /><Run Text="{Binding Active, Mode=OneWay, StringFormat=' {0}'}" FontWeight="SemiBold" />
+                                    </TextBlock>
+                                    <StackPanel>
+                                        <TextBlock Text="{local:Tr Games_None}" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Games.Count}" Value="0">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Games}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <TextBlock Text="{Binding}" FontFamily="Consolas" Width="260" VerticalAlignment="Center" />
+                                                        <Button Content="{local:Tr Games_Remove}" Style="{StaticResource ActionButton}" Click="RemoveGame_Click" Tag="{Binding}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DockPanel>
+                                <TextBlock Text="{Binding GameMessage}" Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                                <TextBlock Text="{Binding GameStatus}" Foreground="{StaticResource SuccessBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                                <TextBlock Text="{local:Tr Games_Hint}" Style="{StaticResource Hint}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{local:Tr Tab_Mods}" Tag="&#xE943;">
                 <views:ModsView DataContext="{Binding Mods}" />
             </TabItem>
 
-            <TabItem Header="{local:Tr Tab_Settings}">
+            <TabItem Header="{local:Tr Tab_Settings}" Tag="&#xE713;">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <!-- Support: diagnostics for bug reports -->
-                    <Border Style="{StaticResource Panel}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Support}" Style="{StaticResource Heading}" />
-                            <TextBlock Text="{local:Tr Support_Intro}" TextWrapping="Wrap" Margin="0,0,0,10" />
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                <Button Content="{local:Tr Support_Copy}" Style="{StaticResource ActionButton}" Click="CopyDiagnostics_Click" />
-                                <Button Content="{local:Tr Support_Report}" Style="{StaticResource ActionButton}" Click="ReportProblem_Click" />
-                                <TextBlock x:Name="DiagnosticsCopied" Foreground="#22C55E" VerticalAlignment="Center" Margin="6,0,0,0" />
-                            </StackPanel>
-                            <TextBox x:Name="DiagnosticsBox" IsReadOnly="True" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
-                                     Background="#1E2025" Foreground="{StaticResource MutedBrush}" BorderThickness="0" Padding="8"
-                                     Visibility="Collapsed" />
-                        </StackPanel>
-                    </Border>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Updates from GitHub -->
-                    <Border Style="{StaticResource Panel}" DataContext="{Binding Update}">
                         <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Updates}" Style="{StaticResource Heading}" />
-                            <CheckBox IsChecked="{Binding CheckAtStartup}" Margin="0,0,0,10">
-                                <TextBlock Text="{local:Tr Update_CheckAtStartup}" />
-                            </CheckBox>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <Button Content="{local:Tr Update_CheckNow}" Style="{StaticResource ActionButton}" Click="CheckUpdate_Click"
-                                        IsEnabled="{Binding IsChecking, Converter={StaticResource Not}}" />
-                                <Button Content="{local:Tr Update_Now}" Style="{StaticResource ActionButton}" Click="InstallUpdate_Click"
-                                        FontWeight="SemiBold" Visibility="{Binding CanInstall, Converter={StaticResource BoolToVisibility}}" />
-                                <TextBlock Text="{Binding Status}" VerticalAlignment="Center" Margin="6,0,0,0" TextWrapping="Wrap" />
-                            </StackPanel>
-                            <TextBlock Text="{local:Tr Update_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{StaticResource Panel}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Language}" Style="{StaticResource Heading}" />
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{local:Tr Label_Language}" Width="140" VerticalAlignment="Center" />
-                                <ComboBox ItemsSource="{x:Static local:Loc.Languages}" SelectedValuePath="Code"
-                                          SelectedValue="{Binding Language, Source={x:Static local:Loc.Instance}}" MinWidth="160">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" Foreground="Black" />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{StaticResource Panel}" DataContext="{Binding Profiles}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Profiles}" Style="{StaticResource Heading}" />
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBlock Text="{local:Tr Profiles_Active}" Width="140" VerticalAlignment="Center" />
-                                <TextBlock Text="{Binding Active}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBlock Text="{local:Tr Profiles_Name}" Width="140" VerticalAlignment="Center" />
-                                <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Width="220" Padding="4,3" Margin="0,0,10,0"
-                                         Background="{StaticResource TrackBrush}" Foreground="{StaticResource TextBrush}" BorderThickness="0" />
-                                <Button Content="{local:Tr Profiles_New}" Style="{StaticResource ActionButton}" Click="NewProfile_Click" />
-                                <Button Content="{local:Tr Profiles_Rename}" Style="{StaticResource ActionButton}" Click="RenameProfile_Click" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="140,0,0,8">
-                                <Button Content="{local:Tr Profiles_Delete}" Style="{StaticResource ActionButton}" Click="DeleteProfile_Click" />
-                                <Button Content="{local:Tr Profiles_OpenFolder}" Style="{StaticResource ActionButton}" Click="ProfileFolder_Click" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="140,0,0,8">
-                                <Button Content="{local:Tr Profiles_Export}" Style="{StaticResource ActionButton}" Click="ExportProfile_Click" />
-                                <Button Content="{local:Tr Profiles_Import}" Style="{StaticResource ActionButton}" Click="ImportProfile_Click" />
-                            </StackPanel>
-                            <TextBlock Text="{Binding Message}" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,0,0,6" />
-                            <TextBlock Text="{local:Tr Profiles_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Games linked to the active profile -->
-                    <Border Style="{StaticResource Panel}" DataContext="{Binding Profiles}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Games}" Style="{StaticResource Heading}" />
-                            <CheckBox IsChecked="{Binding AutoSwitch}" Margin="0,0,0,10">
-                                <TextBlock Text="{local:Tr Games_AutoSwitch}" />
-                            </CheckBox>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBlock Text="{local:Tr Games_Pick}" Width="140" VerticalAlignment="Center" />
-                                <ComboBox ItemsSource="{Binding RunningApps}" SelectedItem="{Binding SelectedApp}" Width="320" Margin="0,0,10,0"
-                                          DropDownOpened="RunningApps_DropDownOpened" />
-                                <Button Content="{local:Tr Games_Link}" Style="{StaticResource ActionButton}" Click="LinkRunningGame_Click" />
-                                <Button Content="{local:Tr Games_Browse}" Style="{StaticResource ActionButton}" Click="BrowseGame_Click" />
-                            </StackPanel>
-                            <DockPanel Margin="0,0,0,8">
-                                <TextBlock DockPanel.Dock="Left" Width="140" Margin="0,4,0,0">
-                                    <Run Text="{local:Tr Games_LinkedTo}" /><Run Text="{Binding Active, Mode=OneWay, StringFormat=' {0}'}" FontWeight="SemiBold" />
-                                </TextBlock>
+                            <!-- Controller: motion sensors, battery, turning off -->
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Settings}">
                                 <StackPanel>
-                                    <TextBlock Text="{local:Tr Games_None}" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Games.Count}" Value="0">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <ItemsControl ItemsSource="{Binding Games}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                                                    <TextBlock Text="{Binding}" FontFamily="Consolas" Width="260" VerticalAlignment="Center" />
-                                                    <Button Content="{local:Tr Games_Remove}" Style="{StaticResource ActionButton}" Click="RemoveGame_Click" Tag="{Binding}" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                    <TextBlock Text="{local:Tr Heading_Controller}" Style="{StaticResource Heading}" />
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                        <CheckBox IsChecked="{Binding GyroDisabled}">
+                                            <TextBlock Text="{local:Tr Set_GyroDisabled}" />
+                                        </CheckBox>
+                                        <TextBlock Text="&#xE946;" Style="{StaticResource Icon}" Margin="8,0,0,0" ToolTip="{local:Tr Set_GyroHint}" Cursor="Help" />
+                                    </StackPanel>
+
+                                    <CheckBox IsChecked="{Binding LowBatteryWarning}" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Battery_Warn}" />
+                                    </CheckBox>
+                                    <DockPanel Margin="46,0,0,10" IsEnabled="{Binding LowBatteryWarning}" Style="{StaticResource SettingRow}">
+                                        <TextBlock Text="{local:Tr Battery_Level}" Width="110" />
+                                        <TextBlock Text="{Binding LowBatteryLevel, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
+                                        <Slider Minimum="5" Maximum="50" TickFrequency="5" Value="{Binding LowBatteryLevel}" />
+                                    </DockPanel>
+                                    <CheckBox IsChecked="{Binding LowBatteryBlink}" Margin="46,0,0,16" IsEnabled="{Binding LowBatteryWarning}">
+                                        <TextBlock Text="{local:Tr Battery_Blink}" />
+                                    </CheckBox>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Power_Idle}" Width="230" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                        <ComboBox ItemsSource="{x:Static local:SettingsViewModel.IdleTimeouts}" SelectedItem="{Binding IdleTurnOff}" MinWidth="150" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="{local:Tr Power_TurnOff}" Style="{StaticResource ActionButton}" Click="TurnOff_Click"
+                                                IsEnabled="{Binding DataContext.IsBluetooth, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                        <TextBlock Text="&#xE946;" Style="{StaticResource Icon}" ToolTip="{local:Tr Power_Hint}" Cursor="Help" />
+                                        <TextBlock Text="{Binding DataContext.PowerMessage, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                   VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
                                 </StackPanel>
-                            </DockPanel>
-                            <TextBlock Text="{Binding GameMessage}" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,0,0,6" />
-                            <TextBlock Text="{Binding GameStatus}" Foreground="#22C55E" TextWrapping="Wrap" Margin="0,0,0,6" />
-                            <TextBlock Text="{local:Tr Games_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
+                            </Border>
 
-                <StackPanel DataContext="{Binding Settings}">
-                    <Border Style="{StaticResource Panel}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Controller}" Style="{StaticResource Heading}" />
-                            <CheckBox IsChecked="{Binding GyroDisabled}" Margin="0,0,0,12">
-                                <TextBlock Text="{local:Tr Set_GyroDisabled}" />
-                            </CheckBox>
-                            <TextBlock Text="{local:Tr Set_GyroHint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,16" />
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Settings}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Window}" Style="{StaticResource Heading}" />
+                                    <CheckBox IsChecked="{Binding StartWithWindows}" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Set_StartWithWindows}" />
+                                    </CheckBox>
+                                    <CheckBox IsChecked="{Binding StartMinimized}" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Set_StartMinimized}" />
+                                    </CheckBox>
+                                    <CheckBox IsChecked="{Binding MinimizeToTray}" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Set_MinimizeToTray}" />
+                                    </CheckBox>
+                                    <CheckBox IsChecked="{Binding CloseToTray}" Margin="0,0,0,10">
+                                        <TextBlock Text="{local:Tr Set_CloseToTray}" />
+                                    </CheckBox>
+                                    <TextBlock Text="{local:Tr Set_Hint}" Style="{StaticResource Hint}" />
+                                </StackPanel>
+                            </Border>
 
-                            <!-- Battery -->
-                            <CheckBox IsChecked="{Binding LowBatteryWarning}" Margin="0,0,0,8">
-                                <TextBlock Text="{local:Tr Battery_Warn}" />
-                            </CheckBox>
-                            <DockPanel Margin="24,0,0,8" IsEnabled="{Binding LowBatteryWarning}">
-                                <TextBlock Text="{local:Tr Battery_Level}" Width="116" />
-                                <TextBlock Text="{Binding LowBatteryLevel, StringFormat={}{0} %}" Width="44" DockPanel.Dock="Right" TextAlignment="Right" />
-                                <Slider Minimum="5" Maximum="50" TickFrequency="5" Value="{Binding LowBatteryLevel}" MaxWidth="300" HorizontalAlignment="Left" Width="300" />
-                            </DockPanel>
-                            <CheckBox IsChecked="{Binding LowBatteryBlink}" Margin="24,0,0,16" IsEnabled="{Binding LowBatteryWarning}">
-                                <TextBlock Text="{local:Tr Battery_Blink}" />
-                            </CheckBox>
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Language}" Style="{StaticResource Heading}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{local:Tr Label_Language}" Width="140" VerticalAlignment="Center" />
+                                        <ComboBox ItemsSource="{x:Static local:Loc.Languages}" SelectedValuePath="Code"
+                                                  SelectedValue="{Binding Language, Source={x:Static local:Loc.Instance}}" MinWidth="160">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
 
-                            <!-- Turning off (Bluetooth) -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                <TextBlock Text="{local:Tr Power_Idle}" Width="250" VerticalAlignment="Center" />
-                                <ComboBox ItemsSource="{x:Static local:SettingsViewModel.IdleTimeouts}" SelectedItem="{Binding IdleTurnOff}" MinWidth="150" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <Button Content="{local:Tr Power_TurnOff}" Style="{StaticResource ActionButton}" Click="TurnOff_Click"
-                                        IsEnabled="{Binding DataContext.IsBluetooth, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                <TextBlock Text="{Binding DataContext.PowerMessage, RelativeSource={RelativeSource AncestorType=Window}}"
-                                           VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#F59E0B" />
-                            </StackPanel>
-                            <TextBlock Text="{local:Tr Power_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
+                        <StackPanel Grid.Column="1">
+                            <!-- Updates from GitHub -->
+                            <Border Style="{StaticResource Panel}" DataContext="{Binding Update}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Updates}" Style="{StaticResource Heading}" />
+                                    <CheckBox IsChecked="{Binding CheckAtStartup}" Margin="0,0,0,12">
+                                        <TextBlock Text="{local:Tr Update_CheckAtStartup}" />
+                                    </CheckBox>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <Button Content="{local:Tr Update_CheckNow}" Style="{StaticResource ActionButton}" Click="CheckUpdate_Click"
+                                                IsEnabled="{Binding IsChecking, Converter={StaticResource Not}}" />
+                                        <Button Content="{local:Tr Update_Now}" Style="{StaticResource PrimaryButton}" Click="InstallUpdate_Click"
+                                                Visibility="{Binding CanInstall, Converter={StaticResource BoolToVisibility}}" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                                    <TextBlock Text="{local:Tr Update_Hint}" Style="{StaticResource Hint}" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Support: diagnostics for bug reports -->
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Support}" Style="{StaticResource Heading}" />
+                                    <TextBlock Text="{local:Tr Support_Intro}" Style="{StaticResource Hint}" FontSize="13" Margin="0,0,0,12" />
+                                    <WrapPanel Margin="0,0,0,8">
+                                        <Button Content="{local:Tr Support_Copy}" Style="{StaticResource ActionButton}" Click="CopyDiagnostics_Click" Margin="0,0,8,6" />
+                                        <Button Content="{local:Tr Support_Report}" Style="{StaticResource ActionButton}" Click="ReportProblem_Click" Margin="0,0,8,6" />
+                                        <TextBlock x:Name="DiagnosticsCopied" Foreground="{StaticResource SuccessBrush}" VerticalAlignment="Center" Margin="4,0,0,6" />
+                                    </WrapPanel>
+                                    <TextBox x:Name="DiagnosticsBox" IsReadOnly="True" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
+                                             Background="#1E2025" Foreground="{StaticResource MutedBrush}" Padding="8" Visibility="Collapsed" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Advanced: what the controller sends -->
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Text="{local:Tr Heading_Advanced}" Style="{StaticResource Heading}" />
+                                    <TextBlock Text="{Binding ReportRate}" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,6" />
+                                    <TextBlock Text="{local:Tr Heading_Raw}" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,0,0,4" />
+                                    <TextBox Text="{Binding RawHex, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12"
+                                             Background="Transparent" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Padding="0" />
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource Panel}">
-                        <StackPanel>
-                            <TextBlock Text="{local:Tr Heading_Window}" Style="{StaticResource Heading}" />
-                            <CheckBox IsChecked="{Binding MinimizeToTray}" Margin="0,0,0,8">
-                                <TextBlock Text="{local:Tr Set_MinimizeToTray}" />
-                            </CheckBox>
-                            <CheckBox IsChecked="{Binding CloseToTray}" Margin="0,0,0,8">
-                                <TextBlock Text="{local:Tr Set_CloseToTray}" />
-                            </CheckBox>
-                            <CheckBox IsChecked="{Binding StartMinimized}" Margin="0,0,0,12">
-                                <TextBlock Text="{local:Tr Set_StartMinimized}" />
-                            </CheckBox>
-                            <CheckBox IsChecked="{Binding StartWithWindows}" Margin="0,0,0,12">
-                                <TextBlock Text="{local:Tr Set_StartWithWindows}" />
-                            </CheckBox>
-                            <TextBlock Text="{local:Tr Set_Hint}" Foreground="{StaticResource MutedBrush}" FontSize="12" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+                    </Grid>
                 </StackPanel>
                 </ScrollViewer>
             </TabItem>

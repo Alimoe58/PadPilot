@@ -50,7 +50,8 @@ When a new version is out, PadPilot shows a banner. **Update now** downloads the
 | **Inputs** | Live view of every button, stick, trigger, the touchpad and motion sensors; battery and charging status; USB and Bluetooth with automatic reconnect |
 | **Button mapping** | Remap any button to another button, a key or key combination, a mouse click or scroll, or a special action (mute the microphone, next profile, turn off the controller); sticks as mouse, WASD or arrow keys – for games without controller support |
 | **Sticks & deadzones** | Inner and outer deadzones (round or cross-shaped) for both sticks and both triggers, stick drift display, circularity test |
-| **Outputs** | Lightbar with colour field, intensity and brightness, plus effects (breathing, rainbow, battery level); player LEDs; mic LED; rumble; adaptive triggers: resistance, section, weapon, vibration, slope, bow, gallop and machine, plus ready-made presets (bow, pistol, shotgun, machine gun, brake, galloping horse…) |
+| **Lightbar & LEDs** | Colour field with intensity and brightness, effects (breathing, rainbow, battery level); player LEDs; mic LED; rumble test |
+| **Triggers** | Adaptive triggers with 8 modes (resistance, section, weapon, vibration, slope, bow, gallop, machine), ready-made presets as cards, and a graph of the resistance along the pull with the live trigger position |
 | **Emulation** | Games see an Xbox 360 or DualShock 4 controller – as DualShock 4 including touchpad and motion sensors (gyro aiming); game rumble is passed to the DualSense; the real controller can be hidden automatically with HidHide; a hint appears when Steam Input might read the controller too |
 | **Mouse** | Touchpad as mouse (move, click, right-click, two-finger scroll, tap to click); gyro as mouse with activation button and calibration |
 | **Mods** | Games and mods can control triggers, lightbar, LEDs and rumble via UDP or a text file – see [docs/MOD-PROTOKOLL.md](docs/MOD-PROTOKOLL.md) |
@@ -65,7 +66,7 @@ When a new version is out, PadPilot shows a banner. **Update now** downloads the
 
 ## Sharing profiles
 
-Every profile is a plain JSON file: trigger settings, lightbar, button mapping, deadzones, emulation mode and the linked game(s). Use **Settings → Profiles → Export active…** to save one and **Import…** to add one someone shared – it becomes a new profile named after the file. Settings that belong to your own controller or PC (gyro calibration, language, window options) are never part of a profile. Imported files are checked: anything that isn't a PadPilot profile is rejected, and impossible values are dropped or limited.
+Every profile is a plain JSON file: trigger settings, lightbar, button mapping, deadzones, emulation mode and the linked game(s). On the **Profiles** page, use **Export active…** to save one and **Import…** to add one someone shared – it becomes a new profile named after the file. Settings that belong to your own controller or PC (gyro calibration, language, window options) are never part of a profile. Imported files are checked: anything that isn't a PadPilot profile is rejected, and impossible values are dropped or limited.
 
 ## For mod developers
 

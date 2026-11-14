@@ -3,8 +3,7 @@
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="Tab_Inputs" xml:space="preserve"><value>Eingaben</value></data>
-  <data name="Tab_Outputs" xml:space="preserve"><value>Ausgaben</value></data>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  
   <data name="Status_Searching" xml:space="preserve"><value>Suche Controller …</value></data>
   <data name="Status_NotFound" xml:space="preserve"><value>Kein DualSense gefunden – per USB-Kabel oder Bluetooth verbinden.</value></data>
   <data name="Status_Connected" xml:space="preserve"><value>{0} verbunden</value></data>
@@ -33,15 +32,11 @@
   <data name="Rumble_Left" xml:space="preserve"><value>Links (stark)</value></data>
   <data name="Rumble_Right" xml:space="preserve"><value>Rechts (fein)</value></data>
   <data name="Rumble_Stop" xml:space="preserve"><value>Rumble stoppen</value></data>
-  <data name="Heading_TriggerL2" xml:space="preserve"><value>ADAPTIVER TRIGGER L2</value></data>
-  <data name="Heading_TriggerR2" xml:space="preserve"><value>ADAPTIVER TRIGGER R2</value></data>
   <data name="Trigger_Effect" xml:space="preserve"><value>Effekt</value></data>
   <data name="Trigger_Start" xml:space="preserve"><value>Start</value></data>
   <data name="Trigger_End" xml:space="preserve"><value>Ende</value></data>
   <data name="Trigger_Strength" xml:space="preserve"><value>Stärke</value></data>
   <data name="Trigger_Frequency" xml:space="preserve"><value>Frequenz (Hz)</value></data>
-  <data name="Trigger_Live" xml:space="preserve"><value>Live</value></data>
-  <data name="Trigger_Preset" xml:space="preserve"><value>Vorlage</value></data>
   <data name="TriggerPreset_Custom" xml:space="preserve"><value>Eigene Einstellung</value></data>
   <data name="TriggerPreset_Off" xml:space="preserve"><value>Aus (kein Effekt)</value></data>
   <data name="TriggerPreset_Light" xml:space="preserve"><value>Leichter Widerstand (Gaspedal)</value></data>
@@ -109,7 +104,6 @@
   <data name="Emu_RumblePassthrough" xml:space="preserve"><value>Rumble aus Spielen an den DualSense weitergeben</value></data>
   <data name="Emu_GameRumbleLarge" xml:space="preserve"><value>Spiel-Rumble links (stark)</value></data>
   <data name="Emu_GameRumbleSmall" xml:space="preserve"><value>Spiel-Rumble rechts (fein)</value></data>
-  <data name="Emu_Hint" xml:space="preserve"><value>Sticks und Trigger laufen durch deine Deadzones. Lightbar, LEDs und adaptive Trigger aus dem Tab „Ausgaben“ bleiben aktiv. Tipp: In Steam für Spiele, die du mit PadPilot spielst, die „PlayStation-Controller-Unterstützung“ ausschalten, sonst liest Steam den DualSense zusätzlich.</value></data>
   <data name="Heading_HidHide" xml:space="preserve"><value>ECHTEN CONTROLLER VERSTECKEN (HIDHIDE)</value></data>
   <data name="HidHide_NotInstalled" xml:space="preserve"><value>HidHide ist nicht installiert. Ohne HidHide sehen manche Spiele zwei Controller (den virtuellen und den echten DualSense) und reagieren eventuell doppelt. Auf „HidHide installieren“ klicken, die Windows-Abfrage bestätigen und danach PC und PadPilot neu starten.</value></data>
   <data name="HidHide_Installed" xml:space="preserve"><value>Beim Beenden von PadPilot oder Ausschalten der Emulation wird der DualSense automatisch wieder freigegeben – nach einem Absturz beim nächsten Start. Falls das Verstecken direkt nach der HidHide-Installation nicht klappt, den PC einmal neu starten.</value></data>
@@ -165,7 +159,6 @@
   <data name="Mods_Invalid" xml:space="preserve"><value>ungültig: {0}</value></data>
   <data name="Mods_StatusRequest" xml:space="preserve"><value>Statusabfrage</value></data>
   <data name="Mods_SourceFile" xml:space="preserve"><value>Datei</value></data>
-  <data name="Mods_OverridesActive" xml:space="preserve"><value>Eine Mod steuert gerade Teile der Ausgabe (Lightbar, Trigger …). Deine Einstellungen aus „Ausgaben“ gelten wieder nach „Zurücksetzen“.</value></data>
   <data name="Mods_SendTest" xml:space="preserve"><value>Testbefehl senden</value></data>
   <data name="Mods_Reset" xml:space="preserve"><value>Zurücksetzen</value></data>
   <data name="Mods_ProtocolIntro" xml:space="preserve"><value>Mods schicken ein JSON-Objekt als UDP-Paket an 127.0.0.1 und den Port links (oder schreiben es in die Textdatei). Jedes Feld ist optional – nur was gesendet wird, ändert sich:</value></data>
@@ -348,4 +341,24 @@ Jetzt aktualisieren?</value></data>
   <data name="Update_Done" xml:space="preserve"><value>PadPilot wurde auf {0} aktualisiert.</value></data>
   <data name="Update_NoWriteAccess" xml:space="preserve"><value>Automatisch installieren geht hier nicht, weil PadPilot nicht in seinen eigenen Ordner schreiben darf – bitte herunterladen.</value></data>
   <data name="Update_Hint" xml:space="preserve"><value>PadPilot fragt bei GitHub (github.com/Alimoe58/PadPilot) nach dem neuesten Release; es werden keine Daten über dich oder deinen PC gesendet. Eine neue Version wird nur heruntergeladen, wenn du auf „Jetzt aktualisieren“ klickst. Sie wird mit der Prüfsumme verglichen, die GitHub veröffentlicht, bevor sie diese ersetzt.</value></data>
+  <data name="Tab_Overview" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="Tab_Lightbar" xml:space="preserve"><value>Lightbar</value></data>
+  <data name="Tab_Triggers" xml:space="preserve"><value>Trigger</value></data>
+  <data name="Tab_Profiles" xml:space="preserve"><value>Profile</value></data>
+  <data name="Overview_Emulation" xml:space="preserve"><value>Emulation</value></data>
+  <data name="Overview_GyroMouse" xml:space="preserve"><value>Gyro-Maus</value></data>
+  <data name="Overview_TouchpadMouse" xml:space="preserve"><value>Touchpad-Maus</value></data>
+  <data name="Overview_On" xml:space="preserve"><value>Als Maus nutzen</value></data>
+  <data name="Overview_Lightbar" xml:space="preserve"><value>Lightbar</value></data>
+  <data name="Overview_Triggers" xml:space="preserve"><value>Trigger</value></data>
+  <data name="Overview_Disconnected" xml:space="preserve"><value>Verbinde deinen DualSense</value></data>
+  <data name="Overview_DisconnectedHint" xml:space="preserve"><value>Steck ihn per USB-Kabel an oder kopple ihn in den Bluetooth-Einstellungen von Windows (PS und Create halten, bis das Licht blinkt). PadPilot findet ihn von selbst.</value></data>
+  <data name="Lightbar_ShowAdvanced" xml:space="preserve"><value>Genaue Werte zeigen (RGB, Hex)</value></data>
+  <data name="Trigger_Preset" xml:space="preserve"><value>VORLAGEN</value></data>
+  <data name="Trigger_Graph" xml:space="preserve"><value>WIDERSTAND ÜBER DEN WEG</value></data>
+  <data name="Trigger_Released" xml:space="preserve"><value>losgelassen</value></data>
+  <data name="Trigger_Pressed" xml:space="preserve"><value>ganz gedrückt</value></data>
+  <data name="Heading_Advanced" xml:space="preserve"><value>ERWEITERT</value></data>
+  <data name="Emu_Hint" xml:space="preserve"><value>Sticks und Trigger laufen durch deine Deadzones. Lightbar, LEDs und adaptive Trigger bleiben aktiv, während Spiele den virtuellen Controller nutzen.</value></data>
+  <data name="Mods_OverridesActive" xml:space="preserve"><value>Eine Mod steuert gerade Teile der Ausgabe (Lightbar, Trigger …). Deine eigenen Lightbar- und Trigger-Einstellungen gelten wieder nach „Zurücksetzen“.</value></data>
 </root>

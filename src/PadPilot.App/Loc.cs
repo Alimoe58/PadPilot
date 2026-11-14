@@ -59,7 +59,7 @@ public sealed class Loc : INotifyPropertyChanged
         string.Format(Instance._culture, Instance[key], args);
 }
 
-/// <summary>XAML shorthand: <c>Text="{local:Tr Tab_Inputs}"</c> binds to the translated text.</summary>
+/// <summary>XAML shorthand: <c>Text="{local:Tr Tab_Overview}"</c> binds to the translated text.</summary>
 public sealed class TrExtension(string key) : MarkupExtension
 {
     public string Key { get; set; } = key;

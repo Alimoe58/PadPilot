@@ -56,7 +56,7 @@ Stärke `1`–`8`. Fehlende Werte bekommen einen Standard.
 
 ## Vorrang
 
-Was eine Mod setzt, gilt **zusätzlich zu und vor** den Einstellungen im Tab „Ausgaben“ –
+Was eine Mod setzt, gilt **zusätzlich zu und vor** den eigenen Lightbar- und Trigger-Einstellungen –
 bis die Mod `{"reset": true}` schickt oder der Benutzer im Tab „Mods“ auf „Zurücksetzen“ klickt.
 Spiel-Rumble aus der Emulation kommt obendrauf (der stärkere Wert gewinnt).
 

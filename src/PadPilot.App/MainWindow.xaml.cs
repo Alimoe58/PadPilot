@@ -241,6 +241,13 @@ public partial class MainWindow : Window
             _viewModel.Profiles.RemoveGame(exe);
     }
 
+    /// <summary>Overview cards: open the page named in the button's Tag.</summary>
+    private void GoTo_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: string page } && FindName(page) is TabItem tab)
+            tab.IsSelected = true;
+    }
+
     private void Swatch_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button { Background: SolidColorBrush brush })

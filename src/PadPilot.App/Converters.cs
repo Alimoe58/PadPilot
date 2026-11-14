@@ -34,6 +34,16 @@ public sealed class NotConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value is not true;
 }
 
+/// <summary>true → Visible, false → Collapsed; ConverterParameter "Invert" turns it round.</summary>
+public sealed class BoolVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+        (value is true) != (parameter as string == "Invert") ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        (value is Visibility.Visible) != (parameter as string == "Invert");
+}
+
 /// <summary>Visible when the bound value's name equals ConverterParameter (used to pick the button layout).</summary>
 public sealed class EqualsVisibilityConverter : IValueConverter
 {

@@ -300,10 +300,23 @@ public sealed class ProfilesViewModel : ObservableObject
         UpdateGameStatus();
     }
 
-    private void UpdateGameStatus() =>
+    private void UpdateGameStatus()
+    {
         GameStatus = !_settings.AutoSwitchProfiles ? ""
             : _switcher.CurrentGame is string game ? Loc.Format("Games_Running", game, _active)
             : "";
+        string? active = _settings.AutoSwitchProfiles ? _switcher.CurrentGame : null;
+        if (active != ActiveGame)
+        {
+            ActiveGame = active;
+            OnPropertyChanged(nameof(ActiveGame));
+            OnPropertyChanged(nameof(HasActiveGame));
+        }
+    }
+
+    /// <summary>The game that switched the profile (shown next to the profile in the header), or null.</summary>
+    public string? ActiveGame { get; private set; }
+    public bool HasActiveGame => ActiveGame != null;
 
     /// <summary>Game → profile for all profiles; the active profile's games come from the UI.</summary>
     private void RebuildLinks()

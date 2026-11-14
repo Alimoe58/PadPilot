@@ -16,6 +16,8 @@ public sealed class EmulationViewModel : ObservableObject
     {
         _service = service;
         _settings = settings;
+        if (service.Mode != EmulationMode.Off)
+            _lastMode = service.Mode;
         CheckDrivers();
         Loc.Instance.PropertyChanged += (_, _) =>
         {
@@ -45,6 +47,15 @@ public sealed class EmulationViewModel : ObservableObject
 
     private void RefreshSteam() => SteamRunning = PadPilot.Core.Games.RunningApps.IsRunning("steam.exe");
 
+    private EmulationMode _lastMode = EmulationMode.Xbox360;
+
+    /// <summary>Quick switch on the overview: on brings back the last virtual controller (Xbox 360 the first time).</summary>
+    public bool IsOn
+    {
+        get => Mode != EmulationMode.Off;
+        set => Mode = value ? _lastMode : EmulationMode.Off;
+    }
+
     public static IReadOnlyList<EmulationMode> Modes { get; } = Enum.GetValues<EmulationMode>();
 
     public EmulationMode Mode
@@ -54,10 +65,13 @@ public sealed class EmulationViewModel : ObservableObject
         {
             if (value == _service.Mode && _status != EmulationStatus.Error)
                 return;
+            if (value != EmulationMode.Off)
+                _lastMode = value;
             _service.Mode = value;
             _settings.EmulationMode = value;
             _settings.Save();
             OnPropertyChanged(nameof(Mode));
+            OnPropertyChanged(nameof(IsOn));
             UpdateStatus();
         }
     }

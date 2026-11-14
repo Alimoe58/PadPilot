@@ -65,6 +65,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private ButtonLayout _layout = ButtonLayout.PlayStation5;
     private string _controllerName = "";
     private bool _isBluetooth;
+    private bool _isConnected;
+    private string _batteryGlyph = "";
     private string _powerMessage = "";
 
     public ControllerState State { get => _state; private set => Set(ref _state, value); }
@@ -76,8 +78,24 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public ButtonLayout Layout { get => _layout; private set => Set(ref _layout, value); }
     public string ControllerName { get => _controllerName; private set => Set(ref _controllerName, value); }
 
+    public bool IsConnected { get => _isConnected; private set => Set(ref _isConnected, value); }
+
+    /// <summary>Icon for the header: Bluetooth or cable.</summary>
+    public string ConnectionGlyph => IsBluetooth ? "" : "";
+
+    /// <summary>Battery icon for the header: empty to full in 11 steps, with a plug while charging.</summary>
+    public string BatteryGlyph { get => _batteryGlyph; private set => Set(ref _batteryGlyph, value); }
+
     /// <summary>Connected over Bluetooth: only then can PadPilot turn the controller off.</summary>
-    public bool IsBluetooth { get => _isBluetooth; private set => Set(ref _isBluetooth, value); }
+    public bool IsBluetooth
+    {
+        get => _isBluetooth;
+        private set
+        {
+            if (Set(ref _isBluetooth, value))
+                OnPropertyChanged(nameof(ConnectionGlyph));
+        }
+    }
     public string PowerMessage { get => _powerMessage; private set => Set(ref _powerMessage, value); }
 
     /// <summary>Raised on the UI thread when the battery reaches the warning level (percent).</summary>
@@ -376,6 +394,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             RawHex = "";
             ControllerName = "";
             State = new ControllerState();
+            IsConnected = false;
+            Output.LeftTrigger.Live = Output.RightTrigger.Live = -1;
             UpdateTexts();
             return;
         }
@@ -403,6 +423,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _batteryWarning = new BatteryWarning();
         _lastBatteryPercent = -1;
         IsBluetooth = _device.Connection == ConnectionType.Bluetooth;
+        IsConnected = true;
         PowerMessage = "";
         Connection = _device.Connection == ConnectionType.Usb ? "USB" : "Bluetooth";
         UpdateTexts();
@@ -417,6 +438,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _device?.Dispose();
         _device = null;
         IsBluetooth = false;
+        IsConnected = false;
         UpdateModStatus();
     }
 
@@ -425,7 +447,16 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         Status = _statusKey == "Status_Connected" ? Loc.Format(_statusKey, ControllerName) : Loc.Get(_statusKey);
         if (_device != null && _device.TryGetLatest(out var state, out _))
-            Battery = FormatBattery(state!);
+            ShowBattery(state!);
+    }
+
+    private void ShowBattery(ControllerState state)
+    {
+        Battery = FormatBattery(state);
+        // Segoe icons: Battery0–10 at E850, BatteryCharging0–10 at E85B.
+        int level = Math.Clamp((int)Math.Round(state.BatteryPercent / 10.0), 0, 10);
+        bool charging = state.Charge is ChargeStatus.Charging or ChargeStatus.Full;
+        BatteryGlyph = ((char)((charging ? 0xE85B : 0xE850) + level)).ToString();
     }
 
     private static string FormatBattery(ControllerState state) => state.Charge switch
@@ -475,7 +506,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _lastRaw = raw;
             State = state!;
             Deadzones.Update(state!);
-            Battery = FormatBattery(state!);
+            ShowBattery(state!);
+            Output.LeftTrigger.Live = state!.L2;
+            Output.RightTrigger.Live = state.R2;
             RawHex = Convert.ToHexString(raw.AsSpan(0, Math.Min(raw.Length, 48)));
         }
 

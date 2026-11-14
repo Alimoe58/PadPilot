@@ -13,7 +13,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $id = "Alimoe58.PadPilot"
-$schema = "1.6.0"
+$schema = "1.28.0"
 $sha = (Get-FileHash $Exe -Algorithm SHA256).Hash
 $url = "https://github.com/Alimoe58/PadPilot/releases/download/v$Version/PadPilot.exe"
 $dir = Join-Path $PSScriptRoot "manifests\a\Alimoe58\PadPilot\$Version"
